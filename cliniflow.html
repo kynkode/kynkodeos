@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6fb;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Main App Container -->
+    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-[#120f2e] text-white flex flex-col justify-between p-5">
+            <div>
+                <!-- Brand / Logo in Sidebar -->
+                <div class="text-xs font-semibold tracking-wider text-purple-300 uppercase mb-8">
+                    KYNKODE
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-house w-5"></i>
+                        <span class="font-medium text-sm">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#29225c] text-white font-medium text-sm shadow-md">
+                        <i class="fa-solid fa-diagram-project w-5"></i>
+                        <span>Flow</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-list-check w-5"></i>
+                        <span class="font-medium text-sm">Tasks</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-network-wired w-5"></i>
+                        <span class="font-medium text-sm">Workflows</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-calendar w-5"></i>
+                        <span class="font-medium text-sm">Calendar</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i>
+                        <span class="font-medium text-sm">Reports</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-gear w-5"></i>
+                        <span class="font-medium text-sm">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer Stats Card -->
+            <div class="mt-8 pt-4 border-t border-white/10">
+                <div class="bg-[#29225c] px-4 py-3.5 rounded-2xl text-white">
+                    <p class="text-xs text-gray-300 mb-1">My Tasks</p>
+                    <div class="text-2xl font-bold tracking-tight mb-0.5">12</div>
+                    <p class="text-[11px] text-purple-300 font-medium">Pending</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6">
+
+            <!-- Top Header -->
+            <header class="flex items-center gap-3">
+                <div class="bg-purple-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                    <i class="fa-solid fa-clipboard-check text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniFlow</h1>
+                    <p class="text-xs text-gray-500 font-medium">Tasks, workflows and accountability</p>
+                </div>
+            </header>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Card 1: My Tasks -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-gray-500">My Tasks</span>
+                    <div class="text-3xl font-bold text-gray-900 mt-2">12</div>
+                    <span class="text-[11px] text-gray-400 mt-1">Pending</span>
+                </div>
+
+                <!-- Card 2: Due Today -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-gray-500">Due Today</span>
+                    <div class="text-3xl font-bold text-gray-900 mt-2">5</div>
+                    <span class="text-[11px] text-gray-400 mt-1">Tasks</span>
+                </div>
+
+                <!-- Card 3: Overdue -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-red-600">Overdue</span>
+                    <div class="text-3xl font-bold text-red-600 mt-2">3</div>
+                    <span class="text-[11px] text-red-400 mt-1">Tasks</span>
+                </div>
+
+                <!-- Card 4: Completed -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-gray-500">Completed</span>
+                    <div class="text-3xl font-bold text-gray-900 mt-2">89%</div>
+                    <span class="text-[11px] text-gray-400 mt-1">This week</span>
+                </div>
+
+            </div>
+
+            <!-- Task List Section -->
+            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                    <div class="flex items-center gap-3">
+                        <h2 class="font-semibold text-gray-800 text-sm">Task List</h2>
+                        <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border border-gray-100 text-xs">
+                            <a href="#" class="px-3 py-1 bg-white shadow-sm font-medium text-gray-800 rounded-lg">All</a>
+                            <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">Today</a>
+                            <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">This Week</a>
+                            <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">Overdue</a>
+                        </div>
+                    </div>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
+                        <i class="fa-solid fa-plus text-xs"></i> New Task
+                    </a>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="text-xs text-gray-400 border-b border-gray-100">
+                                <th class="pb-3 font-medium">Task</th>
+                                <th class="pb-3 font-medium">Workflow</th>
+                                <th class="pb-3 font-medium">Assigned To</th>
+                                <th class="pb-3 font-medium">Due Date</th>
+                                <th class="pb-3 font-medium">Priority</th>
+                                <th class="pb-3 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50 text-gray-700">
+                            <!-- Row 1 -->
+                            <tr class="hover:bg-gray-50/50">
+                                <td class="py-3.5 font-medium text-gray-900">Call owner - lab results</td>
+                                <td class="py-3.5 text-gray-600">Lab Results</td>
+                                <td class="py-3.5 text-gray-600">Jane</td>
+                                <td class="py-3.5 text-gray-600">18/08/2026</td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">High</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-1 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">Overdue</span>
+                                </td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr class="hover:bg-gray-50/50">
+                                <td class="py-3.5 font-medium text-gray-900">Prepare discharge note</td>
+                                <td class="py-3.5 text-gray-600">Hospitalization</td>
+                                <td class="py-3.5 text-gray-600">Dr. Chris</td>
+                                <td class="py-3.5 text-gray-600">18/08/2026</td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">High</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Today</span>
+                                </td>
+                            </tr>
+                            <!-- Row 3 -->
+                            <tr class="hover:bg-gray-50/50">
+                                <td class="py-3.5 font-medium text-gray-900">Relocation docs check</td>
+                                <td class="py-3.5 text-gray-600">Pet Relocation</td>
+                                <td class="py-3.5 text-gray-600">Mary</td>
+                                <td class="py-3.5 text-gray-600">19/08/2026</td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Medium</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-1 bg-blue-50 text-blue-600 border border-blue-200/60 rounded-full text-xs font-medium">Tomorrow</span>
+                                </td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr class="hover:bg-gray-50/50">
+                                <td class="py-3.5 font-medium text-gray-900">Stock count - Pharmacy</td>
+                                <td class="py-3.5 text-gray-600">Inventory</td>
+                                <td class="py-3.5 text-gray-600">Brian</td>
+                                <td class="py-3.5 text-gray-600">21/08/2026</td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Medium</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-1 bg-blue-50 text-blue-600 border border-blue-200/60 rounded-full text-xs font-medium">This Week</span>
+                                </td>
+                            </tr>
+                            <!-- Row 5 -->
+                            <tr class="hover:bg-gray-50/50">
+                                <td class="py-3.5 font-medium text-gray-900">Follow-up: Post-op</td>
+                                <td class="py-3.5 text-gray-600">Follow-up</td>
+                                <td class="py-3.5 text-gray-600">Jane</td>
+                                <td class="py-3.5 text-gray-600">22/08/2026</td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Low</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="inline-block px-2.5 py-1 bg-blue-50 text-blue-600 border border-blue-200/60 rounded-full text-xs font-medium">This Week</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Workflow Progress Section -->
+            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                <h2 class="font-semibold text-gray-800 text-sm">Workflow Progress</h2>
+                
+                <div class="space-y-4 text-sm">
+                    <!-- Progress Item 1 -->
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-48 font-medium text-gray-800 shrink-0">Pet Relocation #1048</div>
+                        <div class="shrink-0">
+                            <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-200/60 rounded-full text-xs font-medium">In Progress</span>
+                        </div>
+                        <div class="flex-1 max-w-md bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full" style="width: 67%;"></div>
+                        </div>
+                        <div class="w-12 text-right font-medium text-gray-600 shrink-0">67%</div>
+                    </div>
+
+                    <!-- Progress Item 2 -->
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-48 font-medium text-gray-800 shrink-0">Hospitalization - Bella</div>
+                        <div class="shrink-0">
+                            <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-200/60 rounded-full text-xs font-medium">In Progress</span>
+                        </div>
+                        <div class="flex-1 max-w-md bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full" style="width: 45%;"></div>
+                        </div>
+                        <div class="w-12 text-right font-medium text-gray-600 shrink-0">45%</div>
+                    </div>
+
+                    <!-- Progress Item 3 -->
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-48 font-medium text-gray-800 shrink-0">Dental Procedure - Max</div>
+                        <div class="shrink-0">
+                            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
+                        </div>
+                        <div class="flex-1 max-w-md bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-emerald-600 h-full rounded-full" style="width: 100%;"></div>
+                        </div>
+                        <div class="w-12 text-right font-medium text-gray-600 shrink-0">100%</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Bottom Slogan Bar -->
+    <footer class="mt-6 text-center text-xs text-purple-900 font-medium">
+        Every task. Every step. No patient falls through the cracks.
+    </footer>
+
+</body>
+</html>

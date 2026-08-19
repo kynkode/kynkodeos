@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniMove</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6fb;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Main App Container -->
+    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-[#2b180a] text-white flex flex-col justify-between p-5">
+            <div>
+                <!-- Brand / Logo in Sidebar -->
+                <div class="text-xs font-semibold tracking-wider text-amber-300 uppercase mb-8">
+                    KYNKODE
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-house w-5"></i>
+                        <span class="font-medium text-sm">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#5c3214] text-white font-medium text-sm shadow-md">
+                        <i class="fa-solid fa-house-chimney-user w-5"></i>
+                        <span>Relocations</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-file-lines w-5"></i>
+                        <span class="font-medium text-sm">Documents</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-square-check w-5"></i>
+                        <span class="font-medium text-sm">Checklists</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-file-invoice w-5"></i>
+                        <span class="font-medium text-sm">Templates</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i>
+                        <span class="font-medium text-sm">Reports</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-gear w-5"></i>
+                        <span class="font-medium text-sm">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer Stats Card -->
+            <div class="mt-8 pt-4 border-t border-white/10">
+                <div class="bg-[#5c3214] px-4 py-3.5 rounded-2xl text-white">
+                    <p class="text-xs text-gray-300 mb-1">Active Cases</p>
+                    <div class="text-2xl font-bold tracking-tight mb-0.5">7</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6">
+
+            <!-- Top Header -->
+            <header class="flex items-center gap-3">
+                <div class="bg-amber-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                    <i class="fa-solid fa-plane text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniMove</h1>
+                    <p class="text-xs text-gray-500 font-medium">Pet relocation made simple</p>
+                </div>
+            </header>
+
+            <!-- Top Grid: Relocation Cases Card -->
+            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold text-gray-800 text-sm">Relocation Cases</h2>
+                    <a href="#" class="text-amber-600 hover:underline text-xs font-medium">View all</a>
+                </div>
+
+                <!-- Case Box container -->
+                <div class="bg-gray-50/60 p-5 rounded-2xl border border-gray-100 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    
+                    <!-- Left: Progress & Travel Date -->
+                    <div class="lg:col-span-7 flex flex-col gap-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-gray-900 text-base">Case #1048</span>
+                                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">In Progress</span>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-600 font-medium flex items-center gap-2">
+                            <span>Kenya</span>
+                            <i class="fa-solid fa-arrow-right text-xs text-gray-400"></i>
+                            <span>United Kingdom</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1 bg-gray-200 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full rounded-full" style="width: 67%;"></div>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-700">67%</span>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            Travel Date: <span class="font-medium text-gray-800">15/09/2026</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Pet Details -->
+                    <div class="lg:col-span-5 grid grid-cols-2 gap-y-2.5 text-sm bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <div>
+                            <span class="text-gray-400 text-xs block">Pet</span>
+                            <span class="font-semibold text-gray-900">Luna</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 text-xs block">Species</span>
+                            <span class="font-semibold text-gray-900">Canine</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 text-xs block">Owner</span>
+                            <span class="font-semibold text-gray-900">Sarah Wanjiku</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 text-xs block">Microchip</span>
+                            <span class="font-semibold text-gray-900 text-xs">900215004123456</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Bottom Grid: Relocation Checklist & Upcoming Deadlines -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Relocation Checklist Section -->
+                <section class="lg:col-span-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <h2 class="font-semibold text-gray-800 text-sm">Relocation Checklist</h2>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <tbody class="divide-y divide-gray-50 text-gray-700">
+                                <!-- Item 1 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-check"></i>
+                                        </span>
+                                        Microchip
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
+                                    </td>
+                                    <td class="py-3 text-right text-xs text-gray-400">10/07/2026</td>
+                                </tr>
+                                <!-- Item 2 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-check"></i>
+                                        </span>
+                                        Rabies Vaccination
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
+                                    </td>
+                                    <td class="py-3 text-right text-xs text-gray-400">10/07/2026</td>
+                                </tr>
+                                <!-- Item 3 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-check"></i>
+                                        </span>
+                                        Rabies Titre Test
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
+                                    </td>
+                                    <td class="py-3 text-right text-xs text-gray-400">10/08/2026</td>
+                                </tr>
+                                <!-- Item 4 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-clock"></i>
+                                        </span>
+                                        Waiting Period
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">In Progress</span>
+                                    </td>
+                                    <td class="py-3 text-right text-xs text-gray-400">(21/07 - 11/09)</td>
+                                </tr>
+                                <!-- Item 5 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </span>
+                                        Health Certificate
+                                    </td>
+                                    <td class="py-3" colspan="2">
+                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>
+                                    </td>
+                                </tr>
+                                <!-- Item 6 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </span>
+                                        Export Permit
+                                    </td>
+                                    <td class="py-3" colspan="2">
+                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>
+                                    </td>
+                                </tr>
+                                <!-- Item 7 -->
+                                <tr>
+                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                                        <span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </span>
+                                        Travel Arrangement
+                                    </td>
+                                    <td class="py-3" colspan="2">
+                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Upcoming Deadlines Section -->
+                <section class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <h2 class="font-semibold text-gray-800 text-sm">Upcoming Deadlines</h2>
+
+                    <div class="space-y-4">
+                        <!-- Deadline 1 -->
+                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2">
+                            <div class="flex items-center justify-between text-sm font-semibold text-gray-900">
+                                <span>Health Certificate</span>
+                                <span class="text-xs font-normal text-gray-500">23/08/2026</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full font-medium">Due in 5 days</span>
+                                <span class="text-gray-400">Clinic</span>
+                            </div>
+                        </div>
+
+                        <!-- Deadline 2 -->
+                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2">
+                            <div class="flex items-center justify-between text-sm font-semibold text-gray-900">
+                                <span>Export Permit</span>
+                                <span class="text-xs font-normal text-gray-500">30/08/2026</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full font-medium">Due in 12 days</span>
+                                <span class="text-gray-400">Gov Vet</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Bottom Slogan Bar -->
+    <footer class="mt-6 text-center text-xs text-amber-900 font-medium">
+        All documents. All deadlines. Stress-free pet travel.
+    </footer>
+
+</body>
+</html>

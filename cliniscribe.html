@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniScribe AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6fb;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Main App Container -->
+    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5">
+            <div>
+                <!-- Brand / Logo in Sidebar -->
+                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">
+                    KYNKODE
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-house w-5"></i>
+                        <span class="font-medium text-sm">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium text-sm shadow-md">
+                        <i class="fa-solid fa-microphone-lines w-5"></i>
+                        <span>Scribe</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-folder-open w-5"></i>
+                        <span class="font-medium text-sm">Records</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-file-lines w-5"></i>
+                        <span class="font-medium text-sm">Templates</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i>
+                        <span class="font-medium text-sm">Reports</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-gear w-5"></i>
+                        <span class="font-medium text-sm">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer Status -->
+            <div class="mt-8 pt-4 border-t border-white/10">
+                <a href="#" class="flex items-center gap-3 bg-white/10 hover:bg-white/15 px-4 py-3 rounded-xl text-xs text-blue-200 transition">
+                    <i class="fa-solid fa-circle-waveform-lines text-blue-400 animate-pulse"></i>
+                    <span>AI is listening...</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6">
+
+            <!-- Top Header -->
+            <header class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                    <i class="fa-solid fa-pen-nib text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniScribe AI</h1>
+                    <p class="text-xs text-gray-500 font-medium">AI-powered medical documentation for vets</p>
+                </div>
+            </header>
+
+            <!-- Top Grid: Live Scribe & Patient Information -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Live Scribe Box -->
+                <section class="lg:col-span-7 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-semibold text-gray-800 text-sm">Live Scribe</h2>
+                        <div class="flex items-center gap-2 text-red-600 font-semibold text-sm">
+                            <span class="font-mono text-base">02:48</span>
+                            <span class="flex items-center gap-1 text-xs text-red-500 font-normal">
+                                <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                                Recording...
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Audio Waveform Illustration -->
+                    <div class="flex items-center justify-center gap-1 py-4 my-auto">
+                        <span class="w-1 h-3 bg-blue-400 rounded-full"></span>
+                        <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
+                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-4 bg-blue-400 rounded-full"></span>
+                        <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
+                        <span class="w-1 h-12 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-16 bg-blue-700 rounded-full"></span>
+                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-14 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
+                        <span class="w-1 h-12 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
+                        <span class="w-1 h-14 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-16 bg-blue-700 rounded-full"></span>
+                        <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
+                        <span class="w-1 h-12 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-4 bg-blue-400 rounded-full"></span>
+                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
+                        <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
+                        <span class="w-1 h-3 bg-blue-400 rounded-full"></span>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-50">
+                        <a href="#" class="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
+                            <i class="fa-solid fa-pause text-xs"></i> Pause
+                        </a>
+                        <a href="#" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-50 text-red-600 border border-red-100 text-sm font-medium hover:bg-red-100 transition">
+                            <i class="fa-solid fa-square text-xs"></i> Stop
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Patient Information Box -->
+                <section class="lg:col-span-5 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <h2 class="font-semibold text-gray-800 text-sm mb-4">Patient Information</h2>
+                    <div class="grid grid-cols-2 gap-y-3 text-sm">
+                        <div>
+                            <span class="text-gray-400 text-xs block mb-0.5">Patient</span>
+                            <span class="font-semibold text-gray-900">Bella</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 text-xs block mb-0.5">Species</span>
+                            <span class="font-semibold text-gray-900">Canine</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 text-xs block mb-0.5">Breed</span>
+                            <span class="font-semibold text-gray-900">German Shepherd</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 text-xs block mb-0.5">Weight / Age</span>
+                            <span class="font-semibold text-gray-900">29.4 kg &nbsp;&nbsp;&nbsp; 3y 2m</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-gray-400 text-xs block mb-0.5">Visit Type</span>
+                            <span class="font-semibold text-gray-900">Consultation</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Bottom Section: AI Generated Note & Actions -->
+            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-6">
+                
+                <!-- Section Header -->
+                <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                    <h2 class="font-semibold text-gray-800 text-sm flex items-center gap-2">
+                        AI Generated Note 
+                        <a href="#" class="text-blue-600 font-normal text-xs hover:underline">(Edit before save)</a>
+                    </h2>
+                </div>
+
+                <!-- Content & Smart Buttons Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                    <!-- Note Text Content -->
+                    <div class="lg:col-span-9 text-sm text-gray-700 space-y-4">
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-1">Presenting Complaint</h3>
+                            <p class="text-gray-600">Inappetence, lethargy and vomiting since yesterday.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-1">History</h3>
+                            <p class="text-gray-600">Owner reports Bella vomited 3 times since last night. No diarrhea. Still drinking water.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-1">Examination</h3>
+                            <p class="text-gray-600">T: 38.7°C, P: 110 bpm, R: 28 bpm. MM pink and moist. Mild dehydration (5%). Abdomen mildly painful on palpation.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-1">Plan</h3>
+                            <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                                <li>CBC, Biochemistry</li>
+                                <li>IV Fluids</li>
+                                <li>Antiemetic (Maropitant)</li>
+                                <li>Recheck tomorrow</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Right-side Utility Action Buttons (# Placeholders) -->
+                    <div class="lg:col-span-3 flex flex-col gap-2.5">
+                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
+                            Smart Suggestions
+                        </a>
+                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
+                            Add Vaccination
+                        </a>
+                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
+                            Add Prescription
+                        </a>
+                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
+                            Add Follow-up
+                        </a>
+                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
+                            Generate Discharge
+                        </a>
+                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
+                            Attach Lab Result
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Footer Action Buttons inside card -->
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                    <a href="#" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
+                        Save Note
+                    </a>
+                    <a href="#" class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
+                        Save & Close
+                    </a>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Bottom Slogan Bar -->
+    <footer class="mt-6 text-center text-xs text-blue-900 font-medium">
+        CliniScribe saves time, improves accuracy and keeps every record complete.
+    </footer>
+
+</body>
+</html>

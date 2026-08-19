@@ -444,11 +444,11 @@
     <!-- Backend Integration Script -->
     <script>
         // Replace with your deployed Google Apps Script Web App URL
-        const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJGyCD3maneLnqLVEVhdlJ53TLqWhyeVzjk7ZQP1GOHaIq0YEEpFnLSwIOkYNxB55T/exec';
 
         // Helper function to fetch data from Google Sheets backend
         async function fetchDashboardData() {
-            if (GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            if (GAS_URL === 'https://script.google.com/macros/s/AKfycbzJGyCD3maneLnqLVEVhdlJ53TLqWhyeVzjk7ZQP1GOHaIq0YEEpFnLSwIOkYNxB55T/exec') {
                 console.warn('GAS_URL not configured. Running with default UI state.');
                 return;
             }
@@ -465,7 +465,7 @@
 
         // Helper function to send action/data back to GAS backend
         async function sendActionToGAS(actionName, payload) {
-            if (GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            if (GAS_URL === 'https://script.google.com/macros/s/AKfycbzJGyCD3maneLnqLVEVhdlJ53TLqWhyeVzjk7ZQP1GOHaIq0YEEpFnLSwIOkYNxB55T/exec') {
                 alert('Action simulated: Connected GAS URL required to persist to Google Sheet.');
                 return;
             }

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Practice Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b172a;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Main App Container -->
+    <div class="w-full max-w-7xl bg-[#0b172a] rounded-3xl overflow-hidden flex flex-col md:flex-row border border-blue-950/40">
+
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-[#0b172a] text-white flex flex-col justify-between p-5 border-r border-blue-950/60">
+            <div>
+                <!-- Brand / Logo in Sidebar -->
+                <div class="text-xs font-semibold tracking-wider text-blue-400 uppercase mb-8">
+                    KYNKODE
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#1e293b] text-white font-medium text-sm shadow-md">
+                        <i class="fa-solid fa-house w-5 text-blue-400"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                        <i class="fa-solid fa-chart-line w-5"></i>
+                        <span class="font-medium text-sm">Insights</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                        <i class="fa-solid fa-bell w-5"></i>
+                        <span class="font-medium text-sm">Alerts</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i>
+                        <span class="font-medium text-sm">Analytics</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                        <i class="fa-solid fa-file-lines w-5"></i>
+                        <span class="font-medium text-sm">Reports</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                        <i class="fa-solid fa-wand-magic-sparkles w-5"></i>
+                        <span class="font-medium text-sm">Ask AI</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                        <i class="fa-solid fa-gear w-5"></i>
+                        <span class="font-medium text-sm">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer Stats Card -->
+            <div class="mt-8 pt-4 border-t border-white/10">
+                <div class="bg-[#1e293b] px-4 py-3.5 rounded-2xl text-white border border-blue-900/40">
+                    <p class="text-xs text-gray-400 mb-1">Practice Score</p>
+                    <div class="flex items-baseline gap-2 mb-0.5">
+                        <span class="text-2xl font-bold tracking-tight text-white">82</span>
+                        <span class="text-xs text-gray-400">/ 100</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-400 font-medium">Good</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 md:p-8 bg-white rounded-r-3xl md:rounded-l-none flex flex-col gap-6 text-gray-800">
+
+            <!-- Top Header -->
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-robot text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">AI Practice Manager</h1>
+                        <p class="text-xs text-gray-500 font-medium">Your intelligent operations assistant</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Greeting Banner -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        Good morning, Dr. Chris <span class="text-xl">👋</span>
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Here's your practice overview for today.</p>
+                </div>
+                <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-medium text-gray-600 self-start md:self-auto">
+                    Tuesday, 19 Aug 2026
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Card 1: Critical Alerts -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-red-600">Critical Alerts</span>
+                    <div class="text-3xl font-bold text-red-600 mt-2">5</div>
+                </div>
+
+                <!-- Card 2: Follow-ups Due -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-gray-500">Follow-ups Due</span>
+                    <div class="text-3xl font-bold text-gray-900 mt-2">11</div>
+                </div>
+
+                <!-- Card 3: Expiry Risk -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-amber-600">Expiry Risk</span>
+                    <div class="text-2xl font-bold text-amber-600 mt-2">KES 86,400</div>
+                </div>
+
+                <!-- Card 4: Relocation Cases -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-medium text-gray-500">Relocation Cases</span>
+                    <div class="text-3xl font-bold text-gray-900 mt-2">3</div>
+                </div>
+
+            </div>
+
+            <!-- Middle Grid: Top Priorities & Practice Performance -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Top Priorities Today -->
+                <section class="lg:col-span-7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <h3 class="font-semibold text-gray-800 text-sm">Top Priorities Today</h3>
+
+                    <div class="space-y-3.5 text-sm">
+                        <!-- Priority 1 -->
+                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+                            <div class="flex items-center gap-3 text-gray-800 font-medium">
+                                <span class="text-xs text-gray-400 w-3">1</span>
+                                <span>Approve procurement request #284</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">High</span>
+                        </div>
+
+                        <!-- Priority 2 -->
+                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+                            <div class="flex items-center gap-3 text-gray-800 font-medium">
+                                <span class="text-xs text-gray-400 w-3">2</span>
+                                <span>Follow up on 3 delayed relocation cases</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">High</span>
+                        </div>
+
+                        <!-- Priority 3 -->
+                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+                            <div class="flex items-center gap-3 text-gray-800 font-medium">
+                                <span class="text-xs text-gray-400 w-3">3</span>
+                                <span>Contact 8 overdue post-operative patients</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Medium</span>
+                        </div>
+
+                        <!-- Priority 4 -->
+                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+                            <div class="flex items-center gap-3 text-gray-800 font-medium">
+                                <span class="text-xs text-gray-400 w-3">4</span>
+                                <span>Transfer Bravecto stock: Westlands -> South C</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Medium</span>
+                        </div>
+
+                        <!-- Priority 5 -->
+                        <div class="flex items-center justify-between py-1.5">
+                            <div class="flex items-center gap-3 text-gray-800 font-medium">
+                                <span class="text-xs text-gray-400 w-3">5</span>
+                                <span>Review KES 34,200 of stock expiring soon</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Low</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Practice Performance Section -->
+                <section class="lg:col-span-5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-semibold text-gray-800 text-sm">Practice Performance</h3>
+                        <span class="text-xs text-gray-400 font-medium">(This Week)</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Revenue -->
+                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
+                            <span class="text-xs text-gray-400">Revenue</span>
+                            <div>
+                                <div class="text-lg font-bold text-gray-900">KES 1.24M</div>
+                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+11%</span>
+                            </div>
+                        </div>
+
+                        <!-- Consultations -->
+                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
+                            <span class="text-xs text-gray-400">Consultations</span>
+                            <div>
+                                <div class="text-lg font-bold text-gray-900">421</div>
+                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+6%</span>
+                            </div>
+                        </div>
+
+                        <!-- New Clients -->
+                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
+                            <span class="text-xs text-gray-400">New Clients</span>
+                            <div>
+                                <div class="text-lg font-bold text-gray-900">83</div>
+                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+18%</span>
+                            </div>
+                        </div>
+
+                        <!-- Avg. Invoice -->
+                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
+                            <span class="text-xs text-gray-400">Avg. Invoice</span>
+                            <div>
+                                <div class="text-lg font-bold text-gray-900">KES 2,945</div>
+                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+4%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Ask KYNKODE AI Input Bar Section -->
+            <section class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-3">
+                <h3 class="font-semibold text-gray-800 text-sm">Ask KYNKODE AI</h3>
+                <div class="relative flex items-center">
+                    <input type="text" placeholder="Ask anything about your practice" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-blue-500 transition pr-12">
+                    <a href="#" class="absolute right-3 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition shadow-sm text-xs">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </a>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Bottom Slogan Bar -->
+    <footer class="mt-6 text-center text-xs text-blue-300 font-medium">
+        Intelligence. Insight. Better decisions every day.
+    </footer>
+
+</body>
+</html>

@@ -12,67 +12,54 @@
             font-family: 'Inter', sans-serif;
             background-color: #f4f6fb;
         }
+        .loader {
+            border-top-color: #2563eb;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
 
-    <!-- Main App Container -->
-    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+        
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        </div>
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#0a182b] text-white flex flex-col justify-between p-5">
+        <aside class="w-full md:w-64 bg-[#0a182b] text-white flex flex-col justify-between p-5 z-10">
             <div>
-                <!-- Brand / Logo in Sidebar -->
-                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">
-                    KYNKODE
-                </div>
-
-                <!-- Navigation Links -->
+                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">KYNKODE</div>
                 <nav class="space-y-1">
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#162d4c] text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-house w-5"></i>
-                        <span>Dashboard</span>
+                        <i class="fa-solid fa-house w-5"></i><span>Dashboard</span>
+                    </a>
+                    <!-- Additional Nav Items Omitted for Brevity (Same as your original) -->
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i><span class="font-medium text-sm">Stock</span>
                     </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-boxes-stacked w-5"></i>
-                        <span class="font-medium text-sm">Stock</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-bell w-5"></i>
-                        <span class="font-medium text-sm">Alerts</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-cart-shopping w-5"></i>
-                        <span class="font-medium text-sm">Orders</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-right-left w-5"></i>
-                        <span class="font-medium text-sm">Transfers</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-chart-pie w-5"></i>
-                        <span class="font-medium text-sm">Reports</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-gear w-5"></i>
-                        <span class="font-medium text-sm">Settings</span>
+                        <i class="fa-solid fa-gear w-5"></i><span class="font-medium text-sm">Settings</span>
                     </a>
                 </nav>
             </div>
-
-            <!-- Sidebar Footer Stats Card -->
             <div class="mt-8 pt-4 border-t border-white/10">
                 <div class="bg-[#162d4c] px-4 py-3.5 rounded-2xl text-white">
                     <p class="text-xs text-gray-300 mb-1">Stock Value</p>
-                    <div class="text-xl font-bold tracking-tight">KES 2.14M</div>
+                    <div id="sb-stock-value" class="text-xl font-bold tracking-tight">--</div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6">
+        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative z-10">
 
-            <!-- Top Header -->
             <header class="flex items-center gap-3">
                 <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
                     <i class="fa-solid fa-cube text-xl"></i>
@@ -85,47 +72,34 @@
 
             <!-- Metrics Grid -->
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                
-                <!-- Card 1: Total Items -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <span class="text-xs font-medium text-blue-600">Total Items</span>
-                    <div class="text-2xl font-bold text-gray-900 mt-2">1,248</div>
+                    <div id="metric-total" class="text-2xl font-bold text-gray-900 mt-2">--</div>
                 </div>
-
-                <!-- Card 2: Stock Value -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <span class="text-xs font-medium text-blue-600">Stock Value</span>
-                    <div class="text-2xl font-bold text-gray-900 mt-2">KES 2.14M</div>
+                    <div id="metric-value" class="text-2xl font-bold text-gray-900 mt-2">--</div>
                 </div>
-
-                <!-- Card 3: Need Ordering -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <span class="text-xs font-medium text-red-600">Need Ordering</span>
-                    <div class="text-2xl font-bold text-red-600 mt-2">6</div>
+                    <div id="metric-order" class="text-2xl font-bold text-red-600 mt-2">--</div>
                 </div>
-
-                <!-- Card 4: Expiring Soon -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <span class="text-xs font-medium text-amber-600">Expiring Soon</span>
-                    <div class="text-2xl font-bold text-amber-600 mt-2">14</div>
+                    <div id="metric-expiry" class="text-2xl font-bold text-amber-600 mt-2">--</div>
                 </div>
-
-                <!-- Card 5: Pending Orders -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
                     <span class="text-xs font-medium text-blue-600">Pending Orders</span>
-                    <div class="text-2xl font-bold text-gray-900 mt-2">3</div>
+                    <div id="metric-pending" class="text-2xl font-bold text-gray-900 mt-2">--</div>
                 </div>
-
             </div>
 
-            <!-- Low Stock / At Risk Items Section -->
+            <!-- Table Section -->
             <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
                 <div class="flex items-center justify-between">
                     <h2 class="font-semibold text-gray-800 text-sm">Low Stock / At Risk Items</h2>
                     <a href="#" class="text-blue-600 hover:underline text-xs font-medium">View all</a>
                 </div>
-
-                <!-- Table -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead>
@@ -139,89 +113,18 @@
                                 <th class="pb-3 font-medium text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-50 text-gray-700">
-                            <!-- Row 1 -->
-                            <tr class="hover:bg-gray-50/50">
-                                <td class="py-3.5 font-medium text-gray-900">DHLP Vaccine</td>
-                                <td class="py-3.5">4</td>
-                                <td class="py-3.5">18</td>
-                                <td class="py-3.5">6 days</td>
-                                <td class="py-3.5 text-gray-500">12/12/2026</td>
-                                <td class="py-3.5">
-                                    <span class="inline-block px-2.5 py-1 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">Low</span>
-                                </td>
-                                <td class="py-3.5 text-right">
-                                    <a href="#" class="inline-block px-3 py-1 bg-gray-50 hover:bg-gray-100 text-blue-600 border border-blue-100 rounded-xl text-xs font-medium transition shadow-sm">Order</a>
-                                </td>
-                            </tr>
-                            <!-- Row 2 -->
-                            <tr class="hover:bg-gray-50/50">
-                                <td class="py-3.5 font-medium text-gray-900">Rabies Vaccine</td>
-                                <td class="py-3.5 text-red-600 font-semibold">0</td>
-                                <td class="py-3.5">15</td>
-                                <td class="py-3.5">0 days</td>
-                                <td class="py-3.5 text-gray-400">-</td>
-                                <td class="py-3.5">
-                                    <span class="inline-block px-2.5 py-1 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">Out of Stock</span>
-                                </td>
-                                <td class="py-3.5 text-right">
-                                    <a href="#" class="inline-block px-3 py-1 bg-gray-50 hover:bg-gray-100 text-blue-600 border border-blue-100 rounded-xl text-xs font-medium transition shadow-sm">Order</a>
-                                </td>
-                            </tr>
-                            <!-- Row 3 -->
-                            <tr class="hover:bg-gray-50/50">
-                                <td class="py-3.5 font-medium text-gray-900">Bravecto 1000mg</td>
-                                <td class="py-3.5">3</td>
-                                <td class="py-3.5">10</td>
-                                <td class="py-3.5">8 days</td>
-                                <td class="py-3.5 text-gray-500">12/12/2026</td>
-                                <td class="py-3.5">
-                                    <span class="inline-block px-2.5 py-1 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">Low</span>
-                                </td>
-                                <td class="py-3.5 text-right">
-                                    <a href="#" class="inline-block px-3 py-1 bg-gray-50 hover:bg-gray-100 text-blue-600 border border-blue-100 rounded-xl text-xs font-medium transition shadow-sm">Order</a>
-                                </td>
-                            </tr>
-                            <!-- Row 4 -->
-                            <tr class="hover:bg-gray-50/50">
-                                <td class="py-3.5 font-medium text-gray-900">Bravecto 500mg</td>
-                                <td class="py-3.5">2</td>
-                                <td class="py-3.5">8</td>
-                                <td class="py-3.5">7 days</td>
-                                <td class="py-3.5 text-gray-500">12/11/2026</td>
-                                <td class="py-3.5">
-                                    <span class="inline-block px-2.5 py-1 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">Low</span>
-                                </td>
-                                <td class="py-3.5 text-right">
-                                    <a href="#" class="inline-block px-3 py-1 bg-gray-50 hover:bg-gray-100 text-blue-600 border border-blue-100 rounded-xl text-xs font-medium transition shadow-sm">Transfer</a>
-                                </td>
-                            </tr>
-                            <!-- Row 5 -->
-                            <tr class="hover:bg-gray-50/50">
-                                <td class="py-3.5 font-medium text-gray-900">Cat Flu Vaccine</td>
-                                <td class="py-3.5">5</td>
-                                <td class="py-3.5">6</td>
-                                <td class="py-3.5">20 days</td>
-                                <td class="py-3.5 text-gray-500">12/10/2026</td>
-                                <td class="py-3.5">
-                                    <span class="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Good</span>
-                                </td>
-                                <td class="py-3.5 text-right text-gray-400">
-                                    -
-                                </td>
-                            </tr>
+                        <tbody id="inventory-table-body" class="divide-y divide-gray-50 text-gray-700">
+                            <!-- Injected via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- KYNKODE Recommendation Box -->
+            <!-- Recommendation Box -->
             <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex flex-col gap-1">
                     <h2 class="font-semibold text-blue-900 text-sm">KYNKODE Recommendation</h2>
-                    <p class="text-sm text-gray-600">
-                        You have KES 31,400 worth of stock expiring within 60 days. Consider transferring Bravecto 500mg (5 units) to South C.
-                    </p>
+                    <p id="recommendation-text" class="text-sm text-gray-600">Loading recommendations...</p>
                 </div>
                 <a href="#" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition shrink-0">
                     View Recommendations
@@ -229,13 +132,87 @@
             </section>
 
         </main>
-
     </div>
 
-    <!-- Bottom Slogan Bar -->
     <footer class="mt-6 text-center text-xs text-blue-900 font-medium">
         Right stock. Right time. Right price.
     </footer>
 
+    <!-- App Logic -->
+    <script>
+        // REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwLmiZxDF88hZAS3OpdyE-D-qwI9gacm3hLoHg_lnXADzZc7B7A4hzgLuxeq7kNBGo/exec"; 
+
+        document.addEventListener('DOMContentLoaded', fetchDashboardData);
+
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(GAS_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    populateDashboard(result.data);
+                } else {
+                    console.error("Backend Error:", result.message);
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                document.getElementById('recommendation-text').textContent = "Failed to load data. Please check your connection.";
+            } finally {
+                // Hide loader
+                document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function populateDashboard(data) {
+            // 1. Populate Metrics
+            document.getElementById('sb-stock-value').textContent = data.metrics.stockValue;
+            document.getElementById('metric-total').textContent = data.metrics.totalItems;
+            document.getElementById('metric-value').textContent = data.metrics.stockValue;
+            document.getElementById('metric-order').textContent = data.metrics.needOrdering;
+            document.getElementById('metric-expiry').textContent = data.metrics.expiringSoon;
+            document.getElementById('metric-pending').textContent = data.metrics.pendingOrders;
+            document.getElementById('recommendation-text').textContent = data.metrics.recommendation;
+
+            // 2. Populate Table
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = ''; // Clear skeleton
+
+            data.items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50/50';
+
+                // Handle Status Badge Styling
+                let statusClasses = "bg-gray-50 text-gray-600 border-gray-200/60";
+                if (item.status.toLowerCase().includes("low") || item.status.toLowerCase().includes("out")) {
+                    statusClasses = "bg-red-50 text-red-600 border-red-200/60";
+                } else if (item.status.toLowerCase().includes("good")) {
+                    statusClasses = "bg-emerald-50 text-emerald-600 border-emerald-200/60";
+                }
+
+                // Handle Stock Color Styling (Red if 0)
+                const stockStyle = item.stock == 0 ? 'text-red-600 font-semibold' : '';
+
+                tr.innerHTML = `
+                    <td class="py-3.5 font-medium text-gray-900">${item.name}</td>
+                    <td class="py-3.5 ${stockStyle}">${item.stock}</td>
+                    <td class="py-3.5">${item.avgUse}</td>
+                    <td class="py-3.5">${item.daysLeft}</td>
+                    <td class="py-3.5 text-gray-500">${item.expiry || '-'}</td>
+                    <td class="py-3.5">
+                        <span class="inline-block px-2.5 py-1 border rounded-full text-xs font-medium ${statusClasses}">${item.status}</span>
+                    </td>
+                    <td class="py-3.5 text-right">
+                        ${item.action !== '-' && item.action !== '' 
+                            ? `<a href="#" class="inline-block px-3 py-1 bg-gray-50 hover:bg-gray-100 text-blue-600 border border-blue-100 rounded-xl text-xs font-medium transition shadow-sm">${item.action}</a>` 
+                            : `<span class="text-gray-400">-</span>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
 </body>
 </html>

@@ -12,15 +12,28 @@
             font-family: 'Inter', sans-serif;
             background-color: #f4f6fb;
         }
+        .loader {
+            border-top-color: #d97706;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
 
     <!-- Main App Container -->
-    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        </div>
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#2b180a] text-white flex flex-col justify-between p-5">
+        <aside class="w-full md:w-64 bg-[#2b180a] text-white flex flex-col justify-between p-5 z-10">
             <div>
                 <!-- Brand / Logo in Sidebar -->
                 <div class="text-xs font-semibold tracking-wider text-amber-300 uppercase mb-8">
@@ -64,13 +77,13 @@
             <div class="mt-8 pt-4 border-t border-white/10">
                 <div class="bg-[#5c3214] px-4 py-3.5 rounded-2xl text-white">
                     <p class="text-xs text-gray-300 mb-1">Active Cases</p>
-                    <div class="text-2xl font-bold tracking-tight mb-0.5">7</div>
+                    <div id="sb-active-cases" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6">
+        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative z-10">
 
             <!-- Top Header -->
             <header class="flex items-center gap-3">
@@ -97,23 +110,23 @@
                     <div class="lg:col-span-7 flex flex-col gap-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <span class="font-bold text-gray-900 text-base">Case #1048</span>
-                                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">In Progress</span>
+                                <span id="case-id" class="font-bold text-gray-900 text-base">--</span>
+                                <span id="case-status" class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">--</span>
                             </div>
                         </div>
                         <div class="text-sm text-gray-600 font-medium flex items-center gap-2">
-                            <span>Kenya</span>
+                            <span id="case-origin">--</span>
                             <i class="fa-solid fa-arrow-right text-xs text-gray-400"></i>
-                            <span>United Kingdom</span>
+                            <span id="case-destination">--</span>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="flex-1 bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-blue-600 h-full rounded-full" style="width: 67%;"></div>
+                                <div id="case-progress-bar" class="bg-blue-600 h-full rounded-full" style="width: 0%;"></div>
                             </div>
-                            <span class="text-xs font-semibold text-gray-700">67%</span>
+                            <span id="case-progress-text" class="text-xs font-semibold text-gray-700">0%</span>
                         </div>
                         <div class="text-xs text-gray-500">
-                            Travel Date: <span class="font-medium text-gray-800">15/09/2026</span>
+                            Travel Date: <span id="case-travel-date" class="font-medium text-gray-800">--</span>
                         </div>
                     </div>
 
@@ -121,19 +134,19 @@
                     <div class="lg:col-span-5 grid grid-cols-2 gap-y-2.5 text-sm bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                         <div>
                             <span class="text-gray-400 text-xs block">Pet</span>
-                            <span class="font-semibold text-gray-900">Luna</span>
+                            <span id="pet-name" class="font-semibold text-gray-900">--</span>
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs block">Species</span>
-                            <span class="font-semibold text-gray-900">Canine</span>
+                            <span id="pet-species" class="font-semibold text-gray-900">--</span>
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs block">Owner</span>
-                            <span class="font-semibold text-gray-900">Sarah Wanjiku</span>
+                            <span id="pet-owner" class="font-semibold text-gray-900">--</span>
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs block">Microchip</span>
-                            <span class="font-semibold text-gray-900 text-xs">900215004123456</span>
+                            <span id="pet-microchip" class="font-semibold text-gray-900 text-xs">--</span>
                         </div>
                     </div>
 
@@ -149,95 +162,8 @@
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <tbody class="divide-y divide-gray-50 text-gray-700">
-                                <!-- Item 1 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-check"></i>
-                                        </span>
-                                        Microchip
-                                    </td>
-                                    <td class="py-3">
-                                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
-                                    </td>
-                                    <td class="py-3 text-right text-xs text-gray-400">10/07/2026</td>
-                                </tr>
-                                <!-- Item 2 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-check"></i>
-                                        </span>
-                                        Rabies Vaccination
-                                    </td>
-                                    <td class="py-3">
-                                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
-                                    </td>
-                                    <td class="py-3 text-right text-xs text-gray-400">10/07/2026</td>
-                                </tr>
-                                <!-- Item 3 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-check"></i>
-                                        </span>
-                                        Rabies Titre Test
-                                    </td>
-                                    <td class="py-3">
-                                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>
-                                    </td>
-                                    <td class="py-3 text-right text-xs text-gray-400">10/08/2026</td>
-                                </tr>
-                                <!-- Item 4 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-clock"></i>
-                                        </span>
-                                        Waiting Period
-                                    </td>
-                                    <td class="py-3">
-                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">In Progress</span>
-                                    </td>
-                                    <td class="py-3 text-right text-xs text-gray-400">(21/07 - 11/09)</td>
-                                </tr>
-                                <!-- Item 5 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </span>
-                                        Health Certificate
-                                    </td>
-                                    <td class="py-3" colspan="2">
-                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>
-                                    </td>
-                                </tr>
-                                <!-- Item 6 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </span>
-                                        Export Permit
-                                    </td>
-                                    <td class="py-3" colspan="2">
-                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>
-                                    </td>
-                                </tr>
-                                <!-- Item 7 -->
-                                <tr>
-                                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                                        <span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </span>
-                                        Travel Arrangement
-                                    </td>
-                                    <td class="py-3" colspan="2">
-                                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>
-                                    </td>
-                                </tr>
+                            <tbody id="checklist-table-body" class="divide-y divide-gray-50 text-gray-700">
+                                <!-- Injected via JS -->
                             </tbody>
                         </table>
                     </div>
@@ -247,30 +173,8 @@
                 <section class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
                     <h2 class="font-semibold text-gray-800 text-sm">Upcoming Deadlines</h2>
 
-                    <div class="space-y-4">
-                        <!-- Deadline 1 -->
-                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2">
-                            <div class="flex items-center justify-between text-sm font-semibold text-gray-900">
-                                <span>Health Certificate</span>
-                                <span class="text-xs font-normal text-gray-500">23/08/2026</span>
-                            </div>
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full font-medium">Due in 5 days</span>
-                                <span class="text-gray-400">Clinic</span>
-                            </div>
-                        </div>
-
-                        <!-- Deadline 2 -->
-                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2">
-                            <div class="flex items-center justify-between text-sm font-semibold text-gray-900">
-                                <span>Export Permit</span>
-                                <span class="text-xs font-normal text-gray-500">30/08/2026</span>
-                            </div>
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full font-medium">Due in 12 days</span>
-                                <span class="text-gray-400">Gov Vet</span>
-                            </div>
-                        </div>
+                    <div id="deadlines-container" class="space-y-4">
+                        <!-- Injected via JS -->
                     </div>
                 </section>
 
@@ -285,5 +189,112 @@
         All documents. All deadlines. Stress-free pet travel.
     </footer>
 
+    <!-- Frontend Fetch Integration -->
+    <script>
+        // REPLACE WITH YOUR PUBLISHED APPS SCRIPT WEB APP URL
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwyfWHo5Z82wTC6IjM082CDuDombvFjT0bTfBA8QupsFN0MIUbzx9-EdCRVYAnGDdg0Fw/exec";
+
+        document.addEventListener('DOMContentLoaded', fetchMoveData);
+
+        async function fetchMoveData() {
+            try {
+                const response = await fetch(GAS_URL);
+                if (!response.ok) throw new Error('Network error');
+
+                const result = await response.json();
+                if (result.status === "success") {
+                    populateDashboard(result.data);
+                } else {
+                    console.error("Backend Error:", result.message);
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+            } finally {
+                document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function populateDashboard(data) {
+            // 1. Sidebar Counter
+            document.getElementById('sb-active-cases').textContent = data.totalActiveCases || 0;
+
+            // 2. Active Case Details
+            const active = data.activeCase;
+            document.getElementById('case-id').textContent = active.caseId;
+            document.getElementById('case-status').textContent = active.status;
+            document.getElementById('case-origin').textContent = active.origin;
+            document.getElementById('case-destination').textContent = active.destination;
+            
+            const rawProgress = String(active.progress).replace('%', '');
+            document.getElementById('case-progress-bar').style.width = `${rawProgress}%`;
+            document.getElementById('case-progress-text').textContent = `${rawProgress}%`;
+            document.getElementById('case-travel-date').textContent = active.travelDate;
+
+            document.getElementById('pet-name').textContent = active.petName;
+            document.getElementById('pet-species').textContent = active.species;
+            document.getElementById('pet-owner').textContent = active.owner;
+            document.getElementById('pet-microchip').textContent = active.microchip;
+
+            // 3. Checklist
+            const checklistBody = document.getElementById('checklist-table-body');
+            checklistBody.innerHTML = '';
+
+            data.checklist.forEach(item => {
+                const tr = document.createElement('tr');
+                const lowerStatus = String(item.status).toLowerCase();
+
+                let iconHtml = '<span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-xmark"></i></span>';
+                let badgeHtml = '<span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Pending</span>';
+
+                if (lowerStatus === 'completed') {
+                    iconHtml = '<span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-check"></i></span>';
+                    badgeHtml = '<span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>';
+                } else if (lowerStatus === 'in progress') {
+                    iconHtml = '<span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-clock"></i></span>';
+                    badgeHtml = '<span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">In Progress</span>';
+                }
+
+                const dateVal = (item.dateOrRange && item.dateOrRange !== '-') ? item.dateOrRange : '';
+
+                tr.innerHTML = `
+                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
+                        ${iconHtml}
+                        ${item.item}
+                    </td>
+                    <td class="py-3" ${dateVal ? '' : 'colspan="2"'}>
+                        ${badgeHtml}
+                    </td>
+                    ${dateVal ? `<td class="py-3 text-right text-xs text-gray-400">${dateVal}</td>` : ''}
+                `;
+                checklistBody.appendChild(tr);
+            });
+
+            // 4. Deadlines
+            const deadlinesContainer = document.getElementById('deadlines-container');
+            deadlinesContainer.innerHTML = '';
+
+            data.deadlines.forEach(dl => {
+                const div = document.createElement('div');
+                div.className = 'p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2';
+
+                let badgeColor = "bg-amber-50 text-amber-700 border-amber-200/60";
+                if (String(dl.dueDays).toLowerCase().includes("5 days") || String(dl.dueDays).toLowerCase().includes("urgent")) {
+                    badgeColor = "bg-red-50 text-red-600 border-red-200/60";
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-center justify-between text-sm font-semibold text-gray-900">
+                        <span>${dl.task}</span>
+                        <span class="text-xs font-normal text-gray-500">${dl.dueDate}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="px-2.5 py-0.5 border rounded-full font-medium ${badgeColor}">${dl.dueDays}</span>
+                        <span class="text-gray-400">${dl.assignedTo}</span>
+                    </div>
+                `;
+                deadlinesContainer.appendChild(div);
+            });
+        }
+    </script>
 </body>
 </html>

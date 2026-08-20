@@ -6,11 +6,62 @@
     <title>CliniScribe AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PDF Generation Scripts from original -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f6fb;
+        }
+
+        /* Adapted original animations for light theme */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .animate-shimmer {
+            background: linear-gradient(90deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.6) 50%, rgba(59,130,246,0.1) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+        
+        @keyframes wave-bars {
+            0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
+            50% { transform: scaleY(1.2); opacity: 1; }
+        }
+        .animate-wave-1 { animation: wave-bars 0.8s infinite ease-in-out 0.0s; }
+        .animate-wave-2 { animation: wave-bars 0.8s infinite ease-in-out 0.15s; }
+        .animate-wave-3 { animation: wave-bars 0.8s infinite ease-in-out 0.3s; }
+        .animate-wave-4 { animation: wave-bars 0.8s infinite ease-in-out 0.45s; }
+
+        /* Light theme content editable styling */
+        [contenteditable="true"] {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 4px 8px;
+            margin-left: -8px;
+            display: block;
+            min-height: 1.5rem;
+        }
+        [contenteditable="true"]:hover {
+            background-color: rgba(243, 244, 246, 0.8);
+            border-color: rgba(229, 231, 235, 1);
+        }
+        [contenteditable="true"]:focus {
+            background-color: #ffffff;
+            border-color: rgba(59, 130, 246, 0.5);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
     </style>
 </head>
@@ -20,7 +71,7 @@
     <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5">
+        <aside class="w-full md:w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5 shrink-0">
             <div>
                 <!-- Brand / Logo in Sidebar -->
                 <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">
@@ -58,24 +109,31 @@
 
             <!-- Sidebar Footer Status -->
             <div class="mt-8 pt-4 border-t border-white/10">
-                <a href="#" class="flex items-center gap-3 bg-white/10 hover:bg-white/15 px-4 py-3 rounded-xl text-xs text-blue-200 transition">
-                    <i class="fa-solid fa-circle-waveform-lines text-blue-400 animate-pulse"></i>
-                    <span>AI is listening...</span>
-                </a>
+                <div class="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl text-xs text-blue-200 transition">
+                    <i id="sidebarStatusIcon" class="fa-solid fa-circle-waveform-lines text-blue-400"></i>
+                    <span id="sidebarStatusText">System Ready...</span>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6">
+        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative overflow-y-auto max-h-[90vh]">
+            
+            <!-- Absolute Progress Bar -->
+            <div id="progressBarContainer" class="absolute top-0 left-0 w-full h-1 bg-gray-200 overflow-hidden hidden">
+                <div class="h-full w-full animate-shimmer"></div>
+            </div>
 
             <!-- Top Header -->
-            <header class="flex items-center gap-3">
-                <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                    <i class="fa-solid fa-pen-nib text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniScribe AI</h1>
-                    <p class="text-xs text-gray-500 font-medium">AI-powered medical documentation for vets</p>
+            <header class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-pen-nib text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniScribe AI</h1>
+                        <p id="statusText" class="text-xs text-blue-600 font-medium">System ready. Waiting for input...</p>
+                    </div>
                 </div>
             </header>
 
@@ -86,8 +144,7 @@
                 <section class="lg:col-span-7 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="font-semibold text-gray-800 text-sm">Live Scribe</h2>
-                        <div class="flex items-center gap-2 text-red-600 font-semibold text-sm">
-                            <span class="font-mono text-base">02:48</span>
+                        <div id="recordingIndicator" class="hidden flex items-center gap-2 text-red-600 font-semibold text-sm">
                             <span class="flex items-center gap-1 text-xs text-red-500 font-normal">
                                 <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
                                 Recording...
@@ -95,69 +152,85 @@
                         </div>
                     </div>
 
-                    <!-- Audio Waveform Illustration -->
-                    <div class="flex items-center justify-center gap-1 py-4 my-auto">
-                        <span class="w-1 h-3 bg-blue-400 rounded-full"></span>
-                        <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
-                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-4 bg-blue-400 rounded-full"></span>
-                        <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
-                        <span class="w-1 h-12 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-16 bg-blue-700 rounded-full"></span>
-                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-14 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
-                        <span class="w-1 h-12 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
-                        <span class="w-1 h-14 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-16 bg-blue-700 rounded-full"></span>
-                        <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
-                        <span class="w-1 h-12 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-4 bg-blue-400 rounded-full"></span>
-                        <span class="w-1 h-10 bg-blue-600 rounded-full"></span>
-                        <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
-                        <span class="w-1 h-3 bg-blue-400 rounded-full"></span>
+                    <!-- Audio Waveform Illustration (Animated when active) -->
+                    <div id="audioWave" class="flex items-center justify-center gap-1 py-4 my-auto h-24 opacity-20 transition-opacity duration-300">
+                        <span class="w-1.5 h-4 bg-blue-400 rounded-full animate-wave-1"></span>
+                        <span class="w-1.5 h-8 bg-blue-500 rounded-full animate-wave-2"></span>
+                        <span class="w-1.5 h-12 bg-blue-600 rounded-full animate-wave-3"></span>
+                        <span class="w-1.5 h-6 bg-blue-400 rounded-full animate-wave-4"></span>
+                        <span class="w-1.5 h-10 bg-blue-500 rounded-full animate-wave-1"></span>
+                        <span class="w-1.5 h-16 bg-blue-700 rounded-full animate-wave-2"></span>
+                        <span class="w-1.5 h-12 bg-blue-600 rounded-full animate-wave-3"></span>
+                        <span class="w-1.5 h-14 bg-blue-600 rounded-full animate-wave-4"></span>
+                        <span class="w-1.5 h-8 bg-blue-500 rounded-full animate-wave-1"></span>
+                        <span class="w-1.5 h-16 bg-blue-700 rounded-full animate-wave-2"></span>
+                        <span class="w-1.5 h-10 bg-blue-600 rounded-full animate-wave-3"></span>
+                        <span class="w-1.5 h-6 bg-blue-500 rounded-full animate-wave-4"></span>
                     </div>
 
-                    <!-- Action Controls -->
+                    <!-- Action Controls (Converted to buttons for logic) -->
                     <div class="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-50">
-                        <a href="#" class="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
-                            <i class="fa-solid fa-pause text-xs"></i> Pause
-                        </a>
-                        <a href="#" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-50 text-red-600 border border-red-100 text-sm font-medium hover:bg-red-100 transition">
+                        <button id="recordBtn" class="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition cursor-pointer">
+                            <i class="fa-solid fa-microphone text-blue-600"></i> Record
+                        </button>
+                        <button id="stopBtn" disabled class="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-50 text-red-600 border border-red-100 text-sm font-medium hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-square text-xs"></i> Stop
-                        </a>
+                        </button>
                     </div>
                 </section>
 
-                <!-- Patient Information Box -->
+                <!-- Settings / Patient Information Box -->
                 <section class="lg:col-span-5 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <h2 class="font-semibold text-gray-800 text-sm mb-4">Patient Information</h2>
-                    <div class="grid grid-cols-2 gap-y-3 text-sm">
-                        <div>
-                            <span class="text-gray-400 text-xs block mb-0.5">Patient</span>
-                            <span class="font-semibold text-gray-900">Bella</span>
+                    <h2 class="font-semibold text-gray-800 text-sm mb-4">Consultation Settings</h2>
+                    <div class="flex flex-col gap-3 text-sm">
+                        
+                        <div class="flex flex-col gap-1">
+                            <label class="text-gray-500 text-xs font-medium">Clinic Facility</label>
+                            <select id="clinicName" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                                <option value="">Loading clinics...</option>
+                            </select>
                         </div>
-                        <div>
-                            <span class="text-gray-400 text-xs block mb-0.5">Species</span>
-                            <span class="font-semibold text-gray-900">Canine</span>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-gray-500 text-xs font-medium">Provider Name</label>
+                                <input type="text" id="doctorName" placeholder="Dr. John Doe" value="Dr. John Doe" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-gray-500 text-xs font-medium">Location</label>
+                                <input type="text" id="manualLocation" placeholder="City, Region" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                            </div>
                         </div>
-                        <div>
-                            <span class="text-gray-400 text-xs block mb-0.5">Breed</span>
-                            <span class="font-semibold text-gray-900">German Shepherd</span>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="text-gray-500 text-xs font-medium">Patient Email</label>
+                            <input type="email" id="patientEmail" placeholder="client@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                         </div>
-                        <div>
-                            <span class="text-gray-400 text-xs block mb-0.5">Weight / Age</span>
-                            <span class="font-semibold text-gray-900">29.4 kg &nbsp;&nbsp;&nbsp; 3y 2m</span>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="text-gray-500 text-xs font-medium">Custom Letterhead (Optional)</label>
+                            <input type="file" id="letterheadUpload" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                         </div>
-                        <div class="col-span-2">
-                            <span class="text-gray-400 text-xs block mb-0.5">Visit Type</span>
-                            <span class="font-semibold text-gray-900">Consultation</span>
-                        </div>
+
                     </div>
                 </section>
+            </div>
 
+            <!-- Transcript Edit Area -->
+            <section id="transcriptCard" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-semibold text-gray-800 text-sm">Live Transcript</h2>
+                    <span class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-md">Edit manually before analyzing</span>
+                </div>
+                <textarea id="transcriptText" class="w-full bg-gray-50 text-sm text-gray-700 rounded-xl p-4 min-h-[100px] focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 border border-gray-200 resize-y placeholder-gray-400 transition-all leading-relaxed" placeholder="Transcription will appear here..."></textarea>
+            </section>
+
+            <!-- AI Intelligence Warnings Box -->
+            <div id="aiWarningsCard" class="hidden bg-red-50 border border-red-200 rounded-2xl p-4 shadow-sm transition-all">
+                <h2 class="text-sm font-bold tracking-wider text-red-600 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> AI Intelligence Warning: Improbable Data Detected
+                </h2>
+                <ul id="aiWarningsList" class="list-disc list-inside text-sm text-red-700 space-y-1"></ul>
             </div>
 
             <!-- Bottom Section: AI Generated Note & Actions -->
@@ -167,70 +240,71 @@
                 <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                     <h2 class="font-semibold text-gray-800 text-sm flex items-center gap-2">
                         AI Generated Note 
-                        <a href="#" class="text-blue-600 font-normal text-xs hover:underline">(Edit before save)</a>
+                        <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>
                     </h2>
                 </div>
 
                 <!-- Content & Smart Buttons Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start" id="reportUI">
 
-                    <!-- Note Text Content -->
-                    <div class="lg:col-span-9 text-sm text-gray-700 space-y-4">
+                    <!-- Note Text Content (Editable SOAP) -->
+                    <div class="lg:col-span-9 text-sm text-gray-700 space-y-5">
+                        
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Presenting Complaint</h3>
-                            <p class="text-gray-600">Inappetence, lethargy and vomiting since yesterday.</p>
+                            <h3 class="font-semibold text-blue-900 mb-1">1. Signalment & Core Disease Category</h3>
+                            <div id="soap1" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">History</h3>
-                            <p class="text-gray-600">Owner reports Bella vomited 3 times since last night. No diarrhea. Still drinking water.</p>
+                            <h3 class="font-semibold text-blue-900 mb-1">2 & 3. History</h3>
+                            <div id="soap23" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Examination</h3>
-                            <p class="text-gray-600">T: 38.7°C, P: 110 bpm, R: 28 bpm. MM pink and moist. Mild dehydration (5%). Abdomen mildly painful on palpation.</p>
+                            <h3 class="font-semibold text-blue-900 mb-1">4. Findings</h3>
+                            <div id="soap4" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Plan</h3>
-                            <ul class="list-disc pl-5 space-y-1 text-gray-600">
-                                <li>CBC, Biochemistry</li>
-                                <li>IV Fluids</li>
-                                <li>Antiemetic (Maropitant)</li>
-                                <li>Recheck tomorrow</li>
-                            </ul>
+                            <h3 class="font-semibold text-blue-900 mb-1">5, 6, & 7. Diagnostics</h3>
+                            <div id="soap567" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-1">8 & 9. Plan</h3>
+                            <div id="soap89" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-1">10 & 11. Takeaways & Differentiation</h3>
+                            <div id="soap1011" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <h3 class="font-semibold text-emerald-700 mb-1">Patient / Client Instructions</h3>
+                            <div id="instructionsText" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
+                        </div>
+
                     </div>
 
-                    <!-- Right-side Utility Action Buttons (# Placeholders) -->
+                    <!-- Right-side Utility Action Buttons (Functional) -->
                     <div class="lg:col-span-3 flex flex-col gap-2.5">
-                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
-                            Smart Suggestions
-                        </a>
-                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
-                            Add Vaccination
-                        </a>
-                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
-                            Add Prescription
-                        </a>
-                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
-                            Add Follow-up
-                        </a>
-                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
-                            Generate Discharge
-                        </a>
-                        <a href="#" class="w-full text-center py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-blue-600 font-medium text-xs rounded-xl border border-blue-50 transition shadow-sm">
-                            Attach Lab Result
-                        </a>
+                        <button id="generateBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Transcript
+                        </button>
+                        <button id="downloadPdfBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> Download PDFs
+                        </button>
+                        <button id="emailBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-envelope text-blue-500"></i> Email Report
+                        </button>
                     </div>
 
                 </div>
 
-                <!-- Footer Action Buttons inside card -->
+                <!-- Footer Action Buttons -->
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-                    <a href="#" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
-                        Save Note
-                    </a>
-                    <a href="#" class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
-                        Save & Close
-                    </a>
+                    <button onclick="syncToDatabase(getEditedData(), 'save')" class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
+                        Quick Save
+                    </button>
+                    <button class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
+                        Save Note & Close
+                    </button>
                 </div>
 
             </section>
@@ -244,5 +318,476 @@
         CliniScribe saves time, improves accuracy and keeps every record complete.
     </footer>
 
+    <!-- App Logic Script -->
+    <script>
+        // ==========================================
+        // MAIN BACKEND URL FROM ORIGINAL CODE
+        // ==========================================
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-EEam5Gu7wyDYdrabhhK8JstajZopTa1nDfcAe2Nb08kzX0uXStO1zjLwrJDljryAYQ/exec";
+
+        let clinicLetterheads = {};
+        let letterheadBase64 = ""; 
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let generatedData = null;
+
+        const dom = {
+            statusText: document.getElementById('statusText'),
+            sidebarStatusIcon: document.getElementById('sidebarStatusIcon'),
+            sidebarStatusText: document.getElementById('sidebarStatusText'),
+            wave: document.getElementById('audioWave'),
+            recordingIndicator: document.getElementById('recordingIndicator'),
+            progress: document.getElementById('progressBarContainer'),
+            transcript: document.getElementById('transcriptText'),
+            recordBtn: document.getElementById('recordBtn'),
+            stopBtn: document.getElementById('stopBtn'),
+            genBtn: document.getElementById('generateBtn'),
+            pdfBtn: document.getElementById('downloadPdfBtn'),
+            emailBtn: document.getElementById('emailBtn'),
+            clinicSelect: document.getElementById('clinicName'),
+            locationInput: document.getElementById('manualLocation'),
+            warningsCard: document.getElementById('aiWarningsCard'),
+            warningsList: document.getElementById('aiWarningsList'),
+            letterheadInput: document.getElementById('letterheadUpload')
+        };
+
+        function setProgress(message, show) {
+            dom.statusText.innerText = message;
+            dom.sidebarStatusText.innerText = show ? "Working..." : message;
+            
+            if(show) {
+                dom.progress.classList.remove('hidden');
+                dom.sidebarStatusIcon.classList.add('animate-spin');
+            } else {
+                dom.progress.classList.add('hidden');
+                dom.sidebarStatusIcon.classList.remove('animate-spin');
+            }
+        }
+
+        // --- Dynamic Clinic Fetching on Load ---
+        async function loadClinics() {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "getLetterheads" }) });
+                const responseData = await res.json();
+
+                if (responseData.status === "success" && responseData.data && responseData.data.length > 0) {
+                    dom.clinicSelect.innerHTML = ""; 
+
+                    responseData.data.forEach(item => {
+                        clinicLetterheads[item.clinicName] = `https://lh3.googleusercontent.com/d/${item.fileId}`;
+                        const opt = document.createElement('option');
+                        opt.value = item.clinicName;
+                        opt.textContent = item.clinicName;
+                        dom.clinicSelect.appendChild(opt);
+                    });
+
+                    letterheadBase64 = clinicLetterheads[dom.clinicSelect.value] || "";
+                } else {
+                    dom.clinicSelect.innerHTML = '<option value="Unknown Clinic">No saved clinics found</option>';
+                }
+            } catch (err) {
+                console.error("Failed to load clinics from backend:", err);
+                dom.clinicSelect.innerHTML = '<option value="Default Clinic">Failed to load clinics</option>';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', loadClinics);
+
+        dom.clinicSelect.addEventListener('change', (e) => {
+            letterheadBase64 = clinicLetterheads[e.target.value] || "";
+            dom.letterheadInput.value = ""; 
+        });
+
+        dom.letterheadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) { letterheadBase64 = event.target.result; }
+                reader.readAsDataURL(file);
+            } else {
+                letterheadBase64 = clinicLetterheads[dom.clinicSelect.value] || "";
+            }
+        });
+
+        // --- Audio Recording ---
+        dom.recordBtn.onclick = async () => {
+            try {
+                audioChunks = [];
+                dom.transcript.value = "";
+                dom.warningsCard.classList.add('hidden');
+                dom.genBtn.disabled = true;
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+                mediaRecorder.onstop = async () => {
+                    setProgress("Uploading audio to cloud for transcription...", true);
+
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = async () => {
+                        const base64Audio = reader.result.split(',')[1];
+                        stream.getTracks().forEach(t => t.stop());
+
+                        try {
+                            const res = await fetch(APPS_SCRIPT_URL, {
+                                method: 'POST',
+                                body: JSON.stringify({ action: 'transcribe', audioBase64: base64Audio }),
+                            });
+                            const json = await res.json();
+
+                            if (json.error) {
+                                const errorMsg = typeof json.error === 'object' ? (json.error.message || JSON.stringify(json.error)) : json.error;
+                                setProgress(`API Error: ${errorMsg}`, false);
+                                dom.recordBtn.disabled = false;
+                                return;
+                            }
+
+                            if (json.text) {
+                                dom.transcript.value = json.text;
+                                setProgress("Transcription complete. Edit text if needed.", false);
+                                dom.genBtn.disabled = false;
+                                dom.recordBtn.disabled = false;
+                            } else {
+                                setProgress("Transcription failed. Please try again.", false);
+                                dom.recordBtn.disabled = false;
+                            }
+                        } catch (err) {
+                            setProgress(`Server Error: ${err.message}`, false);
+                            dom.recordBtn.disabled = false;
+                        }
+                    };
+                };
+
+                mediaRecorder.start();
+                setProgress("Recording conversation...", false);
+                dom.wave.classList.remove('opacity-20');
+                dom.wave.classList.add('opacity-100');
+                dom.recordingIndicator.classList.remove('hidden');
+                dom.recordBtn.disabled = true;
+                dom.stopBtn.disabled = false;
+            } catch (err) {
+                setProgress(`Mic Error: ${err.message}`, false);
+            }
+        };
+
+        dom.stopBtn.onclick = () => {
+            if (mediaRecorder) mediaRecorder.stop();
+            dom.wave.classList.remove('opacity-100');
+            dom.wave.classList.add('opacity-20');
+            dom.recordingIndicator.classList.add('hidden');
+            dom.stopBtn.disabled = true;
+        };
+
+        // --- LLM Analysis via Backend ---
+        dom.genBtn.onclick = async () => {
+            const text = dom.transcript.value.trim();
+            if (!text) return alert("Transcript is empty!");
+
+            dom.genBtn.disabled = true;
+            dom.warningsCard.classList.add('hidden');
+            setProgress("Analyzing transcript on the cloud...", true);
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'analyze', transcript: text }),
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                   const errorMsg = typeof data.error === 'object' ? (data.error.message || JSON.stringify(data.error)) : data.error;
+                   throw new Error(errorMsg);
+                }
+
+                generatedData = data.result;
+
+                const soap = generatedData.SOAP || {};
+                document.getElementById('soap1').innerText = soap["1_Signalment_Core_Disease_Category"] || "Not reported";
+                document.getElementById('soap23').innerText = soap["2_3_History"] || "Unremarkable";
+                document.getElementById('soap4').innerText = soap["4_Findings"] || "Unremarkable";
+                document.getElementById('soap567').innerText = soap["5_6_7_Diagnostics"] || "None documented";
+                document.getElementById('soap89').innerText = soap["8_9_Plan"] || "None documented";
+                document.getElementById('soap1011').innerText = soap["10_11_Takeaways_Differentiation"] || "None documented";
+
+                let instList = Array.isArray(generatedData.ClientInstructions) ? generatedData.ClientInstructions : (generatedData.ClientInstructions ? [generatedData.ClientInstructions] : []);
+                instList = instList.filter(i => i && i.trim() !== "");
+
+                if (instList.length > 0) {
+                    document.getElementById('instructionsText').innerText = instList.map(i => `• ${i}`).join('\n\n');
+                } else {
+                    document.getElementById('instructionsText').innerText = "N/A — Patient deceased or no discharge instructions required.";
+                }
+
+                if (generatedData.Warnings && Array.isArray(generatedData.Warnings) && generatedData.Warnings.length > 0 && generatedData.Warnings[0] !== "") {
+                    dom.warningsList.innerHTML = generatedData.Warnings.map(w => `<li>${w}</li>`).join('');
+                    dom.warningsCard.classList.remove('hidden');
+                }
+
+                dom.pdfBtn.disabled = false;
+                dom.emailBtn.disabled = false;
+
+                setProgress("Analysis complete! Saving to database...", false);
+                syncToDatabase(getEditedData(), "save");
+                dom.genBtn.disabled = false;
+
+            } catch (err) {
+                setProgress(`Generation Error: ${err.message}`, false);
+                dom.genBtn.disabled = false;
+            }
+        };
+
+        function getEditedData() {
+            return {
+                SOAP: {
+                    "1_Signalment_Core_Disease_Category": document.getElementById('soap1').innerText,
+                    "2_3_History": document.getElementById('soap23').innerText,
+                    "4_Findings": document.getElementById('soap4').innerText,
+                    "5_6_7_Diagnostics": document.getElementById('soap567').innerText,
+                    "8_9_Plan": document.getElementById('soap89').innerText,
+                    "10_11_Takeaways_Differentiation": document.getElementById('soap1011').innerText
+                },
+                ClientInstructions: document.getElementById('instructionsText').innerText
+            };
+        }
+
+        // --- NEW PDF-LIB ENGINE ---
+        async function generatePerfectPdf(docTitle, docData, letterheadSrc) {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            let pdfDoc;
+            let templateDoc = null; 
+            let bgImage = null;
+
+            // 1. Load or create document container
+            if (!letterheadSrc) {
+                pdfDoc = await PDFDocument.create();
+                pdfDoc.addPage([595.28, 841.89]);
+            } else {
+                const res = await fetch(letterheadSrc);
+                if (!res.ok) throw new Error(`Failed to load letterhead asset (Status: ${res.status})`);
+
+                const assetBytes = await res.arrayBuffer();
+
+                try {
+                    // First attempt: Load as standard PDF
+                    pdfDoc = await PDFDocument.load(assetBytes);
+                    templateDoc = await PDFDocument.load(assetBytes);
+                } catch (e) {
+                    // Second attempt: Treat as image background
+                    pdfDoc = await PDFDocument.create();
+                    const page = pdfDoc.addPage([595.28, 841.89]);
+
+                    // Smart Image Type Detection
+                    try {
+                        bgImage = await pdfDoc.embedPng(assetBytes);
+                    } catch (pngErr) {
+                        try {
+                            bgImage = await pdfDoc.embedJpg(assetBytes);
+                        } catch (jpgErr) {
+                            throw new Error("Selected letterhead image is not a valid PNG or JPEG.");
+                        }
+                    }
+
+                    page.drawImage(bgImage, { x: 0, y: 0, width: 595.28, height: 841.89 });
+                }
+            }
+
+            const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+            // 2. Define Margins
+            const PAGE_HEIGHT = 841.89;
+            const PAGE_WIDTH = 595.28;
+            const HEADER_MARGIN = 240; 
+            const FOOTER_MARGIN = 150; 
+            const SIDE_MARGIN = 50;
+
+            const SAFE_WIDTH = PAGE_WIDTH - (SIDE_MARGIN * 2);
+            const START_Y = PAGE_HEIGHT - HEADER_MARGIN;
+            const END_Y = FOOTER_MARGIN;
+            const FONT_SIZE = 11;
+            const LINE_HEIGHT = FONT_SIZE * 1.5;
+
+            let pages = pdfDoc.getPages();
+            let currentPage = pages[0];
+            let currentY = START_Y;
+
+            // Helper to cleanly add a new page using template
+            const addNewPage = async () => {
+                if (templateDoc) {
+                    const [copiedPage] = await pdfDoc.copyPages(templateDoc, [0]);
+                    pdfDoc.addPage(copiedPage);
+                } else {
+                    const newPage = pdfDoc.addPage([595.28, 841.89]);
+                    if (bgImage) {
+                        newPage.drawImage(bgImage, { x: 0, y: 0, width: 595.28, height: 841.89 });
+                    }
+                }
+                pages = pdfDoc.getPages();
+                currentPage = pages[pages.length - 1];
+                currentY = START_Y;
+            };
+
+            // 3. Helper to wrap text and handle pagination
+            const drawTextBound = async (text, isBold = false) => {
+                const currentFont = isBold ? boldFont : font;
+                const paragraphs = text.split('\n');
+
+                for (const paragraph of paragraphs) {
+                    const words = paragraph.split(' ');
+                    let line = '';
+
+                    for (let i = 0; i < words.length; i++) {
+                        const testLine = line + words[i] + ' ';
+                        const textWidth = currentFont.widthOfTextAtSize(testLine, FONT_SIZE);
+
+                        if (textWidth > SAFE_WIDTH && i > 0) {
+                            if (currentY < END_Y) {
+                                await addNewPage(); 
+                            }
+
+                            currentPage.drawText(line.trim(), {
+                                x: SIDE_MARGIN, y: currentY, size: FONT_SIZE, font: currentFont, color: rgb(0.2, 0.2, 0.2),
+                            });
+
+                            line = words[i] + ' ';
+                            currentY -= LINE_HEIGHT;
+                        } else {
+                            line = testLine;
+                        }
+                    }
+
+                    if (line.trim().length > 0) {
+                        if (currentY < END_Y) {
+                            await addNewPage(); 
+                        }
+
+                        currentPage.drawText(line.trim(), {
+                            x: SIDE_MARGIN, y: currentY, size: FONT_SIZE, font: currentFont, color: rgb(0.2, 0.2, 0.2),
+                        });
+                        currentY -= LINE_HEIGHT;
+                    }
+                    currentY -= (LINE_HEIGHT / 2); 
+                }
+            };
+
+            // 4. Map the data onto the layout engine
+            if (currentY < END_Y) await addNewPage();
+            await drawTextBound(docTitle, true);
+            currentY -= LINE_HEIGHT; 
+
+            for (const [key, value] of Object.entries(docData)) {
+                if (value) {
+                    const formattedKey = key.replace(/_/g, ' ') + ":";
+                    if (currentY < END_Y) await addNewPage();
+                    await drawTextBound(formattedKey, true);
+                    await drawTextBound(value, false);
+                    currentY -= LINE_HEIGHT; 
+                }
+            }
+
+            // 5. Export for backend / download
+            return await pdfDoc.saveAsBase64({ dataUri: true }); 
+        }
+
+        async function syncToDatabase(data, actionType, reportPdfBase64 = null, instructionsPdfBase64 = null) {
+            try {
+                const payload = {
+                    action: actionType,
+                    timestamp: new Date().toISOString(),
+                    Location: dom.locationInput.value || "Not Specified",
+                    clinicName: dom.clinicSelect.value || "Unknown Clinic",
+                    doctorName: document.getElementById('doctorName').value || "Unknown Doctor",
+                    patientEmail: document.getElementById('patientEmail').value || "",
+                    SOAP: data ? data.SOAP : {},
+                    ClientInstructions: data ? data.ClientInstructions : "",
+                    reportPdfBase64: reportPdfBase64,
+                    instructionsPdfBase64: instructionsPdfBase64
+                };
+
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) setProgress(actionType === "email" ? "Email Sent!" : "Saved to database!", false);
+            } catch (err) {
+                setProgress(`Sync status: ${err.message}`, false);
+            }
+        }
+
+        // --- Actions: Email & Download (Wired to pdf-lib) ---
+        dom.emailBtn.onclick = async () => {
+            const email = document.getElementById('patientEmail').value;
+            if (!email) return alert("Enter patient email first!");
+
+            dom.emailBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-blue-500"></i> Sending...';
+            dom.emailBtn.disabled = true;
+
+            try {
+                const headerInfo = {
+                    "Clinic": dom.clinicSelect.value || "Unknown Clinic",
+                    "Provider": document.getElementById('doctorName').value || "Unknown Provider",
+                    "Location": dom.locationInput.value || "Not Specified",
+                    "Date": new Date().toLocaleDateString()
+                };
+
+                const soapDataWithHeader = { ...headerInfo, ...getEditedData().SOAP };
+                let reportPdfBase64 = await generatePerfectPdf("Clinical SOAP Report", soapDataWithHeader, letterheadBase64);
+
+                let instructionsPdfBase64 = null;
+                const currentInstText = document.getElementById('instructionsText').innerText;
+                if (currentInstText && !currentInstText.startsWith("N/A")) {
+                    const instData = { ...headerInfo, "Instructions": currentInstText };
+                    instructionsPdfBase64 = await generatePerfectPdf("Discharge Instructions", instData, letterheadBase64);
+                }
+
+                await syncToDatabase(getEditedData(), "email", reportPdfBase64, instructionsPdfBase64);
+                dom.emailBtn.innerHTML = '<i class="fa-solid fa-check text-green-500"></i> Email Sent!';
+            } catch (err) {
+                alert("Email sending failed: " + err.message);
+                dom.emailBtn.innerHTML = '<i class="fa-solid fa-envelope text-blue-500"></i> Email Report';
+            } finally {
+                setTimeout(() => {
+                    dom.emailBtn.innerHTML = '<i class="fa-solid fa-envelope text-blue-500"></i> Email Report';
+                    dom.emailBtn.disabled = false;
+                }, 3000);
+            }
+        };
+
+        dom.pdfBtn.onclick = async () => {
+            if (!generatedData) return;
+
+            const headerInfo = {
+                "Clinic": dom.clinicSelect.value || "Unknown Clinic",
+                "Provider": document.getElementById('doctorName').value || "Unknown Provider",
+                "Location": dom.locationInput.value || "Not Specified",
+                "Date": new Date().toLocaleDateString()
+            };
+
+            const downloadBase64Pdf = (base64String, filename) => {
+                const link = document.createElement('a');
+                link.href = base64String;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const soapDataWithHeader = { ...headerInfo, ...getEditedData().SOAP };
+            let reportPdfBase64 = await generatePerfectPdf("Clinical SOAP Report", soapDataWithHeader, letterheadBase64);
+            downloadBase64Pdf(reportPdfBase64, 'Consultation_Report.pdf');
+
+            const currentInstText = document.getElementById('instructionsText').innerText;
+            if (currentInstText && !currentInstText.startsWith("N/A")) {
+                const instData = { ...headerInfo, "Instructions": currentInstText };
+                let instructionsPdfBase64 = await generatePerfectPdf("Discharge Instructions", instData, letterheadBase64);
+                downloadBase64Pdf(instructionsPdfBase64, 'Discharge_Instructions.pdf');
+            }
+        };
+    </script>
 </body>
 </html>

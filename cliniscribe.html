@@ -288,7 +288,6 @@
         let audioChunks = [];
         let generatedData = null;
         
-        // --- NEW GLOBALS FOR REPORT TYPING ---
         let currentReportType = "Consultation Report"; 
 
         const dom = {
@@ -465,11 +464,9 @@
 
                 generatedData = data.result;
 
-                // --- CAPTURE DYNAMIC REPORT TYPE ---
                 currentReportType = generatedData.ReportType || "Consultation Report";
                 dom.noteTitle.innerHTML = `${currentReportType} <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>`;
 
-                // --- MAP TO NEW UNNUMBERED BACKEND KEYS ---
                 const soap = generatedData.SOAP || {};
                 document.getElementById('soap1').innerText = soap["Signalment_Core_Disease_Category"] || "Not reported";
                 document.getElementById('soap23').innerText = soap["History"] || "Unremarkable";
@@ -506,7 +503,6 @@
         };
 
         function getEditedData() {
-            // --- PASS REPORT TYPE AND UNNUMBERED KEYS BACK TO SCRIPT ---
             return {
                 reportType: currentReportType,
                 SOAP: {
@@ -521,19 +517,15 @@
             };
         }
 
-        // --- REVISED PDF GENERATOR ---
+        // --- FULL-PAGE LETTERHEAD BACKGROUND LOGIC ---
         async function generatePerfectPdf(docTitle, sections, letterheadSrc) {
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const pdfDoc = await PDFDocument.create();
             const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
             const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-            let page = pdfDoc.addPage();
-            const { width, height } = page.getSize();
-            let y = height - 50;
-            const margin = 50;
-            const usableWidth = width - margin * 2;
-
+            // 1. Embed the letterhead image once
+            let bgImage = null;
             if (letterheadSrc && letterheadSrc.trim() !== "") {
                 try {
                     let imgBytes;
@@ -544,32 +536,45 @@
                         imgBytes = await res.arrayBuffer();
                     }
                     
-                    let image;
                     try { 
-                        image = await pdfDoc.embedPng(imgBytes); 
+                        bgImage = await pdfDoc.embedPng(imgBytes); 
                     } catch(e) { 
-                        image = await pdfDoc.embedJpg(imgBytes); 
-                    }
-
-                    if (image) {
-                        const imgDims = image.scaleToFit(usableWidth, 100);
-                        const imgX = margin + (usableWidth - imgDims.width) / 2;
-                        page.drawImage(image, {
-                            x: imgX,
-                            y: height - 40 - imgDims.height,
-                            width: imgDims.width,
-                            height: imgDims.height,
-                        });
-                        y = height - 60 - imgDims.height;
+                        bgImage = await pdfDoc.embedJpg(imgBytes); 
                     }
                 } catch (err) {
                     console.warn("Letterhead failed to load or embed:", err);
                 }
             }
 
-            // --- DRAW ONLY THE DYNAMIC DOCUMENT TITLE ---
-            page.drawText(docTitle, { x: margin, y, size: 16, font: boldFont, color: rgb(0.1, 0.2, 0.4) });
-            y -= 30; // Jump straight into the sections
+            // 2. Define Margins to ensure text stays in the "editable" middle band
+            // MASSIVELY INCREASED MARGINS to clear the tall header and footer graphics in image_9fe2f5.png
+            const topMargin = 280;     // Space for the tall top header graphic
+            const bottomMargin = 160;  // Space for the tall bottom footer graphic
+            const sideMargin = 60;     // Slightly wider side margin for a cleaner central look
+
+            let page = pdfDoc.addPage();
+            const { width, height } = page.getSize();
+            const usableWidth = width - sideMargin * 2;
+            let y = height - topMargin;
+
+            // 3. Helper function to draw background on any new page
+            const drawBackground = (targetPage) => {
+                if (bgImage) {
+                    targetPage.drawImage(bgImage, {
+                        x: 0,
+                        y: 0,
+                        width: width,   // Spans full page width
+                        height: height, // Spans full page height
+                    });
+                }
+            };
+
+            // Draw background on the very first page
+            drawBackground(page);
+
+            // Title
+            page.drawText(docTitle, { x: sideMargin, y, size: 16, font: boldFont, color: rgb(0.1, 0.2, 0.4) });
+            y -= 30;
 
             const wrapText = (text, textFont, textSize, maxWidth) => {
                 const words = text.split(/\s+/);
@@ -590,17 +595,20 @@
                 return lines;
             };
 
+            // 4. Update page break logic to trigger before hitting the footer & auto-draw background
             const checkPageBreak = (neededSpace) => {
-                if (y < margin + neededSpace) {
+                if (y - neededSpace < bottomMargin) {
                     page = pdfDoc.addPage();
-                    y = height - margin;
+                    drawBackground(page);
+                    y = height - topMargin; // Reset to just beneath the header
                 }
             };
 
+            // Render Text Sections
             for (const section of sections) {
                 checkPageBreak(40);
                 
-                page.drawText(section.title, { x: margin, y, size: 12, font: boldFont, color: rgb(0, 0, 0) });
+                page.drawText(section.title, { x: sideMargin, y, size: 12, font: boldFont, color: rgb(0, 0, 0) });
                 y -= 18;
 
                 const paragraphs = (section.content || "-").split('\n');
@@ -612,7 +620,7 @@
                     const lines = wrapText(para, font, 10, usableWidth);
                     for (const line of lines) {
                         checkPageBreak(15);
-                        page.drawText(line, { x: margin, y, size: 10, font: font, color: rgb(0.2, 0.2, 0.2) });
+                        page.drawText(line, { x: sideMargin, y, size: 10, font: font, color: rgb(0.2, 0.2, 0.2) });
                         y -= 14;
                     }
                     y -= 6;
@@ -650,7 +658,6 @@
                     { title: "Takeaways & Differentiation", content: editedData.SOAP["Takeaways_Differentiation"] }
                 ];
                 
-                // --- INJECT DYNAMIC TITLE AND FILE NAME ---
                 const medPdfBytes = await generatePerfectPdf(currentReportType, medRecordSections, letterheadBase64);
                 const formattedFileName = currentReportType.replace(/ /g, "_") + ".pdf";
                 downloadBlob(medPdfBytes, formattedFileName);

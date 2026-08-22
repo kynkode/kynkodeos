@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- PDF Generation Scripts from original -->
+    <!-- PDF Generation Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
@@ -18,7 +18,6 @@
             background-color: #f4f6fb;
         }
 
-        /* Adapted original animations for light theme */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -43,7 +42,6 @@
         .animate-wave-3 { animation: wave-bars 0.8s infinite ease-in-out 0.3s; }
         .animate-wave-4 { animation: wave-bars 0.8s infinite ease-in-out 0.45s; }
 
-        /* Light theme content editable styling */
         [contenteditable="true"] {
             transition: all 0.2s ease-in-out;
             border: 1px solid transparent;
@@ -67,47 +65,33 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
 
-    <!-- Main App Container -->
     <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
 
         <!-- Sidebar -->
         <aside class="w-full md:w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5 shrink-0">
             <div>
-                <!-- Brand / Logo in Sidebar -->
-                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">
-                    KYNKODE
-                </div>
-
-                <!-- Navigation Links -->
+                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">KYNKODE</div>
                 <nav class="space-y-1">
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-house w-5"></i>
-                        <span class="font-medium text-sm">Dashboard</span>
+                        <i class="fa-solid fa-house w-5"></i><span class="font-medium text-sm">Dashboard</span>
                     </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-microphone-lines w-5"></i>
-                        <span>Scribe</span>
+                        <i class="fa-solid fa-microphone-lines w-5"></i><span>Scribe</span>
                     </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-folder-open w-5"></i>
-                        <span class="font-medium text-sm">Records</span>
+                        <i class="fa-solid fa-folder-open w-5"></i><span class="font-medium text-sm">Records</span>
                     </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-file-lines w-5"></i>
-                        <span class="font-medium text-sm">Templates</span>
+                        <i class="fa-solid fa-file-lines w-5"></i><span class="font-medium text-sm">Templates</span>
                     </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-chart-pie w-5"></i>
-                        <span class="font-medium text-sm">Reports</span>
+                        <i class="fa-solid fa-chart-pie w-5"></i><span class="font-medium text-sm">Reports</span>
                     </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-gear w-5"></i>
-                        <span class="font-medium text-sm">Settings</span>
+                        <i class="fa-solid fa-gear w-5"></i><span class="font-medium text-sm">Settings</span>
                     </a>
                 </nav>
             </div>
-
-            <!-- Sidebar Footer Status -->
             <div class="mt-8 pt-4 border-t border-white/10">
                 <div class="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl text-xs text-blue-200 transition">
                     <i id="sidebarStatusIcon" class="fa-solid fa-circle-waveform-lines text-blue-400"></i>
@@ -119,7 +103,6 @@
         <!-- Main Content Area -->
         <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative overflow-y-auto max-h-[90vh]">
             
-            <!-- Absolute Progress Bar -->
             <div id="progressBarContainer" class="absolute top-0 left-0 w-full h-1 bg-gray-200 overflow-hidden hidden">
                 <div class="h-full w-full animate-shimmer"></div>
             </div>
@@ -139,20 +122,16 @@
 
             <!-- Top Grid: Live Scribe & Patient Information -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
                 <!-- Live Scribe Box -->
                 <section class="lg:col-span-7 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="font-semibold text-gray-800 text-sm">Live Scribe</h2>
                         <div id="recordingIndicator" class="hidden flex items-center gap-2 text-red-600 font-semibold text-sm">
                             <span class="flex items-center gap-1 text-xs text-red-500 font-normal">
-                                <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-                                Recording...
+                                <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span> Recording...
                             </span>
                         </div>
                     </div>
-
-                    <!-- Audio Waveform Illustration (Animated when active) -->
                     <div id="audioWave" class="flex items-center justify-center gap-1 py-4 my-auto h-24 opacity-20 transition-opacity duration-300">
                         <span class="w-1.5 h-4 bg-blue-400 rounded-full animate-wave-1"></span>
                         <span class="w-1.5 h-8 bg-blue-500 rounded-full animate-wave-2"></span>
@@ -167,8 +146,6 @@
                         <span class="w-1.5 h-10 bg-blue-600 rounded-full animate-wave-3"></span>
                         <span class="w-1.5 h-6 bg-blue-500 rounded-full animate-wave-4"></span>
                     </div>
-
-                    <!-- Action Controls (Converted to buttons for logic) -->
                     <div class="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-50">
                         <button id="recordBtn" class="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition cursor-pointer">
                             <i class="fa-solid fa-microphone text-blue-600"></i> Record
@@ -179,18 +156,16 @@
                     </div>
                 </section>
 
-                <!-- Settings / Patient Information Box -->
+                <!-- Settings Box -->
                 <section class="lg:col-span-5 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
                     <h2 class="font-semibold text-gray-800 text-sm mb-4">Consultation Settings</h2>
                     <div class="flex flex-col gap-3 text-sm">
-                        
                         <div class="flex flex-col gap-1">
                             <label class="text-gray-500 text-xs font-medium">Clinic Facility</label>
                             <select id="clinicName" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                                 <option value="">Loading clinics...</option>
                             </select>
                         </div>
-                        
                         <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
                                 <label class="text-gray-500 text-xs font-medium">Provider Name</label>
@@ -201,22 +176,19 @@
                                 <input type="text" id="manualLocation" placeholder="City, Region" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                             </div>
                         </div>
-
                         <div class="flex flex-col gap-1">
                             <label class="text-gray-500 text-xs font-medium">Patient Email</label>
                             <input type="email" id="patientEmail" placeholder="client@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                         </div>
-
                         <div class="flex flex-col gap-1">
                             <label class="text-gray-500 text-xs font-medium">Custom Letterhead (Optional)</label>
                             <input type="file" id="letterheadUpload" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                         </div>
-
                     </div>
                 </section>
             </div>
 
-            <!-- Transcript Edit Area -->
+            <!-- Transcript Area -->
             <section id="transcriptCard" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="font-semibold text-gray-800 text-sm">Live Transcript</h2>
@@ -225,7 +197,7 @@
                 <textarea id="transcriptText" class="w-full bg-gray-50 text-sm text-gray-700 rounded-xl p-4 min-h-[100px] focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 border border-gray-200 resize-y placeholder-gray-400 transition-all leading-relaxed" placeholder="Transcription will appear here..."></textarea>
             </section>
 
-            <!-- AI Intelligence Warnings Box -->
+            <!-- AI Warnings -->
             <div id="aiWarningsCard" class="hidden bg-red-50 border border-red-200 rounded-2xl p-4 shadow-sm transition-all">
                 <h2 class="text-sm font-bold tracking-wider text-red-600 mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-triangle-exclamation"></i> AI Intelligence Warning: Improbable Data Detected
@@ -233,45 +205,41 @@
                 <ul id="aiWarningsList" class="list-disc list-inside text-sm text-red-700 space-y-1"></ul>
             </div>
 
-            <!-- Bottom Section: AI Generated Note & Actions -->
+            <!-- Bottom Section -->
             <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-6">
                 
-                <!-- Section Header -->
                 <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-                    <h2 class="font-semibold text-gray-800 text-sm flex items-center gap-2">
+                    <h2 class="font-semibold text-gray-800 text-sm flex items-center gap-2" id="generatedNoteTitle">
                         AI Generated Note 
                         <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>
                     </h2>
                 </div>
 
-                <!-- Content & Smart Buttons Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start" id="reportUI">
-
-                    <!-- Note Text Content (Editable SOAP) -->
                     <div class="lg:col-span-9 text-sm text-gray-700 space-y-5">
                         
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">1. Signalment & Core Disease Category</h3>
+                            <h3 class="font-semibold text-blue-900 mb-1">Signalment & Core Disease Category</h3>
                             <div id="soap1" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">2 & 3. History</h3>
+                            <h3 class="font-semibold text-blue-900 mb-1">History</h3>
                             <div id="soap23" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">4. Findings</h3>
+                            <h3 class="font-semibold text-blue-900 mb-1">Findings</h3>
                             <div id="soap4" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">5, 6, & 7. Diagnostics</h3>
+                            <h3 class="font-semibold text-blue-900 mb-1">Diagnostics</h3>
                             <div id="soap567" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">8 & 9. Plan</h3>
+                            <h3 class="font-semibold text-blue-900 mb-1">Plan</h3>
                             <div id="soap89" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">10 & 11. Takeaways & Differentiation</h3>
+                            <h3 class="font-semibold text-blue-900 mb-1">Takeaways & Differentiation</h3>
                             <div id="soap1011" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
                         
@@ -279,10 +247,8 @@
                             <h3 class="font-semibold text-emerald-700 mb-1">Patient / Client Instructions</h3>
                             <div id="instructionsText" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
                         </div>
-
                     </div>
 
-                    <!-- Right-side Utility Action Buttons (Functional) -->
                     <div class="lg:col-span-3 flex flex-col gap-2.5">
                         <button id="generateBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Transcript
@@ -294,10 +260,8 @@
                             <i class="fa-solid fa-envelope text-blue-500"></i> Email Report
                         </button>
                     </div>
-
                 </div>
 
-                <!-- Footer Action Buttons -->
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
                     <button onclick="syncToDatabase(getEditedData(), 'save')" class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
                         Quick Save
@@ -306,31 +270,26 @@
                         Save Note & Close
                     </button>
                 </div>
-
             </section>
-
         </main>
-
     </div>
 
-    <!-- Bottom Slogan Bar -->
     <footer class="mt-6 text-center text-xs text-blue-900 font-medium">
         CliniScribe saves time, improves accuracy and keeps every record complete.
     </footer>
 
     <!-- App Logic Script -->
     <script>
-        // ==========================================
-        // MAIN BACKEND URL FROM ORIGINAL CODE
-        // ==========================================
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhnB-Ifp1JZXGMe01mNt--eYeaDrYvLELD6PzVslotIxoyWxdBF79u6TeJR3NTcvKXGw/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby85n7GqYLIJy1qJoYE4M2Gk6UzZ7pWLqOa4xQP4sX8-GNcTFCRRJXXxxQ9jK6epIdsjA/exec";
 
         let clinicLetterheads = {};
         let letterheadBase64 = ""; 
-
         let mediaRecorder = null;
         let audioChunks = [];
         let generatedData = null;
+        
+        // --- NEW GLOBALS FOR REPORT TYPING ---
+        let currentReportType = "Consultation Report"; 
 
         const dom = {
             statusText: document.getElementById('statusText'),
@@ -349,7 +308,8 @@
             locationInput: document.getElementById('manualLocation'),
             warningsCard: document.getElementById('aiWarningsCard'),
             warningsList: document.getElementById('aiWarningsList'),
-            letterheadInput: document.getElementById('letterheadUpload')
+            letterheadInput: document.getElementById('letterheadUpload'),
+            noteTitle: document.getElementById('generatedNoteTitle')
         };
 
         function setProgress(message, show) {
@@ -365,14 +325,12 @@
             }
         }
 
-        // --- Mock Sync Function if Original Missing ---
         async function syncToDatabase(data, mode) {
             console.log(`Syncing DB (${mode}):`, data);
             setProgress("Saved successfully.", false);
             setTimeout(() => setProgress("System ready. Waiting for input...", false), 3000);
         }
 
-        // --- Dynamic Clinic Fetching on Load ---
         async function loadClinics() {
             try {
                 const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "getLetterheads" }) });
@@ -380,7 +338,6 @@
 
                 if (responseData.status === "success" && responseData.data && responseData.data.length > 0) {
                     dom.clinicSelect.innerHTML = ""; 
-
                     responseData.data.forEach(item => {
                         clinicLetterheads[item.clinicName] = `https://lh3.googleusercontent.com/d/${item.fileId}`;
                         const opt = document.createElement('option');
@@ -388,7 +345,6 @@
                         opt.textContent = item.clinicName;
                         dom.clinicSelect.appendChild(opt);
                     });
-
                     letterheadBase64 = clinicLetterheads[dom.clinicSelect.value] || "";
                 } else {
                     dom.clinicSelect.innerHTML = '<option value="Unknown Clinic">No saved clinics found</option>';
@@ -416,7 +372,6 @@
             }
         });
 
-        // --- Audio Recording ---
         dom.recordBtn.onclick = async () => {
             try {
                 audioChunks = [];
@@ -430,7 +385,6 @@
 
                 mediaRecorder.onstop = async () => {
                     setProgress("Uploading audio to cloud for transcription...", true);
-
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     const reader = new FileReader();
 
@@ -489,7 +443,6 @@
             dom.stopBtn.disabled = true;
         };
 
-        // --- LLM Analysis via Backend ---
         dom.genBtn.onclick = async () => {
             const text = dom.transcript.value.trim();
             if (!text) return alert("Transcript is empty!");
@@ -512,13 +465,18 @@
 
                 generatedData = data.result;
 
+                // --- CAPTURE DYNAMIC REPORT TYPE ---
+                currentReportType = generatedData.ReportType || "Consultation Report";
+                dom.noteTitle.innerHTML = `${currentReportType} <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>`;
+
+                // --- MAP TO NEW UNNUMBERED BACKEND KEYS ---
                 const soap = generatedData.SOAP || {};
-                document.getElementById('soap1').innerText = soap["1_Signalment_Core_Disease_Category"] || "Not reported";
-                document.getElementById('soap23').innerText = soap["2_3_History"] || "Unremarkable";
-                document.getElementById('soap4').innerText = soap["4_Findings"] || "Unremarkable";
-                document.getElementById('soap567').innerText = soap["5_6_7_Diagnostics"] || "None documented";
-                document.getElementById('soap89').innerText = soap["8_9_Plan"] || "None documented";
-                document.getElementById('soap1011').innerText = soap["10_11_Takeaways_Differentiation"] || "None documented";
+                document.getElementById('soap1').innerText = soap["Signalment_Core_Disease_Category"] || "Not reported";
+                document.getElementById('soap23').innerText = soap["History"] || "Unremarkable";
+                document.getElementById('soap4').innerText = soap["Findings"] || "Unremarkable";
+                document.getElementById('soap567').innerText = soap["Diagnostics"] || "None documented";
+                document.getElementById('soap89').innerText = soap["Plan"] || "None documented";
+                document.getElementById('soap1011').innerText = soap["Takeaways_Differentiation"] || "None documented";
 
                 let instList = Array.isArray(generatedData.ClientInstructions) ? generatedData.ClientInstructions : (generatedData.ClientInstructions ? [generatedData.ClientInstructions] : []);
                 instList = instList.filter(i => i && i.trim() !== "");
@@ -548,20 +506,22 @@
         };
 
         function getEditedData() {
+            // --- PASS REPORT TYPE AND UNNUMBERED KEYS BACK TO SCRIPT ---
             return {
+                reportType: currentReportType,
                 SOAP: {
-                    "1_Signalment_Core_Disease_Category": document.getElementById('soap1').innerText,
-                    "2_3_History": document.getElementById('soap23').innerText,
-                    "4_Findings": document.getElementById('soap4').innerText,
-                    "5_6_7_Diagnostics": document.getElementById('soap567').innerText,
-                    "8_9_Plan": document.getElementById('soap89').innerText,
-                    "10_11_Takeaways_Differentiation": document.getElementById('soap1011').innerText
+                    "Signalment_Core_Disease_Category": document.getElementById('soap1').innerText,
+                    "History": document.getElementById('soap23').innerText,
+                    "Findings": document.getElementById('soap4').innerText,
+                    "Diagnostics": document.getElementById('soap567').innerText,
+                    "Plan": document.getElementById('soap89').innerText,
+                    "Takeaways_Differentiation": document.getElementById('soap1011').innerText
                 },
                 ClientInstructions: document.getElementById('instructionsText').innerText
             };
         }
 
-        // --- NEW PDF-LIB ENGINE ---
+        // --- REVISED PDF GENERATOR ---
         async function generatePerfectPdf(docTitle, sections, letterheadSrc) {
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const pdfDoc = await PDFDocument.create();
@@ -574,7 +534,6 @@
             const margin = 50;
             const usableWidth = width - margin * 2;
 
-            // Handle background/letterhead
             if (letterheadSrc && letterheadSrc.trim() !== "") {
                 try {
                     let imgBytes;
@@ -608,16 +567,10 @@
                 }
             }
 
-            // Draw Document Info
-            const providerName = document.getElementById('doctorName').value || "Unknown Provider";
-            const today = new Date().toLocaleDateString();
-
+            // --- DRAW ONLY THE DYNAMIC DOCUMENT TITLE ---
             page.drawText(docTitle, { x: margin, y, size: 16, font: boldFont, color: rgb(0.1, 0.2, 0.4) });
-            y -= 20;
-            page.drawText(`Provider: ${providerName}  |  Date: ${today}`, { x: margin, y, size: 10, font: font, color: rgb(0.4, 0.4, 0.4) });
-            y -= 30;
+            y -= 30; // Jump straight into the sections
 
-            // Text Wrapper Helper
             const wrapText = (text, textFont, textSize, maxWidth) => {
                 const words = text.split(/\s+/);
                 let lines = [];
@@ -644,7 +597,6 @@
                 }
             };
 
-            // Loop and draw unnumbered sections
             for (const section of sections) {
                 checkPageBreak(40);
                 
@@ -663,15 +615,14 @@
                         page.drawText(line, { x: margin, y, size: 10, font: font, color: rgb(0.2, 0.2, 0.2) });
                         y -= 14;
                     }
-                    y -= 6; // Spacing after paragraph
+                    y -= 6;
                 }
-                y -= 12; // Spacing after section
+                y -= 12;
             }
 
             return await pdfDoc.save();
         }
 
-        // Helper to trigger download
         function downloadBlob(bytes, filename) {
             const blob = new Blob([bytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
@@ -684,27 +635,26 @@
             URL.revokeObjectURL(url);
         }
 
-        // --- Button Handlers ---
         dom.pdfBtn.onclick = async () => {
             const editedData = getEditedData();
             dom.pdfBtn.disabled = true;
             setProgress("Generating precise PDFs...", true);
 
             try {
-                // 1. Core Subject Matter Medical Record (strictly unnumbered items)
                 const medRecordSections = [
-                    { title: "Signalment & Core Disease Category", content: editedData.SOAP["1_Signalment_Core_Disease_Category"] },
-                    { title: "History", content: editedData.SOAP["2_3_History"] },
-                    { title: "Findings", content: editedData.SOAP["4_Findings"] },
-                    { title: "Diagnostics", content: editedData.SOAP["5_6_7_Diagnostics"] },
-                    { title: "Plan", content: editedData.SOAP["8_9_Plan"] },
-                    { title: "Takeaways & Differentiation", content: editedData.SOAP["10_11_Takeaways_Differentiation"] }
+                    { title: "Signalment & Core Disease Category", content: editedData.SOAP["Signalment_Core_Disease_Category"] },
+                    { title: "History", content: editedData.SOAP["History"] },
+                    { title: "Findings", content: editedData.SOAP["Findings"] },
+                    { title: "Diagnostics", content: editedData.SOAP["Diagnostics"] },
+                    { title: "Plan", content: editedData.SOAP["Plan"] },
+                    { title: "Takeaways & Differentiation", content: editedData.SOAP["Takeaways_Differentiation"] }
                 ];
                 
-                const medPdfBytes = await generatePerfectPdf("Medical Record", medRecordSections, letterheadBase64);
-                downloadBlob(medPdfBytes, "Core_Medical_Record.pdf");
+                // --- INJECT DYNAMIC TITLE AND FILE NAME ---
+                const medPdfBytes = await generatePerfectPdf(currentReportType, medRecordSections, letterheadBase64);
+                const formattedFileName = currentReportType.replace(/ /g, "_") + ".pdf";
+                downloadBlob(medPdfBytes, formattedFileName);
 
-                // 2. Client Instructions (Maintained exactly as generated/edited)
                 const instructionsContent = editedData.ClientInstructions;
                 if (instructionsContent && !instructionsContent.includes("N/A — Patient deceased")) {
                     const clientSections = [

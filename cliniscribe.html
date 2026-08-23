@@ -250,9 +250,34 @@
                     </div>
 
                     <div class="lg:col-span-3 flex flex-col gap-2.5">
-                        <button id="generateBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Transcript
+                        <!-- 1. Generate Consultation Report -->
+                        <button id="genConsultBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-stethoscope"></i> Generate Consultation Report
                         </button>
+                        
+                        <!-- 2. Generate Radiographic Report -->
+                        <button id="genRadioBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-x-ray"></i> Generate Radiographic Report
+                        </button>
+                        
+                        <!-- 3. Generate Ultrasound Report -->
+                        <button id="genUltraBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-wave-square"></i> Generate Ultrasound Report
+                        </button>
+                        
+                        <!-- 4. Generate Surgical Report -->
+                        <button id="genSurgBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-scissors-medical"></i> Generate Surgical Report
+                        </button>
+                        
+                        <!-- 5. Generate Laboratory Report -->
+                        <button id="genLabBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-flask"></i> Generate Laboratory Report
+                        </button>
+
+                        <div class="border-t border-gray-100 my-1"></div>
+
+                        <!-- Export Buttons -->
                         <button id="downloadPdfBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-file-pdf text-red-500"></i> Download PDFs
                         </button>
@@ -280,7 +305,7 @@
 
     <!-- App Logic Script -->
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyC2PmlvnIoukeXfGCP-2OgPWdrU5UBNXLhQZy4dp2XFdAEYJ3GZ1LmfdiUmdF_WXtTEw/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzP1vzgTNPHx_UV5PwpA8h7kkGmULFlhNUOfmY3kDLpzQr7aGfHCo62W6tKtMYDsVEcg/exec";
 
         let clinicLetterheads = {};
         let letterheadBase64 = ""; 
@@ -300,7 +325,13 @@
             transcript: document.getElementById('transcriptText'),
             recordBtn: document.getElementById('recordBtn'),
             stopBtn: document.getElementById('stopBtn'),
-            genBtn: document.getElementById('generateBtn'),
+            // New Buttons
+            genConsultBtn: document.getElementById('genConsultBtn'),
+            genRadioBtn: document.getElementById('genRadioBtn'),
+            genUltraBtn: document.getElementById('genUltraBtn'),
+            genSurgBtn: document.getElementById('genSurgBtn'),
+            genLabBtn: document.getElementById('genLabBtn'),
+            
             pdfBtn: document.getElementById('downloadPdfBtn'),
             emailBtn: document.getElementById('emailBtn'),
             clinicSelect: document.getElementById('clinicName'),
@@ -322,6 +353,15 @@
                 dom.progress.classList.add('hidden');
                 dom.sidebarStatusIcon.classList.remove('animate-spin');
             }
+        }
+        
+        // Helper to disable/enable all generation buttons at once
+        function setGenerateButtonsDisabled(disabledState) {
+            dom.genConsultBtn.disabled = disabledState;
+            dom.genRadioBtn.disabled = disabledState;
+            dom.genUltraBtn.disabled = disabledState;
+            dom.genSurgBtn.disabled = disabledState;
+            dom.genLabBtn.disabled = disabledState;
         }
 
         async function syncToDatabase(data, mode) {
@@ -376,7 +416,7 @@
                 audioChunks = [];
                 dom.transcript.value = "";
                 dom.warningsCard.classList.add('hidden');
-                dom.genBtn.disabled = true;
+                setGenerateButtonsDisabled(true);
 
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
@@ -409,7 +449,7 @@
                             if (json.text) {
                                 dom.transcript.value = json.text;
                                 setProgress("Transcription complete. Edit text if needed.", false);
-                                dom.genBtn.disabled = false;
+                                setGenerateButtonsDisabled(false);
                                 dom.recordBtn.disabled = false;
                             } else {
                                 setProgress("Transcription failed. Please try again.", false);
@@ -442,18 +482,23 @@
             dom.stopBtn.disabled = true;
         };
 
-        dom.genBtn.onclick = async () => {
+        // Reusable Report Generator Function
+        async function generateReport(requestedReportType) {
             const text = dom.transcript.value.trim();
             if (!text) return alert("Transcript is empty!");
 
-            dom.genBtn.disabled = true;
+            setGenerateButtonsDisabled(true);
             dom.warningsCard.classList.add('hidden');
-            setProgress("Analyzing transcript on the cloud...", true);
+            setProgress(`Analyzing transcript for ${requestedReportType}...`, true);
 
             try {
                 const res = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'analyze', transcript: text }),
+                    body: JSON.stringify({ 
+                        action: 'analyze', 
+                        transcript: text,
+                        reportType: requestedReportType // Pass the selected report type to backend
+                    }),
                 });
                 const data = await res.json();
 
@@ -464,7 +509,7 @@
 
                 generatedData = data.result;
 
-                currentReportType = generatedData.ReportType || "Consultation Report";
+                currentReportType = generatedData.ReportType || requestedReportType;
                 dom.noteTitle.innerHTML = `${currentReportType} <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>`;
 
                 const soap = generatedData.SOAP || {};
@@ -494,13 +539,20 @@
 
                 setProgress("Analysis complete! Saving to database...", false);
                 syncToDatabase(getEditedData(), "save");
-                dom.genBtn.disabled = false;
+                setGenerateButtonsDisabled(false);
 
             } catch (err) {
                 setProgress(`Generation Error: ${err.message}`, false);
-                dom.genBtn.disabled = false;
+                setGenerateButtonsDisabled(false);
             }
-        };
+        }
+        
+        // Attach click listeners to all new buttons
+        dom.genConsultBtn.onclick = () => generateReport("Consultation Report");
+        dom.genRadioBtn.onclick = () => generateReport("Radiographic Report");
+        dom.genUltraBtn.onclick = () => generateReport("Ultrasound Report");
+        dom.genSurgBtn.onclick = () => generateReport("Surgical Report");
+        dom.genLabBtn.onclick = () => generateReport("Laboratory Report");
 
         function getEditedData() {
             return {
@@ -690,7 +742,7 @@
             dom.pdfBtn.disabled = false;
         };
 
-        // --- NEW: Email PDF Button Logic ---
+        // --- Email PDF Button Logic ---
         dom.emailBtn.onclick = async () => {
             const email = document.getElementById('patientEmail').value.trim();
             const clinic = dom.clinicSelect.value;

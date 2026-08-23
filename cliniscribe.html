@@ -280,7 +280,7 @@
 
     <!-- App Logic Script -->
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby85n7GqYLIJy1qJoYE4M2Gk6UzZ7pWLqOa4xQP4sX8-GNcTFCRRJXXxxQ9jK6epIdsjA/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyC2PmlvnIoukeXfGCP-2OgPWdrU5UBNXLhQZy4dp2XFdAEYJ3GZ1LmfdiUmdF_WXtTEw/exec";
 
         let clinicLetterheads = {};
         let letterheadBase64 = ""; 
@@ -631,6 +631,16 @@
             return await pdfDoc.save();
         }
 
+        // Helper function to safely convert raw PDF bytes to Base64 in the browser
+        const convertBlobToBase64 = (blob) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        };
+
         function downloadBlob(bytes, filename) {
             const blob = new Blob([bytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
@@ -680,10 +690,78 @@
             dom.pdfBtn.disabled = false;
         };
 
-        dom.emailBtn.onclick = () => {
-            const email = document.getElementById('patientEmail').value;
+        // --- NEW: Email PDF Button Logic ---
+        dom.emailBtn.onclick = async () => {
+            const email = document.getElementById('patientEmail').value.trim();
+            const clinic = dom.clinicSelect.value;
+            const doctor = document.getElementById('doctorName').value;
+
             if(!email) return alert("Please enter a patient email in the Settings panel.");
-            alert(`Opening email client to send records to ${email}...`);
+
+            dom.emailBtn.disabled = true;
+            setProgress("Generating PDFs and sending email via cloud...", true);
+
+            try {
+                const editedData = getEditedData();
+
+                // 1. Generate Medical Report PDF Bytes
+                const medRecordSections = [
+                    { title: "Signalment & Core Disease Category", content: editedData.SOAP["Signalment_Core_Disease_Category"] },
+                    { title: "History", content: editedData.SOAP["History"] },
+                    { title: "Findings", content: editedData.SOAP["Findings"] },
+                    { title: "Diagnostics", content: editedData.SOAP["Diagnostics"] },
+                    { title: "Plan", content: editedData.SOAP["Plan"] },
+                    { title: "Takeaways & Differentiation", content: editedData.SOAP["Takeaways_Differentiation"] }
+                ];
+                const medPdfBytes = await generatePerfectPdf(currentReportType, medRecordSections, letterheadBase64);
+                
+                // Convert to Base64 safely via Blob
+                const medBlob = new Blob([medPdfBytes], { type: 'application/pdf' });
+                const reportPdfBase64 = await convertBlobToBase64(medBlob);
+                
+                let instructionsPdfBase64 = null;
+
+                // 2. Conditionally Generate Instructions PDF Bytes
+                const instructionsContent = editedData.ClientInstructions;
+                if (instructionsContent && !instructionsContent.includes("N/A — Patient deceased")) {
+                    const clientSections = [
+                        { title: "Patient / Client Instructions", content: instructionsContent }
+                    ];
+                    const clientPdfBytes = await generatePerfectPdf("Client Instructions", clientSections, letterheadBase64);
+                    const clientBlob = new Blob([clientPdfBytes], { type: 'application/pdf' });
+                    instructionsPdfBase64 = await convertBlobToBase64(clientBlob);
+                }
+
+                // 3. Dispatch to Backend
+                const payload = {
+                    action: "email",
+                    patientEmail: email,
+                    clinicName: clinic,
+                    doctorName: doctor,
+                    reportType: currentReportType,
+                    reportPdfBase64: reportPdfBase64,
+                    instructionsPdfBase64: instructionsPdfBase64
+                };
+
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    setProgress("Records emailed to patient successfully!", false);
+                } else {
+                    throw new Error(data.error || "Failed to send email through server.");
+                }
+
+            } catch (err) {
+                console.error("Email Error:", err);
+                setProgress(`Email Error: ${err.message}`, false);
+            }
+            
+            dom.emailBtn.disabled = false;
         };
 
     </script>

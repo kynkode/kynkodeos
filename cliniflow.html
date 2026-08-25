@@ -35,15 +35,34 @@
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
         </div>
 
+        <!-- MOBILE HEADER BAR -->
+        <header class="md:hidden flex items-center justify-between p-4 bg-[#120f2e] text-white z-30 shrink-0 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-robot text-purple-400 text-lg"></i>
+                <span class="font-bold text-sm text-purple-300 tracking-wider uppercase">KYNKODE</span>
+            </div>
+            <button id="mobile-menu-btn" class="p-2 rounded-xl bg-[#29225c] text-gray-200 hover:text-white focus:outline-none">
+                <i id="mobile-menu-icon" class="fa-solid fa-bars text-lg"></i>
+            </button>
+        </header>
+
+        <!-- MOBILE BACKDROP OVERLAY -->
+        <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden transition-opacity duration-300"></div>
+
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#120f2e] text-white flex flex-col justify-between p-5 z-10 flex-shrink-0">
+        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-50 w-64 bg-[#120f2e] text-white flex flex-col justify-between p-5 flex-shrink-0 transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none h-full">
             <div>
-                <div class="flex items-center gap-3 mb-8 px-2">
-                    <i class="fa-solid fa-robot text-purple-400 text-xl"></i>
-                    <div>
-                        <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-purple-300">KYNKODE</h1>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                <div class="flex items-center justify-between mb-8 px-2">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-robot text-purple-400 text-xl"></i>
+                        <div>
+                            <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-purple-300">KYNKODE</h1>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                        </div>
                     </div>
+                    <button id="close-menu-btn" class="md:hidden text-gray-400 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
                 </div>
 
                 <nav class="space-y-2">
@@ -72,7 +91,7 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
+        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden w-full">
             <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
                 
                 <header class="flex items-center gap-3">
@@ -190,9 +209,49 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            setupMobileMenu();
             fetchFlowData();
             setupAIBar();
         });
+
+        function setupMobileMenu() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const closeBtn = document.getElementById('close-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('mobile-backdrop');
+            const menuIcon = document.getElementById('mobile-menu-icon');
+            const navLinks = sidebar.querySelectorAll('nav a');
+
+            function openMenu() {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                backdrop.classList.remove('hidden');
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-xmark');
+            }
+
+            function closeMenu() {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                backdrop.classList.add('hidden');
+                menuIcon.classList.remove('fa-xmark');
+                menuIcon.classList.add('fa-bars');
+            }
+
+            if (menuBtn) {
+                menuBtn.addEventListener('click', () => {
+                    const isOpen = sidebar.classList.contains('translate-x-0');
+                    isOpen ? closeMenu() : openMenu();
+                });
+            }
+
+            if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+            if (backdrop) backdrop.addEventListener('click', closeMenu);
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+        }
 
         async function fetchFlowData() {
             try {
@@ -279,7 +338,6 @@
                 loadingIcon.classList.remove('hidden');
 
                 try {
-                    // Send text/plain to bypass CORS preflight checks in Google Apps Script
                     const response = await fetch(GAS_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },

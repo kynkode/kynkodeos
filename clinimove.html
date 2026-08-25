@@ -25,26 +25,48 @@
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-4 md:p-8">
+<body class="h-screen flex flex-col items-center justify-center p-0 md:p-8">
+
+    <!-- Mobile Backdrop Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
 
     <!-- Main App Container -->
-    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white md:rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+
+        <!-- Mobile Top Header Bar with Hamburger Button -->
+        <div class="md:hidden flex items-center justify-between bg-[#2b180a] text-white px-5 py-3.5 border-b border-white/10 shrink-0 z-20">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-plane-departure text-amber-500 text-lg"></i>
+                <div>
+                    <h1 class="font-bold text-sm leading-tight uppercase tracking-wider text-amber-400">KYNKODE</h1>
+                    <p class="text-[9px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                </div>
+            </div>
+            <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2 rounded-lg focus:outline-none hover:bg-white/10 transition" aria-label="Open Menu">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
 
         <!-- Loading Overlay -->
         <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
         </div>
 
-        <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#2b180a] text-white flex flex-col justify-between p-5 z-10 flex-shrink-0">
+        <!-- Sidebar Drawer (Slide-out on Mobile, Static on Desktop) -->
+        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-40 w-64 bg-[#2b180a] text-white flex flex-col justify-between p-5 flex-shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none h-full overflow-y-auto">
             <div>
-                <!-- Brand / Logo -->
-                <div class="flex items-center gap-3 mb-8 px-2">
-                    <i class="fa-solid fa-plane-departure text-amber-500 text-xl"></i>
-                    <div>
-                        <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-amber-400">KYNKODE</h1>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                <!-- Brand / Logo & Close Button for Mobile -->
+                <div class="flex items-center justify-between mb-8 px-2">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-plane-departure text-amber-500 text-xl"></i>
+                        <div>
+                            <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-amber-400">KYNKODE</h1>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                        </div>
                     </div>
+                    <button id="mobile-close-btn" class="md:hidden text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition" aria-label="Close Menu">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
                 </div>
 
                 <!-- Navigation Links -->
@@ -212,7 +234,7 @@
         </main>
     </div>
 
-    <!-- Frontend Fetch Integration -->
+    <!-- Frontend Fetch Integration & Mobile Navigation Script -->
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwi4nCHOTE5Nqf6fjhAI5_h1lVBcvP7MKo4OAERw328aDWKnTsNvAdNVHrChK7OB8xi/exec";
 
@@ -246,9 +268,41 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            setupMobileMenu();
             fetchMoveData();
             setupAIBar();
         });
+
+        /* --- Mobile Navigation Drawer Logic --- */
+        function setupMobileMenu() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const closeBtn = document.getElementById('mobile-close-btn');
+            const overlay = document.getElementById('mobile-overlay');
+            const sidebar = document.getElementById('sidebar');
+
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+
+            if (menuBtn) menuBtn.addEventListener('click', openSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            const navLinks = sidebar.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+        }
 
         async function fetchMoveData() {
             try {
@@ -379,7 +433,7 @@
                 } catch (error) { 
                     console.error("AI Request Error:", error);
                     alert("Could not connect to KYNKODE AI backend. Check console for details.");
-                } finally {
+                } font-medium {
                     queryInput.disabled = false;
                     queryInput.value = '';
                     queryInput.focus();

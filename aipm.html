@@ -1,258 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Practice Manager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b172a;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYNKODE AI Practice Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+    .sidebar-bg { background-color: #0B172E; }
+    .widget-bg { background-color: #1A2A47; }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body>
+  <div id="root"></div>
 
-    <!-- Main App Container -->
-    <div class="w-full max-w-7xl bg-[#0b172a] rounded-3xl overflow-hidden flex flex-col md:flex-row border border-blue-950/40">
+  <script type="text/babel">
+    const { useState, useRef } = React;
 
-        <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#0b172a] text-white flex flex-col justify-between p-5 border-r border-blue-950/60">
-            <div>
-                <!-- Brand / Logo in Sidebar -->
-                <div class="text-xs font-semibold tracking-wider text-blue-400 uppercase mb-8">
-                    KYNKODE
-                </div>
+    // SECURE CONFIGURATION: Only point to GAS. No API keys here.
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw_Nim6b0w_AOPhxRdVB54KKMpxILKCLaCaFm_Ql8ZMMgzZrHBuA3g09GcfcGvb25Dp/exec';
 
-                <!-- Navigation Links -->
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#1e293b] text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-house w-5 text-blue-400"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
-                        <i class="fa-solid fa-chart-line w-5"></i>
-                        <span class="font-medium text-sm">Insights</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
-                        <i class="fa-solid fa-bell w-5"></i>
-                        <span class="font-medium text-sm">Alerts</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
-                        <i class="fa-solid fa-chart-pie w-5"></i>
-                        <span class="font-medium text-sm">Analytics</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
-                        <i class="fa-solid fa-file-lines w-5"></i>
-                        <span class="font-medium text-sm">Reports</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
-                        <i class="fa-solid fa-wand-magic-sparkles w-5"></i>
-                        <span class="font-medium text-sm">Ask AI</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
-                        <i class="fa-solid fa-gear w-5"></i>
-                        <span class="font-medium text-sm">Settings</span>
-                    </a>
-                </nav>
+    function App() {
+      const [query, setQuery] = useState('');
+      const [isRecording, setIsRecording] = useState(false);
+      const [isProcessing, setIsProcessing] = useState(false);
+      
+      const mediaRecorder = useRef(null);
+      const audioChunks = useRef([]);
+
+      const icons = {
+        bot: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-400"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>,
+        dashboard: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>,
+        mic: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>,
+        send: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+      };
+
+      // ==========================================
+      // SECURE COMMUNICATION WITH GAS
+      // ==========================================
+      const sendToGAS = async (textData, audioBase64 = null) => {
+        setIsProcessing(true);
+        try {
+          const response = await fetch(GAS_WEB_APP_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+              source: 'kynkode_frontend',
+              action: 'ASK_AI',
+              data: { text: textData, audioBase64: audioBase64 }
+            })
+          });
+          const result = await response.json();
+          console.log("AI Response:", result.ai_response);
+          alert("KYNKODE AI: " + result.ai_response); // In production, route this to a chat window UI
+        } catch (error) {
+          console.error("Backend Error:", error);
+        }
+        setIsProcessing(false);
+      };
+
+      const handleSendText = () => {
+        if (!query) return;
+        sendToGAS(query);
+        setQuery('');
+      };
+
+      // ==========================================
+      // VOICE CAPTURE (BROWSER NATIVE)
+      // ==========================================
+      const toggleVoice = async () => {
+        if (isRecording) {
+          // Stop recording
+          mediaRecorder.current.stop();
+          setIsRecording(false);
+        } else {
+          // Start recording
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+            audioChunks.current = [];
+            
+            mediaRecorder.current.ondataavailable = (event) => {
+              if (event.data.size > 0) audioChunks.current.push(event.data);
+            };
+
+            mediaRecorder.current.onstop = () => {
+              const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
+              const reader = new FileReader();
+              reader.readAsDataURL(audioBlob);
+              reader.onloadend = () => {
+                const base64Audio = reader.result;
+                sendToGAS("Listen to the attached audio command.", base64Audio);
+              };
+              stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorder.current.start();
+            setIsRecording(true);
+          } catch (err) {
+            console.error("Microphone access denied:", err);
+            alert("Please allow microphone access to use voice commands.");
+          }
+        }
+      };
+
+      return (
+        <div className="flex h-screen text-gray-800">
+          
+          {/* SIDEBAR */}
+          <div className="w-64 sidebar-bg text-white flex flex-col p-4 m-4 rounded-2xl shadow-xl">
+            <div className="flex items-center gap-3 px-2 mb-8 mt-2">
+              {icons.bot}
+              <div>
+                <h1 className="font-bold text-lg leading-tight">AI Practice Manager</h1>
+                <p className="text-xs text-gray-400">Your intelligent operations assistant</p>
+              </div>
             </div>
 
-            <!-- Sidebar Footer Stats Card -->
-            <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="bg-[#1e293b] px-4 py-3.5 rounded-2xl text-white border border-blue-900/40">
-                    <p class="text-xs text-gray-400 mb-1">Practice Score</p>
-                    <div class="flex items-baseline gap-2 mb-0.5">
-                        <span class="text-2xl font-bold tracking-tight text-white">82</span>
-                        <span class="text-xs text-gray-400">/ 100</span>
-                    </div>
-                    <p class="text-[11px] text-emerald-400 font-medium">Good</p>
-                </div>
+            <div className="text-xs font-bold text-gray-500 mb-4 px-2 tracking-wider">KYNKODE</div>
+            <nav className="space-y-2 flex-1">
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-400 font-medium cursor-pointer">
+                {icons.dashboard} <span className="text-sm">Dashboard</span>
+              </div>
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white cursor-pointer">
+                {icons.dashboard} <span className="text-sm">Insights</span>
+              </div>
+            </nav>
+
+            <div className="widget-bg rounded-xl p-4 border border-blue-900/50">
+              <p className="text-sm text-gray-300">Practice Score</p>
+              <div className="flex items-baseline gap-1 mt-1">
+                <span className="text-3xl font-bold">82</span>
+                <span className="text-sm text-gray-400">/100</span>
+              </div>
+              <p className="text-xs text-green-400 mt-1">Good</p>
             </div>
-        </aside>
+          </div>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-white rounded-r-3xl md:rounded-l-none flex flex-col gap-6 text-gray-800">
-
-            <!-- Top Header -->
-            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                        <i class="fa-solid fa-robot text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">AI Practice Manager</h1>
-                        <p class="text-xs text-gray-500 font-medium">Your intelligent operations assistant</p>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Greeting Banner -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        Good morning, Dr. Chris <span class="text-xl">👋</span>
-                    </h2>
-                    <p class="text-xs text-gray-500 mt-0.5">Here's your practice overview for today.</p>
-                </div>
-                <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-medium text-gray-600 self-start md:self-auto">
-                    Tuesday, 19 Aug 2026
-                </div>
+          {/* MAIN CONTENT */}
+          <div className="flex-1 p-8 overflow-y-auto flex flex-col">
+            
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="text-2xl font-bold">Good morning, Dr. Chris 👋</h2>
+                <p className="text-gray-500">Here's your practice overview for today.</p>
+              </div>
+              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 text-sm font-medium">
+                Tuesday, 19 Aug 2026
+              </div>
             </div>
 
-            <!-- Metrics Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <!-- Card 1: Critical Alerts -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-red-600">Critical Alerts</span>
-                    <div class="text-3xl font-bold text-red-600 mt-2">5</div>
+            <div className="grid grid-cols-4 gap-4 mb-6">
+              {[
+                { n: "5", l: "Critical Alerts", c: "text-red-500" },
+                { n: "11", l: "Follow-ups Due", c: "text-yellow-600" },
+                { n: "KES 86,400", l: "Expiry Risk", c: "text-orange-500" },
+                { n: "3", l: "Relocation Cases", c: "text-blue-600" }
+              ].map((kpi, i) => (
+                <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center">
+                  <div className={`text-2xl font-bold mb-1 ${kpi.c}`}>{kpi.n}</div>
+                  <div className="text-sm text-gray-500">{kpi.l}</div>
                 </div>
-
-                <!-- Card 2: Follow-ups Due -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Follow-ups Due</span>
-                    <div class="text-3xl font-bold text-gray-900 mt-2">11</div>
-                </div>
-
-                <!-- Card 3: Expiry Risk -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-amber-600">Expiry Risk</span>
-                    <div class="text-2xl font-bold text-amber-600 mt-2">KES 86,400</div>
-                </div>
-
-                <!-- Card 4: Relocation Cases -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Relocation Cases</span>
-                    <div class="text-3xl font-bold text-gray-900 mt-2">3</div>
-                </div>
-
+              ))}
             </div>
 
-            <!-- Middle Grid: Top Priorities & Practice Performance -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- Top Priorities Today -->
-                <section class="lg:col-span-7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <h3 class="font-semibold text-gray-800 text-sm">Top Priorities Today</h3>
-
-                    <div class="space-y-3.5 text-sm">
-                        <!-- Priority 1 -->
-                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
-                            <div class="flex items-center gap-3 text-gray-800 font-medium">
-                                <span class="text-xs text-gray-400 w-3">1</span>
-                                <span>Approve procurement request #284</span>
-                            </div>
-                            <span class="px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">High</span>
-                        </div>
-
-                        <!-- Priority 2 -->
-                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
-                            <div class="flex items-center gap-3 text-gray-800 font-medium">
-                                <span class="text-xs text-gray-400 w-3">2</span>
-                                <span>Follow up on 3 delayed relocation cases</span>
-                            </div>
-                            <span class="px-2.5 py-0.5 bg-red-50 text-red-600 border border-red-200/60 rounded-full text-xs font-medium">High</span>
-                        </div>
-
-                        <!-- Priority 3 -->
-                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
-                            <div class="flex items-center gap-3 text-gray-800 font-medium">
-                                <span class="text-xs text-gray-400 w-3">3</span>
-                                <span>Contact 8 overdue post-operative patients</span>
-                            </div>
-                            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Medium</span>
-                        </div>
-
-                        <!-- Priority 4 -->
-                        <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
-                            <div class="flex items-center gap-3 text-gray-800 font-medium">
-                                <span class="text-xs text-gray-400 w-3">4</span>
-                                <span>Transfer Bravecto stock: Westlands -> South C</span>
-                            </div>
-                            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">Medium</span>
-                        </div>
-
-                        <!-- Priority 5 -->
-                        <div class="flex items-center justify-between py-1.5">
-                            <div class="flex items-center gap-3 text-gray-800 font-medium">
-                                <span class="text-xs text-gray-400 w-3">5</span>
-                                <span>Review KES 34,200 of stock expiring soon</span>
-                            </div>
-                            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Low</span>
-                        </div>
+            <div className="grid grid-cols-3 gap-6 flex-1">
+              <div className="col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 className="font-bold text-lg mb-4">Top Priorities Today</h3>
+                <div className="space-y-4">
+                  {[
+                    { t: "Approve procurement request #284", p: "High", c: "text-red-500 bg-red-50" },
+                    { t: "Follow up on 3 delayed relocation cases", p: "High", c: "text-red-500 bg-red-50" },
+                    { t: "Contact 8 overdue post-operative patients", p: "Medium", c: "text-yellow-600 bg-yellow-50" },
+                    { t: "Transfer Bravecto stock: Westlands → South C", p: "Medium", c: "text-yellow-600 bg-yellow-50" },
+                    { t: "Review KES 34,200 of stock expiring soon", p: "Low", c: "text-green-600 bg-green-50" }
+                  ].map((row, i) => (
+                    <div key={i} className="flex items-center justify-between p-2 -mx-2 rounded-lg hover:bg-gray-50">
+                      <div className="flex items-center gap-4">
+                        <span className="text-gray-400 text-sm">{i+1}</span>
+                        <span className="text-gray-700 text-sm font-medium">{row.t}</span>
+                      </div>
+                      <span className={`text-xs font-semibold px-2 py-1 rounded-md ${row.c}`}>{row.p}</span>
                     </div>
-                </section>
+                  ))}
+                </div>
+              </div>
 
-                <!-- Practice Performance Section -->
-                <section class="lg:col-span-5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-semibold text-gray-800 text-sm">Practice Performance</h3>
-                        <span class="text-xs text-gray-400 font-medium">(This Week)</span>
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 className="font-bold text-lg mb-4">Practice Performance <span className="text-gray-400 text-sm font-normal">(This Week)</span></h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { l: "Revenue", v: "KES 1.24M", t: "+11%" },
+                    { l: "Consultations", v: "421", t: "+6%" },
+                    { l: "New Clients", v: "83", t: "+16%" },
+                    { l: "Avg. Invoice", v: "KES 2,945", t: "+4%" }
+                  ].map((m, i) => (
+                    <div key={i} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                      <div className="text-xs text-gray-500 mb-1">{m.l}</div>
+                      <div className="font-bold text-gray-800">{m.v}</div>
+                      <div className="text-xs text-green-500 font-medium mt-1">{m.t}</div>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <!-- Revenue -->
-                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
-                            <span class="text-xs text-gray-400">Revenue</span>
-                            <div>
-                                <div class="text-lg font-bold text-gray-900">KES 1.24M</div>
-                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+11%</span>
-                            </div>
-                        </div>
-
-                        <!-- Consultations -->
-                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
-                            <span class="text-xs text-gray-400">Consultations</span>
-                            <div>
-                                <div class="text-lg font-bold text-gray-900">421</div>
-                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+6%</span>
-                            </div>
-                        </div>
-
-                        <!-- New Clients -->
-                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
-                            <span class="text-xs text-gray-400">New Clients</span>
-                            <div>
-                                <div class="text-lg font-bold text-gray-900">83</div>
-                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+18%</span>
-                            </div>
-                        </div>
-
-                        <!-- Avg. Invoice -->
-                        <div class="p-4 rounded-xl border border-gray-100 bg-gray-50/40 flex flex-col justify-between gap-2">
-                            <span class="text-xs text-gray-400">Avg. Invoice</span>
-                            <div>
-                                <div class="text-lg font-bold text-gray-900">KES 2,945</div>
-                                <span class="text-xs text-emerald-600 font-semibold mt-0.5 block">+4%</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <!-- Ask KYNKODE AI Input Bar Section -->
-            <section class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-3">
-                <h3 class="font-semibold text-gray-800 text-sm">Ask KYNKODE AI</h3>
-                <div class="relative flex items-center">
-                    <input type="text" placeholder="Ask anything about your practice" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-blue-500 transition pr-12">
-                    <a href="#" class="absolute right-3 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition shadow-sm text-xs">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </a>
-                </div>
-            </section>
+            {/* ASK AI BAR */}
+            <div className="mt-6 bg-white rounded-2xl shadow-lg border border-blue-100 p-3 flex items-center gap-4">
+              <span className="font-bold text-blue-800 whitespace-nowrap pl-2">
+                {isProcessing ? "Processing..." : "Ask KYNKODE AI"}
+              </span>
+              <input 
+                type="text" 
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendText()}
+                placeholder="Ask anything about your practice..." 
+                disabled={isProcessing}
+                className="flex-1 bg-transparent border-none outline-none text-gray-700 w-full disabled:opacity-50" 
+              />
+              <button 
+                onClick={toggleVoice}
+                disabled={isProcessing}
+                className={`p-3 rounded-xl transition-all ${isRecording ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'} disabled:opacity-50`}
+              >
+                {icons.mic}
+              </button>
+              <button 
+                onClick={handleSendText}
+                disabled={isProcessing}
+                className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md transition-all disabled:bg-gray-400"
+              >
+                {icons.send}
+              </button>
+            </div>
+            
+            <div className="text-center mt-3 text-xs text-blue-800 font-semibold">
+              Intelligence. Insight. Better decisions every day.
+            </div>
 
-        </main>
+          </div>
+        </div>
+      );
+    }
 
-    </div>
-
-    <!-- Bottom Slogan Bar -->
-    <footer class="mt-6 text-center text-xs text-blue-300 font-medium">
-        Intelligence. Insight. Better decisions every day.
-    </footer>
-
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>

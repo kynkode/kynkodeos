@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniRecall</title>
+    <title>CliniRecall - KYNKODE AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -20,12 +20,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Custom scrollbar for the main area */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body class="h-screen flex flex-col items-center justify-center p-4 md:p-8">
 
     <!-- Main App Container -->
-    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
 
         <!-- Loading Overlay -->
         <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
@@ -33,44 +37,55 @@
         </div>
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#072218] text-white flex flex-col justify-between p-5 z-10">
+        <aside class="w-full md:w-64 bg-[#072218] text-white flex flex-col justify-between p-5 z-10 flex-shrink-0">
             <div>
-                <div class="text-xs font-semibold tracking-wider text-emerald-300 uppercase mb-8">KYNKODE</div>
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-house w-5"></i>
-                        <span class="font-medium text-sm">Dashboard</span>
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-3 mb-8 px-2">
+                    <i class="fa-solid fa-bell text-emerald-500 text-xl"></i>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-emerald-400">KYNKODE</h1>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-2">
+                    <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-diagram-project w-5"></i>
+                        <span class="font-medium text-sm">CliniFlow</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#0e3b2b] text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-bell w-5"></i>
-                        <span>Recall</span>
+                    <a href="clinimove.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-plane-departure w-5"></i>
+                        <span class="font-medium text-sm">CliniMove</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-user-group w-5"></i>
-                        <span class="font-medium text-sm">Clients</span>
+                    <a href="clinistock.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i>
+                        <span class="font-medium text-sm">CliniStock</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-envelope w-5"></i>
-                        <span class="font-medium text-sm">Messages</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-file-lines w-5"></i>
-                        <span class="font-medium text-sm">Templates</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-chart-pie w-5"></i>
-                        <span class="font-medium text-sm">Reports</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-gear w-5"></i>
-                        <span class="font-medium text-sm">Settings</span>
+                    <a href="clinirecall.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#0e3b2b] text-white font-medium text-sm shadow-md transition">
+                        <i class="fa-solid fa-bell w-5 text-emerald-400"></i>
+                        <span>CliniRecall</span>
                     </a>
                 </nav>
+
+                <!-- Module Specific Links -->
+                <div class="mt-8 pt-6 border-t border-white/10 space-y-1">
+                    <p class="px-4 text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Communications</p>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
+                        <i class="fa-solid fa-user-group w-4 text-center"></i> Clients
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
+                        <i class="fa-solid fa-envelope w-4 text-center"></i> Messages
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
+                        <i class="fa-solid fa-file-lines w-4 text-center"></i> Templates
+                    </a>
+                </div>
             </div>
 
             <!-- Sidebar Footer Stats Card -->
             <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="bg-[#0e3b2b] px-4 py-3.5 rounded-2xl text-white">
+                <div class="bg-[#0e3b2b] px-4 py-3.5 rounded-2xl text-white shadow-inner">
                     <p class="text-xs text-gray-300 mb-1">Messages sent</p>
                     <div id="sb-messages-sent" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
                     <p class="text-[11px] text-emerald-300 font-medium">This week</p>
@@ -79,89 +94,136 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative z-10">
+        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
 
-            <!-- Top Header -->
-            <header class="flex items-center gap-3">
-                <div class="bg-emerald-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                    <i class="fa-solid fa-bell text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniRecall</h1>
-                    <p class="text-xs text-gray-500 font-medium">Never miss a follow-up again</p>
-                </div>
-            </header>
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
 
-            <!-- Metrics Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Due Today</span>
-                    <div id="metric-due-today" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Due This Week</span>
-                    <div id="metric-due-week" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-red-600">Overdue</span>
-                    <div id="metric-overdue" class="text-3xl font-bold text-red-600 mt-2">--</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Completed</span>
-                    <div class="flex items-baseline gap-1 mt-2">
-                        <span id="metric-completed" class="text-3xl font-bold text-gray-900">--%</span>
+                <!-- Top Header -->
+                <header class="flex items-center gap-3">
+                    <div class="bg-emerald-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-bell text-xl"></i>
                     </div>
-                    <span class="text-[11px] text-gray-400 mt-1">This week</span>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniRecall</h1>
+                        <p class="text-xs text-gray-500 font-medium">Never miss a follow-up again</p>
+                    </div>
+                </header>
+
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-gray-500">Due Today</span>
+                        <div id="metric-due-today" class="text-3xl font-bold text-gray-900 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-gray-500">Due This Week</span>
+                        <div id="metric-due-week" class="text-3xl font-bold text-gray-900 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-red-600">Overdue</span>
+                        <div id="metric-overdue" class="text-3xl font-bold text-red-600 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-gray-500">Completed</span>
+                        <div class="flex items-baseline gap-1 mt-2">
+                            <span id="metric-completed" class="text-3xl font-bold text-emerald-600">--%</span>
+                        </div>
+                        <span class="text-[11px] text-gray-400 mt-1">This week</span>
+                    </div>
                 </div>
+
+                <!-- Follow-up Queue Section -->
+                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-semibold text-gray-800 text-sm">Today's Follow-up Queue</h2>
+                        <a href="#" class="text-emerald-600 hover:underline text-xs font-medium">View all</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="text-xs text-gray-400 border-b border-gray-100">
+                                    <th class="pb-3 font-medium">Time</th>
+                                    <th class="pb-3 font-medium">Client</th>
+                                    <th class="pb-3 font-medium">Patient</th>
+                                    <th class="pb-3 font-medium">Reason</th>
+                                    <th class="pb-3 font-medium">Channel</th>
+                                    <th class="pb-3 font-medium text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queue-table-body" class="divide-y divide-gray-50 text-gray-700">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Recent Activities Section -->
+                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <h2 class="font-semibold text-gray-800 text-sm">Recent Activities</h2>
+                    <div id="activities-container" class="space-y-3.5 text-sm">
+                        <!-- Injected via JS -->
+                    </div>
+                </section>
+
+                <!-- Footer Text inside scrolling area -->
+                <footer class="mt-2 text-center text-xs text-emerald-900/60 font-medium pb-2">
+                    Automated reminders. Happier clients. Better compliance.
+                </footer>
             </div>
 
-            <!-- Follow-up Queue Section -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="font-semibold text-gray-800 text-sm">Today's Follow-up Queue</h2>
-                    <a href="#" class="text-emerald-600 hover:underline text-xs font-medium">View all</a>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead>
-                            <tr class="text-xs text-gray-400 border-b border-gray-100">
-                                <th class="pb-3 font-medium">Time</th>
-                                <th class="pb-3 font-medium">Client</th>
-                                <th class="pb-3 font-medium">Patient</th>
-                                <th class="pb-3 font-medium">Reason</th>
-                                <th class="pb-3 font-medium">Channel</th>
-                                <th class="pb-3 font-medium">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="queue-table-body" class="divide-y divide-gray-50 text-gray-700">
-                            <!-- Injected via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Recent Activities Section -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                <h2 class="font-semibold text-gray-800 text-sm">Recent Activities</h2>
-                <div id="activities-container" class="space-y-3.5 text-sm">
-                    <!-- Injected via JS -->
-                </div>
-            </section>
+            <!-- KYNKODE AI Input Bar (Emerald Theme) -->
+            <div class="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-emerald-100 p-3 flex items-center gap-4 z-20">
+                <span class="font-bold text-emerald-900 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
+                <i class="fa-solid fa-sparkles text-emerald-500 sm:hidden pl-2"></i>
+                <input type="text" id="ai-query" placeholder="Ask to draft a recall message, check overdue appointments, or configure templates..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
+                <button class="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition-all">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <button id="ai-send" class="p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center min-w-[44px]">
+                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
+                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
+                </button>
+            </div>
 
         </main>
     </div>
 
-    <!-- Bottom Slogan Bar -->
-    <footer class="mt-6 text-center text-xs text-emerald-900 font-medium">
-        Automated reminders. Happier clients. Better compliance.
-    </footer>
-
     <!-- Frontend Fetch Integration -->
     <script>
         // REPLACE WITH YOUR PUBLISHED APPS SCRIPT WEB APP URL
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyE94artUaMTw6uy98IQKZwA31e7Y232xs22lLk2gRp51w_BqywbIKvr6c76_4lIPQ0hg/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw_Nim6b0w_AOPhxRdVB54KKMpxILKCLaCaFm_Ql8ZMMgzZrHBuA3g09GcfcGvb25Dp/exec";
 
-        document.addEventListener('DOMContentLoaded', fetchRecallData);
+        // Fallback Data in case the GAS endpoint fails
+        const fallbackData = {
+            status: "success",
+            data: {
+                metrics: {
+                    messagesSent: 482,
+                    dueToday: 15,
+                    dueThisWeek: 84,
+                    overdue: 3,
+                    completionRate: 94
+                },
+                queue: [
+                    { time: "09:00 AM", client: "Sarah Jenkins", patient: "Bella (Dog)", reason: "Annual Vaccination", channel: "whatsapp", status: "Pending" },
+                    { time: "10:30 AM", client: "Mark Thompson", patient: "Charlie (Cat)", reason: "Dental Checkup", channel: "sms", status: "Sent" },
+                    { time: "11:15 AM", client: "Emily Davis", patient: "Luna (Dog)", reason: "Flea & Tick Renewal", channel: "whatsapp", status: "Pending" },
+                    { time: "02:00 PM", client: "James Wilson", patient: "Max (Parrot)", reason: "Beak Trim Follow-up", channel: "phone", status: "Overdue" }
+                ],
+                activities: [
+                    { description: "WhatsApp reminder sent to Sarah Jenkins", timeAgo: "10m ago", status: "Delivered", type: "message" },
+                    { description: "Automated SMS to Mark Thompson", timeAgo: "1h ago", status: "Failed", type: "message" },
+                    { description: "Follow-up call logged for James Wilson", timeAgo: "2h ago", status: "No Answer", type: "call" },
+                    { description: "Email template 'Annual Vax' updated", timeAgo: "Yesterday", status: "System", type: "system" }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRecallData();
+            setupAIBar();
+        });
 
         async function fetchRecallData() {
             try {
@@ -172,10 +234,12 @@
                 if (result.status === "success") {
                     populateDashboard(result.data);
                 } else {
-                    console.error("Backend Error:", result.message);
+                    console.warn("Backend Error, using fallback data:", result.message);
+                    populateDashboard(fallbackData.data);
                 }
             } catch (error) {
-                console.error("Fetch Error:", error);
+                console.warn("Fetch Error, using fallback data:", error);
+                populateDashboard(fallbackData.data);
             } finally {
                 document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
             }
@@ -187,7 +251,7 @@
             document.getElementById('metric-due-today').textContent = data.metrics.dueToday;
             document.getElementById('metric-due-week').textContent = data.metrics.dueThisWeek;
             document.getElementById('metric-overdue').textContent = data.metrics.overdue;
-            document.getElementById('metric-completed').textContent = data.metrics.completionRate;
+            document.getElementById('metric-completed').textContent = data.metrics.completionRate + "%";
 
             // 2. Populate Queue Table
             const queueBody = document.getElementById('queue-table-body');
@@ -195,24 +259,32 @@
 
             data.queue.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50';
+                tr.className = 'hover:bg-gray-50/50 transition-colors';
 
                 // Channel Icon Logic
-                let channelIcon = '<i class="fa-solid fa-comment-sms text-sm text-gray-600"></i>';
+                let channelIcon = '<i class="fa-solid fa-comment-sms text-sm text-gray-500"></i>';
                 if (item.channel === 'whatsapp') {
-                    channelIcon = '<i class="fa-brands fa-whatsapp text-base text-emerald-600"></i>';
+                    channelIcon = '<i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>';
                 } else if (item.channel === 'phone') {
-                    channelIcon = '<i class="fa-solid fa-phone text-sm text-gray-600"></i>';
+                    channelIcon = '<i class="fa-solid fa-phone text-sm text-gray-500"></i>';
                 }
+
+                // Status Badge Logic
+                let statusClasses = "bg-gray-50 text-gray-600 border-gray-200/60";
+                if (item.status === 'Pending') statusClasses = "bg-amber-50 text-amber-700 border-amber-200/60";
+                if (item.status === 'Sent') statusClasses = "bg-emerald-50 text-emerald-700 border-emerald-200/60";
+                if (item.status === 'Overdue') statusClasses = "bg-red-50 text-red-700 border-red-200/60";
 
                 tr.innerHTML = `
                     <td class="py-3.5 font-medium text-gray-900">${item.time}</td>
-                    <td class="py-3.5">${item.client}</td>
-                    <td class="py-3.5">${item.patient}</td>
-                    <td class="py-3.5">${item.reason}</td>
+                    <td class="py-3.5 font-medium">${item.client}</td>
+                    <td class="py-3.5 text-gray-600">${item.patient}</td>
+                    <td class="py-3.5 text-gray-600">${item.reason}</td>
                     <td class="py-3.5">${channelIcon}</td>
-                    <td class="py-3.5">
-                        <span class="inline-block px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">${item.status}</span>
+                    <td class="py-3.5 text-right">
+                        <span class="inline-block px-2.5 py-1 ${statusClasses} border rounded-full text-[11px] font-semibold uppercase tracking-wide">
+                            ${item.status}
+                        </span>
                     </td>
                 `;
                 queueBody.appendChild(tr);
@@ -224,7 +296,7 @@
 
             data.activities.forEach(act => {
                 const div = document.createElement('div');
-                div.className = 'flex items-center justify-between py-1';
+                div.className = 'flex items-center justify-between py-2 border-b border-gray-50 last:border-0';
 
                 // Status styling & icon map
                 let badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200/60";
@@ -234,22 +306,72 @@
                     badgeClass = "bg-red-50 text-red-600 border-red-200/60";
                 }
                 if (act.type === 'call') {
-                    iconClass = "bg-amber-50 text-amber-600 fa-clock-rotate-left";
+                    iconClass = "bg-amber-50 text-amber-600 fa-phone-volume";
+                } else if (act.type === 'system') {
+                    iconClass = "bg-blue-50 text-blue-600 fa-gear";
+                } else if (act.type === 'message') {
+                    iconClass = "bg-emerald-50 text-emerald-600 fa-message";
                 }
 
                 div.innerHTML = `
                     <div class="flex items-center gap-3 text-gray-700">
-                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${iconClass.split(' ')[0]} ${iconClass.split(' ')[1]}">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${iconClass.split(' ')[0]} ${iconClass.split(' ')[1]}">
                             <i class="fa-solid ${iconClass.split(' ')[2]}"></i>
                         </span>
-                        <span>${act.description}</span>
+                        <span class="font-medium">${act.description}</span>
                     </div>
                     <div class="flex items-center gap-4 shrink-0">
-                        <span class="text-xs text-gray-400">${act.timeAgo}</span>
-                        <span class="px-3 py-1 border rounded-full text-xs font-medium ${badgeClass}">${act.status}</span>
+                        <span class="text-xs text-gray-400 font-medium">${act.timeAgo}</span>
+                        <span class="px-2.5 py-1 border rounded-md text-[10px] uppercase tracking-wider font-semibold ${badgeClass}">${act.status}</span>
                     </div>
                 `;
                 activitiesContainer.appendChild(div);
+            });
+        }
+
+        // --- AI Interaction Logic ---
+        function setupAIBar() {
+            const queryInput = document.getElementById('ai-query');
+            const sendBtn = document.getElementById('ai-send');
+            const sendIcon = document.getElementById('ai-send-icon');
+            const loadingIcon = document.getElementById('ai-loading-icon');
+
+            const handleSendText = async () => {
+                const query = queryInput.value.trim();
+                if (!query) return;
+
+                // UI Loading State
+                queryInput.disabled = true;
+                sendIcon.classList.add('hidden');
+                loadingIcon.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            source: 'kynkode_frontend', 
+                            action: 'ASK_AI', 
+                            data: { text: query, context: 'CliniRecall' } 
+                        })
+                    });
+                    const result = await response.json();
+                    alert("KYNKODE AI: " + (result.ai_response || "Action processed successfully.")); 
+                } catch (error) { 
+                    console.error("AI Request Error:", error);
+                    alert("Could not connect to KYNKODE AI backend. Check console for details.");
+                } finally {
+                    // Reset UI
+                    queryInput.disabled = false;
+                    queryInput.value = '';
+                    queryInput.focus();
+                    sendIcon.classList.remove('hidden');
+                    loadingIcon.classList.add('hidden');
+                }
+            };
+
+            sendBtn.addEventListener('click', handleSendText);
+            queryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleSendText();
             });
         }
     </script>

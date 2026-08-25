@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniFlow</title>
+    <title>CliniFlow - KYNKODE AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -20,12 +20,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Custom scrollbar for the main area */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body class="h-screen flex flex-col items-center justify-center p-4 md:p-8">
 
     <!-- Main App Container -->
-    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
 
         <!-- Loading Overlay -->
         <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
@@ -33,42 +37,30 @@
         </div>
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#120f2e] text-white flex flex-col justify-between p-5 z-10">
+        <aside class="w-full md:w-64 bg-[#120f2e] text-white flex flex-col justify-between p-5 z-10 flex-shrink-0">
             <div>
-                <!-- Brand / Logo in Sidebar -->
-                <div class="text-xs font-semibold tracking-wider text-purple-300 uppercase mb-8">
-                    KYNKODE
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-3 mb-8 px-2">
+                    <i class="fa-solid fa-robot text-purple-400 text-xl"></i>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-purple-300">KYNKODE</h1>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                    </div>
                 </div>
 
                 <!-- Navigation Links -->
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-house w-5"></i>
-                        <span class="font-medium text-sm">Dashboard</span>
+                <nav class="space-y-2">
+                    <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#29225c] text-white font-medium text-sm shadow-md transition">
+                        <i class="fa-solid fa-diagram-project w-5 text-purple-300"></i>
+                        <span>CliniFlow</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#29225c] text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-diagram-project w-5"></i>
-                        <span>Flow</span>
+                    <a href="clinimove.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-plane-departure w-5"></i>
+                        <span class="font-medium text-sm">CliniMove</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-list-check w-5"></i>
-                        <span class="font-medium text-sm">Tasks</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-network-wired w-5"></i>
-                        <span class="font-medium text-sm">Workflows</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-calendar w-5"></i>
-                        <span class="font-medium text-sm">Calendar</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-chart-pie w-5"></i>
-                        <span class="font-medium text-sm">Reports</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-gear w-5"></i>
-                        <span class="font-medium text-sm">Settings</span>
+                    <a href="clinistock.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i>
+                        <span class="font-medium text-sm">CliniStock</span>
                     </a>
                 </nav>
             </div>
@@ -84,127 +76,154 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative z-10">
-
-            <!-- Top Header -->
-            <header class="flex items-center gap-3">
-                <div class="bg-purple-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                    <i class="fa-solid fa-clipboard-check text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniFlow</h1>
-                    <p class="text-xs text-gray-500 font-medium">Tasks, workflows and accountability</p>
-                </div>
-            </header>
-
-            <!-- Metrics Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
                 
-                <!-- Card 1: My Tasks -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">My Tasks</span>
-                    <div id="metric-my-tasks" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                    <span class="text-[11px] text-gray-400 mt-1">Pending</span>
+                <!-- Top Header -->
+                <header class="flex items-center gap-3">
+                    <div class="bg-purple-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-clipboard-check text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniFlow</h1>
+                        <p class="text-xs text-gray-500 font-medium">Tasks, workflows and accountability</p>
+                    </div>
+                </header>
+
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-gray-500">My Tasks</span>
+                        <div id="metric-my-tasks" class="text-3xl font-bold text-gray-900 mt-2">--</div>
+                        <span class="text-[11px] text-gray-400 mt-1">Pending</span>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-gray-500">Due Today</span>
+                        <div id="metric-due-today" class="text-3xl font-bold text-gray-900 mt-2">--</div>
+                        <span class="text-[11px] text-gray-400 mt-1">Tasks</span>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-red-600">Overdue</span>
+                        <div id="metric-overdue" class="text-3xl font-bold text-red-600 mt-2">--</div>
+                        <span class="text-[11px] text-red-400 mt-1">Tasks</span>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-gray-500">Completed</span>
+                        <div id="metric-completed" class="text-3xl font-bold text-gray-900 mt-2">--</div>
+                        <span class="text-[11px] text-gray-400 mt-1">This week</span>
+                    </div>
                 </div>
 
-                <!-- Card 2: Due Today -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Due Today</span>
-                    <div id="metric-due-today" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                    <span class="text-[11px] text-gray-400 mt-1">Tasks</span>
-                </div>
+                <!-- Task List Section -->
+                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between flex-wrap gap-3">
+                        <div class="flex items-center gap-3">
+                            <h2 class="font-semibold text-gray-800 text-sm">Task List</h2>
+                            <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border border-gray-100 text-xs hidden sm:flex">
+                                <a href="#" class="px-3 py-1 bg-white shadow-sm font-medium text-gray-800 rounded-lg">All</a>
+                                <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">Today</a>
+                                <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">This Week</a>
+                            </div>
+                        </div>
+                        <a href="#" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
+                            <i class="fa-solid fa-plus text-xs"></i> New Task
+                        </a>
+                    </div>
 
-                <!-- Card 3: Overdue -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-red-600">Overdue</span>
-                    <div id="metric-overdue" class="text-3xl font-bold text-red-600 mt-2">--</div>
-                    <span class="text-[11px] text-red-400 mt-1">Tasks</span>
-                </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="text-xs text-gray-400 border-b border-gray-100">
+                                    <th class="pb-3 font-medium">Task</th>
+                                    <th class="pb-3 font-medium">Workflow</th>
+                                    <th class="pb-3 font-medium">Assigned To</th>
+                                    <th class="pb-3 font-medium">Due Date</th>
+                                    <th class="pb-3 font-medium">Priority</th>
+                                    <th class="pb-3 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-table-body" class="divide-y divide-gray-50 text-gray-700">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
-                <!-- Card 4: Completed -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-500">Completed</span>
-                    <div id="metric-completed" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                    <span class="text-[11px] text-gray-400 mt-1">This week</span>
-                </div>
-
+                <!-- Workflow Progress Section -->
+                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4 mb-4">
+                    <h2 class="font-semibold text-gray-800 text-sm">Workflow Progress</h2>
+                    <div id="workflows-container" class="space-y-4 text-sm">
+                        <!-- Injected via JS -->
+                    </div>
+                </section>
             </div>
 
-            <!-- Task List Section -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                <div class="flex items-center justify-between flex-wrap gap-3">
-                    <div class="flex items-center gap-3">
-                        <h2 class="font-semibold text-gray-800 text-sm">Task List</h2>
-                        <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border border-gray-100 text-xs">
-                            <a href="#" class="px-3 py-1 bg-white shadow-sm font-medium text-gray-800 rounded-lg">All</a>
-                            <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">Today</a>
-                            <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">This Week</a>
-                            <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">Overdue</a>
-                        </div>
-                    </div>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
-                        <i class="fa-solid fa-plus text-xs"></i> New Task
-                    </a>
-                </div>
-
-                <!-- Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead>
-                            <tr class="text-xs text-gray-400 border-b border-gray-100">
-                                <th class="pb-3 font-medium">Task</th>
-                                <th class="pb-3 font-medium">Workflow</th>
-                                <th class="pb-3 font-medium">Assigned To</th>
-                                <th class="pb-3 font-medium">Due Date</th>
-                                <th class="pb-3 font-medium">Priority</th>
-                                <th class="pb-3 font-medium">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tasks-table-body" class="divide-y divide-gray-50 text-gray-700">
-                            <!-- Injected via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Workflow Progress Section -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                <h2 class="font-semibold text-gray-800 text-sm">Workflow Progress</h2>
-                
-                <div id="workflows-container" class="space-y-4 text-sm">
-                    <!-- Injected via JS -->
-                </div>
-            </section>
+            <!-- KYNKODE AI Input Bar -->
+            <div class="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-purple-100 p-3 flex items-center gap-4 z-20">
+                <span class="font-bold text-purple-800 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
+                <i class="fa-solid fa-sparkles text-purple-500 sm:hidden pl-2"></i>
+                <input type="text" id="ai-query" placeholder="Ask anything about tasks..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
+                <button class="p-3 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-100 transition-all">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <button id="ai-send" class="p-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all flex items-center justify-center min-w-[44px]">
+                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
+                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
+                </button>
+            </div>
 
         </main>
-
     </div>
 
-    <!-- Bottom Slogan Bar -->
-    <footer class="mt-6 text-center text-xs text-purple-900 font-medium">
+    <footer class="mt-4 text-center text-xs text-purple-900/60 font-medium pb-4">
         Every task. Every step. No patient falls through the cracks.
     </footer>
 
     <!-- Frontend Fetch Integration -->
     <script>
         // REPLACE WITH YOUR PUBLISHED APPS SCRIPT WEB APP URL
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbzwukjxORLuXSZmFg_PmEZMbfUqKxrJTvYHxejdLWRO9qtj6_mJOUBkgkuVAhtkVrmd/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw_Nim6b0w_AOPhxRdVB54KKMpxILKCLaCaFm_Ql8ZMMgzZrHBuA3g09GcfcGvb25Dp/exec";
 
-        document.addEventListener('DOMContentLoaded', fetchFlowData);
+        // Fallback Data in case the GAS endpoint fails or returns HTML instead of JSON
+        const fallbackData = {
+            status: "success",
+            data: {
+                metrics: { myTasks: 12, dueToday: 5, overdue: 3, completedPct: 89 },
+                tasks: [
+                    { task: 'Call owner - lab results', workflow: 'Lab Results', assignedTo: 'Dr. Sarah', dueDate: '18/08/2026', priority: 'High', status: 'Overdue' },
+                    { task: 'Prepare discharge note', workflow: 'Hospitalization', assignedTo: 'Dr. John', dueDate: '18/08/2026', priority: 'High', status: 'Today' },
+                    { task: 'Relocation docs check', workflow: 'Pet Relocation', assignedTo: 'Admin', dueDate: '19/08/2026', priority: 'Medium', status: 'Pending' }
+                ],
+                workflows: [
+                    { name: 'Pet Relocation - Luna', status: 'In Progress', progress: 67 },
+                    { name: 'Surgery - Max', status: 'Pending', progress: 25 },
+                    { name: 'Discharge - Bella', status: 'Completed', progress: 100 }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchFlowData();
+            setupAIBar();
+        });
 
         async function fetchFlowData() {
             try {
                 const response = await fetch(GAS_URL);
                 if (!response.ok) throw new Error('Network error');
-
+                
                 const result = await response.json();
                 if (result.status === "success") {
                     populateDashboard(result.data);
                 } else {
-                    console.error("Backend Error:", result.message);
+                    console.warn("Backend Error, using fallback data");
+                    populateDashboard(fallbackData.data);
                 }
             } catch (error) {
-                console.error("Fetch Error:", error);
+                console.warn("Fetch Error (CORS or unavailable), using fallback data:", error);
+                populateDashboard(fallbackData.data);
             } finally {
                 document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
             }
@@ -217,7 +236,7 @@
             document.getElementById('metric-my-tasks').textContent = metrics.myTasks;
             document.getElementById('metric-due-today').textContent = metrics.dueToday;
             document.getElementById('metric-overdue').textContent = metrics.overdue;
-            
+
             const formattedPct = String(metrics.completedPct).includes('%') ? metrics.completedPct : `${metrics.completedPct}%`;
             document.getElementById('metric-completed').textContent = formattedPct;
 
@@ -227,19 +246,18 @@
 
             data.tasks.forEach(t => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50';
+                tr.className = 'hover:bg-gray-50/50 transition-colors';
 
-                // Priority Badge Color
                 let prioClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
                 const lowerPrio = String(t.priority).toLowerCase();
                 if (lowerPrio === 'high') prioClass = 'bg-red-50 text-red-600 border-red-200/60';
                 if (lowerPrio === 'low') prioClass = 'bg-emerald-50 text-emerald-600 border-emerald-200/60';
 
-                // Status Badge Color
                 let statusClass = 'bg-blue-50 text-blue-600 border-blue-200/60';
                 const lowerStatus = String(t.status).toLowerCase();
                 if (lowerStatus === 'overdue') statusClass = 'bg-red-50 text-red-600 border-red-200/60';
                 if (lowerStatus === 'today') statusClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
+                if (lowerStatus === 'completed') statusClass = 'bg-emerald-50 text-emerald-600 border-emerald-200/60';
 
                 tr.innerHTML = `
                     <td class="py-3.5 font-medium text-gray-900">${t.task}</td>
@@ -265,7 +283,7 @@
                 div.className = 'flex items-center justify-between gap-4';
 
                 const rawProgress = String(wf.progress).replace('%', '');
-                
+
                 let badgeClass = 'bg-blue-50 text-blue-600 border-blue-200/60';
                 let barClass = 'bg-blue-600';
                 if (String(wf.status).toLowerCase() === 'completed' || rawProgress === '100') {
@@ -274,16 +292,62 @@
                 }
 
                 div.innerHTML = `
-                    <div class="w-48 font-medium text-gray-800 shrink-0">${wf.name}</div>
-                    <div class="shrink-0">
+                    <div class="w-48 font-medium text-gray-800 shrink-0 truncate">${wf.name}</div>
+                    <div class="shrink-0 hidden sm:block">
                         <span class="px-2.5 py-0.5 border rounded-full text-xs font-medium ${badgeClass}">${wf.status}</span>
                     </div>
                     <div class="flex-1 max-w-md bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="${barClass} h-full rounded-full" style="width: ${rawProgress}%;"></div>
+                        <div class="${barClass} h-full rounded-full transition-all duration-1000 ease-out" style="width: ${rawProgress}%;"></div>
                     </div>
                     <div class="w-12 text-right font-medium text-gray-600 shrink-0">${rawProgress}%</div>
                 `;
                 wfContainer.appendChild(div);
+            });
+        }
+
+        // --- AI Interaction Logic ---
+        function setupAIBar() {
+            const queryInput = document.getElementById('ai-query');
+            const sendBtn = document.getElementById('ai-send');
+            const sendIcon = document.getElementById('ai-send-icon');
+            const loadingIcon = document.getElementById('ai-loading-icon');
+
+            const handleSendText = async () => {
+                const query = queryInput.value.trim();
+                if (!query) return;
+
+                // UI Loading State
+                queryInput.disabled = true;
+                sendIcon.classList.add('hidden');
+                loadingIcon.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            source: 'kynkode_frontend', 
+                            action: 'ASK_AI', 
+                            data: { text: query } 
+                        })
+                    });
+                    const result = await response.json();
+                    alert("KYNKODE AI: " + (result.ai_response || "Action processed successfully.")); 
+                } catch (error) { 
+                    console.error("AI Request Error:", error);
+                    alert("Could not connect to KYNKODE AI backend. Check console for details.");
+                } finally {
+                    // Reset UI
+                    queryInput.disabled = false;
+                    queryInput.value = '';
+                    queryInput.focus();
+                    sendIcon.classList.remove('hidden');
+                    loadingIcon.classList.add('hidden');
+                }
+            };
+
+            sendBtn.addEventListener('click', handleSendText);
+            queryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleSendText();
             });
         }
     </script>

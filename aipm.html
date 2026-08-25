@@ -22,12 +22,13 @@
     const { useState, useRef } = React;
 
     // SECURE CONFIGURATION: Only point to GAS. No API keys here.
-    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw_Nim6b0w_AOPhxRdVB54KKMpxILKCLaCaFm_Ql8ZMMgzZrHBuA3g09GcfcGvb25Dp/exec';
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzo3y7oSSA4GCm6qgxry9Mg2LijmWMD_hazwaI8_OA07dvbdPoFzDqdQ06Q6nQFtuqA/exec';
 
     function App() {
       const [query, setQuery] = useState('');
       const [isRecording, setIsRecording] = useState(false);
       const [isProcessing, setIsProcessing] = useState(false);
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
       
       const mediaRecorder = useRef(null);
       const audioChunks = useRef([]);
@@ -36,7 +37,9 @@
         bot: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-400"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>,
         dashboard: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>,
         mic: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>,
-        send: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        send: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>,
+        menu: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
+        close: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       };
 
       // ==========================================
@@ -108,29 +111,65 @@
       };
 
       return (
-        <div className="flex h-screen text-gray-800">
+        <div className="flex flex-col md:flex-row h-screen text-gray-800 relative overflow-hidden">
           
-          {/* SIDEBAR */}
-          <div className="w-64 sidebar-bg text-white flex flex-col p-4 m-4 rounded-2xl shadow-xl">
-            <div className="flex items-center gap-3 px-2 mb-8 mt-2">
+          {/* MOBILE HEADER BAR */}
+          <div className="md:hidden flex items-center justify-between p-4 sidebar-bg text-white shadow-md z-30">
+            <div className="flex items-center gap-3">
               {icons.bot}
-              <div>
-                <h1 className="font-bold text-lg leading-tight">AI Practice Manager</h1>
-                <p className="text-xs text-gray-400">Your intelligent operations assistant</p>
+              <span className="font-bold text-base">KYNKODE AI</span>
+            </div>
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+              className="p-2 rounded-lg bg-blue-950/50 text-gray-200 hover:text-white"
+            >
+              {isMobileMenuOpen ? icons.close : icons.menu}
+            </button>
+          </div>
+
+          {/* MOBILE BACKDROP OVERLAY */}
+          {isMobileMenuOpen && (
+            <div 
+              className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+          )}
+
+          {/* SIDEBAR */}
+          <div className={`
+            fixed md:relative inset-y-0 left-0 z-50 w-64 sidebar-bg text-white flex flex-col p-4 m-0 md:m-4 md:rounded-2xl shadow-xl transition-transform duration-300 ease-in-out
+            ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          `}>
+            <div className="flex items-center justify-between px-2 mb-8 mt-2">
+              <div className="flex items-center gap-3">
+                {icons.bot}
+                <div>
+                  <h1 className="font-bold text-lg leading-tight">AI Practice Manager</h1>
+                  <p className="text-xs text-gray-400">Your intelligent operations assistant</p>
+                </div>
               </div>
+              <button className="md:hidden text-gray-400 p-1" onClick={() => setIsMobileMenuOpen(false)}>
+                {icons.close}
+              </button>
             </div>
 
             <div className="text-xs font-bold text-gray-500 mb-4 px-2 tracking-wider">KYNKODE</div>
             <nav className="space-y-2 flex-1">
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-400 font-medium cursor-pointer">
+              <div 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-400 font-medium cursor-pointer"
+              >
                 {icons.dashboard} <span className="text-sm">Dashboard</span>
               </div>
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white cursor-pointer">
+              <div 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white cursor-pointer"
+              >
                 {icons.dashboard} <span className="text-sm">Insights</span>
               </div>
             </nav>
 
-            <div className="widget-bg rounded-xl p-4 border border-blue-900/50">
+            <div className="widget-bg rounded-xl p-4 border border-blue-900/50 mt-auto">
               <p className="text-sm text-gray-300">Practice Score</p>
               <div className="flex items-baseline gap-1 mt-1">
                 <span className="text-3xl font-bold">82</span>
@@ -141,19 +180,20 @@
           </div>
 
           {/* MAIN CONTENT */}
-          <div className="flex-1 p-8 overflow-y-auto flex flex-col">
+          <div className="flex-1 p-4 md:p-8 overflow-y-auto flex flex-col">
             
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
               <div>
-                <h2 className="text-2xl font-bold">Good morning, Dr. Chris 👋</h2>
-                <p className="text-gray-500">Here's your practice overview for today.</p>
+                <h2 className="text-xl md:text-2xl font-bold">Good morning, Dr. Chris 👋</h2>
+                <p className="text-gray-500 text-sm md:text-base">Here's your practice overview for today.</p>
               </div>
-              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 text-sm font-medium">
+              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 text-sm font-medium self-start sm:self-auto">
                 Tuesday, 19 Aug 2026
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            {/* KPI METRICS GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               {[
                 { n: "5", l: "Critical Alerts", c: "text-red-500" },
                 { n: "11", l: "Follow-ups Due", c: "text-yellow-600" },
@@ -167,8 +207,9 @@
               ))}
             </div>
 
-            <div className="grid grid-cols-3 gap-6 flex-1">
-              <div className="col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            {/* CONTENT SECTIONS GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+              <div className="md:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
                 <h3 className="font-bold text-lg mb-4">Top Priorities Today</h3>
                 <div className="space-y-4">
                   {[
@@ -179,17 +220,17 @@
                     { t: "Review KES 34,200 of stock expiring soon", p: "Low", c: "text-green-600 bg-green-50" }
                   ].map((row, i) => (
                     <div key={i} className="flex items-center justify-between p-2 -mx-2 rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4">
                         <span className="text-gray-400 text-sm">{i+1}</span>
                         <span className="text-gray-700 text-sm font-medium">{row.t}</span>
                       </div>
-                      <span className={`text-xs font-semibold px-2 py-1 rounded-md ${row.c}`}>{row.p}</span>
+                      <span className={`text-xs font-semibold px-2 py-1 rounded-md ml-2 shrink-0 ${row.c}`}>{row.p}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
                 <h3 className="font-bold text-lg mb-4">Practice Performance <span className="text-gray-400 text-sm font-normal">(This Week)</span></h3>
                 <div className="grid grid-cols-2 gap-4">
                   {[
@@ -209,8 +250,8 @@
             </div>
 
             {/* ASK AI BAR */}
-            <div className="mt-6 bg-white rounded-2xl shadow-lg border border-blue-100 p-3 flex items-center gap-4">
-              <span className="font-bold text-blue-800 whitespace-nowrap pl-2">
+            <div className="mt-6 bg-white rounded-2xl shadow-lg border border-blue-100 p-3 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4">
+              <span className="font-bold text-blue-800 whitespace-nowrap pl-2 text-sm sm:text-base">
                 {isProcessing ? "Processing..." : "Ask KYNKODE AI"}
               </span>
               <input 
@@ -220,22 +261,24 @@
                 onKeyDown={(e) => e.key === 'Enter' && handleSendText()}
                 placeholder="Ask anything about your practice..." 
                 disabled={isProcessing}
-                className="flex-1 bg-transparent border-none outline-none text-gray-700 w-full disabled:opacity-50" 
+                className="flex-1 bg-transparent border-none outline-none text-gray-700 w-full min-w-[150px] text-sm sm:text-base disabled:opacity-50" 
               />
-              <button 
-                onClick={toggleVoice}
-                disabled={isProcessing}
-                className={`p-3 rounded-xl transition-all ${isRecording ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'} disabled:opacity-50`}
-              >
-                {icons.mic}
-              </button>
-              <button 
-                onClick={handleSendText}
-                disabled={isProcessing}
-                className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md transition-all disabled:bg-gray-400"
-              >
-                {icons.send}
-              </button>
+              <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                <button 
+                  onClick={toggleVoice}
+                  disabled={isProcessing}
+                  className={`p-3 rounded-xl transition-all ${isRecording ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'} disabled:opacity-50`}
+                >
+                  {icons.mic}
+                </button>
+                <button 
+                  onClick={handleSendText}
+                  disabled={isProcessing}
+                  className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md transition-all disabled:bg-gray-400"
+                >
+                  {icons.send}
+                </button>
+              </div>
             </div>
             
             <div className="text-center mt-3 text-xs text-blue-800 font-semibold">

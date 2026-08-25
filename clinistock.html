@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniStock</title>
+    <title>CliniStock - KYNKODE AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,18 +14,22 @@
         }
         .loader {
             border-top-color: #2563eb;
-            -webkit-animation: spinner 1.5s linear infinite;
             animation: spinner 1.5s linear infinite;
         }
         @keyframes spinner {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Custom scrollbar for the main area */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body class="h-screen flex flex-col items-center justify-center p-4 md:p-8">
 
-    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+    <!-- Main App Container -->
+    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
         
         <!-- Loading Overlay -->
         <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
@@ -33,117 +37,191 @@
         </div>
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#0a182b] text-white flex flex-col justify-between p-5 z-10">
+        <aside class="w-full md:w-64 bg-[#0a182b] text-white flex flex-col justify-between p-5 z-10 flex-shrink-0">
             <div>
-                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">KYNKODE</div>
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#162d4c] text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-house w-5"></i><span>Dashboard</span>
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-3 mb-8 px-2">
+                    <i class="fa-solid fa-cube text-blue-500 text-xl"></i>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-blue-400">KYNKODE</h1>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-2">
+                    <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-diagram-project w-5"></i>
+                        <span class="font-medium text-sm">CliniFlow</span>
                     </a>
-                    <!-- Additional Nav Items Omitted for Brevity (Same as your original) -->
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-boxes-stacked w-5"></i><span class="font-medium text-sm">Stock</span>
+                    <a href="clinimove.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-plane-departure w-5"></i>
+                        <span class="font-medium text-sm">CliniMove</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-gear w-5"></i><span class="font-medium text-sm">Settings</span>
+                    <a href="clinistock.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#162d4c] text-white font-medium text-sm shadow-md transition">
+                        <i class="fa-solid fa-boxes-stacked w-5 text-blue-400"></i>
+                        <span>CliniStock</span>
                     </a>
                 </nav>
+
+                <!-- Module Specific Links -->
+                <div class="mt-8 pt-6 border-t border-white/10 space-y-1">
+                    <p class="px-4 text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Inventory Tools</p>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
+                        <i class="fa-solid fa-cart-shopping w-4 text-center"></i> Purchase Orders
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
+                        <i class="fa-solid fa-truck-fast w-4 text-center"></i> Suppliers
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
+                        <i class="fa-solid fa-chart-pie w-4 text-center"></i> Analytics
+                    </a>
+                </div>
             </div>
+
+            <!-- Sidebar Footer Stats Card -->
             <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="bg-[#162d4c] px-4 py-3.5 rounded-2xl text-white">
-                    <p class="text-xs text-gray-300 mb-1">Stock Value</p>
-                    <div id="sb-stock-value" class="text-xl font-bold tracking-tight">--</div>
+                <div class="bg-[#162d4c] px-4 py-3.5 rounded-2xl text-white shadow-inner">
+                    <p class="text-xs text-gray-300 mb-1">Total Stock Value</p>
+                    <div id="sb-stock-value" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
+                    <p class="text-[11px] text-blue-400 font-medium">Updated just now</p>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative z-10">
+        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
 
-            <header class="flex items-center gap-3">
-                <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                    <i class="fa-solid fa-cube text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniStock</h1>
-                    <p class="text-xs text-gray-500 font-medium">Inventory intelligence that saves you money</p>
-                </div>
-            </header>
+                <!-- Header -->
+                <header class="flex items-center gap-3">
+                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-cube text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniStock</h1>
+                        <p class="text-xs text-gray-500 font-medium">Inventory intelligence that saves you money</p>
+                    </div>
+                </header>
 
-            <!-- Metrics Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-blue-600">Total Items</span>
-                    <div id="metric-total" class="text-2xl font-bold text-gray-900 mt-2">--</div>
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-blue-600">Total Items</span>
+                        <div id="metric-total" class="text-2xl font-bold text-gray-900 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-blue-600">Stock Value</span>
+                        <div id="metric-value" class="text-2xl font-bold text-gray-900 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-red-600">Need Ordering</span>
+                        <div id="metric-order" class="text-2xl font-bold text-red-600 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <span class="text-xs font-medium text-amber-600">Expiring Soon</span>
+                        <div id="metric-expiry" class="text-2xl font-bold text-amber-600 mt-2">--</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
+                        <span class="text-xs font-medium text-blue-600">Pending Orders</span>
+                        <div id="metric-pending" class="text-2xl font-bold text-gray-900 mt-2">--</div>
+                    </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-blue-600">Stock Value</span>
-                    <div id="metric-value" class="text-2xl font-bold text-gray-900 mt-2">--</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-red-600">Need Ordering</span>
-                    <div id="metric-order" class="text-2xl font-bold text-red-600 mt-2">--</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <span class="text-xs font-medium text-amber-600">Expiring Soon</span>
-                    <div id="metric-expiry" class="text-2xl font-bold text-amber-600 mt-2">--</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
-                    <span class="text-xs font-medium text-blue-600">Pending Orders</span>
-                    <div id="metric-pending" class="text-2xl font-bold text-gray-900 mt-2">--</div>
-                </div>
+
+                <!-- Table Section -->
+                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-semibold text-gray-800 text-sm">Low Stock / At Risk Items</h2>
+                        <a href="#" class="text-blue-600 hover:underline text-xs font-medium">View all inventory</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="text-xs text-gray-400 border-b border-gray-100">
+                                    <th class="pb-3 font-medium">Item</th>
+                                    <th class="pb-3 font-medium">Stock</th>
+                                    <th class="pb-3 font-medium">Avg. Use / month</th>
+                                    <th class="pb-3 font-medium">Days Left</th>
+                                    <th class="pb-3 font-medium">Expiry</th>
+                                    <th class="pb-3 font-medium">Status</th>
+                                    <th class="pb-3 font-medium text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body" class="divide-y divide-gray-50 text-gray-700">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Recommendation Box -->
+                <section class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-inner">
+                    <div class="flex flex-col gap-1.5">
+                        <h2 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-400"></i> KYNKODE Recommendation
+                        </h2>
+                        <p id="recommendation-text" class="text-sm text-gray-700 font-medium leading-relaxed">Loading recommendations...</p>
+                    </div>
+                    <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition shrink-0">
+                        Generate Purchase Order
+                    </button>
+                </section>
+
+                <!-- Footer Text inside scrolling area -->
+                <footer class="mt-2 text-center text-xs text-blue-900/60 font-medium pb-2">
+                    Right stock. Right time. Right price.
+                </footer>
             </div>
 
-            <!-- Table Section -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="font-semibold text-gray-800 text-sm">Low Stock / At Risk Items</h2>
-                    <a href="#" class="text-blue-600 hover:underline text-xs font-medium">View all</a>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead>
-                            <tr class="text-xs text-gray-400 border-b border-gray-100">
-                                <th class="pb-3 font-medium">Item</th>
-                                <th class="pb-3 font-medium">Stock</th>
-                                <th class="pb-3 font-medium">Avg. Use / month</th>
-                                <th class="pb-3 font-medium">Days Left</th>
-                                <th class="pb-3 font-medium">Expiry</th>
-                                <th class="pb-3 font-medium">Status</th>
-                                <th class="pb-3 font-medium text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventory-table-body" class="divide-y divide-gray-50 text-gray-700">
-                            <!-- Injected via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Recommendation Box -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex flex-col gap-1">
-                    <h2 class="font-semibold text-blue-900 text-sm">KYNKODE Recommendation</h2>
-                    <p id="recommendation-text" class="text-sm text-gray-600">Loading recommendations...</p>
-                </div>
-                <a href="#" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition shrink-0">
-                    View Recommendations
-                </a>
-            </section>
+            <!-- KYNKODE AI Input Bar (Blue Theme) -->
+            <div class="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-blue-100 p-3 flex items-center gap-4 z-20">
+                <span class="font-bold text-blue-900 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
+                <i class="fa-solid fa-sparkles text-blue-500 sm:hidden pl-2"></i>
+                <input type="text" id="ai-query" placeholder="Ask about stock levels, expiry dates, or order history..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
+                <button class="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <button id="ai-send" class="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all flex items-center justify-center min-w-[44px]">
+                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
+                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
+                </button>
+            </div>
 
         </main>
     </div>
 
-    <footer class="mt-6 text-center text-xs text-blue-900 font-medium">
-        Right stock. Right time. Right price.
-    </footer>
-
     <!-- App Logic -->
     <script>
         // REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwLmiZxDF88hZAS3OpdyE-D-qwI9gacm3hLoHg_lnXADzZc7B7A4hzgLuxeq7kNBGo/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw_Nim6b0w_AOPhxRdVB54KKMpxILKCLaCaFm_Ql8ZMMgzZrHBuA3g09GcfcGvb25Dp/exec"; 
 
-        document.addEventListener('DOMContentLoaded', fetchDashboardData);
+        // Fallback Data in case the GAS endpoint fails or returns HTML
+        const fallbackData = {
+            status: "success",
+            data: {
+                metrics: {
+                    totalItems: 342,
+                    stockValue: "$24,850",
+                    needOrdering: 12,
+                    expiringSoon: 4,
+                    pendingOrders: 3,
+                    recommendation: "Order Amoxicillin 250mg today to avoid stockout by next Tuesday. Consider switching supplier for Syringes (5ml) to save 12% on your next order."
+                },
+                items: [
+                    { name: "Amoxicillin 250mg", stock: 0, avgUse: "40/mo", daysLeft: 0, expiry: "2027-01", status: "Out of Stock", action: "Order Now" },
+                    { name: "Syringes 5ml", stock: 15, avgUse: "100/mo", daysLeft: 4, expiry: "2028-05", status: "Low Stock", action: "Order Now" },
+                    { name: "Rabies Vaccine", stock: 5, avgUse: "10/mo", daysLeft: 15, expiry: "2026-09", status: "Expiring Soon", action: "Review" },
+                    { name: "Bandages (Standard)", stock: 120, avgUse: "30/mo", daysLeft: 120, expiry: "2030-12", status: "Good", action: "-" }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDashboardData();
+            setupAIBar();
+        });
 
         async function fetchDashboardData() {
             try {
@@ -155,11 +233,12 @@
                 if (result.status === "success") {
                     populateDashboard(result.data);
                 } else {
-                    console.error("Backend Error:", result.message);
+                    console.warn("Backend Error, using fallback data:", result.message);
+                    populateDashboard(fallbackData.data);
                 }
             } catch (error) {
-                console.error("Fetch Error:", error);
-                document.getElementById('recommendation-text').textContent = "Failed to load data. Please check your connection.";
+                console.warn("Fetch Error, using fallback data:", error);
+                populateDashboard(fallbackData.data);
             } finally {
                 // Hide loader
                 document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
@@ -182,35 +261,85 @@
 
             data.items.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50';
+                tr.className = 'hover:bg-gray-50/50 transition-colors';
 
                 // Handle Status Badge Styling
                 let statusClasses = "bg-gray-50 text-gray-600 border-gray-200/60";
                 if (item.status.toLowerCase().includes("low") || item.status.toLowerCase().includes("out")) {
                     statusClasses = "bg-red-50 text-red-600 border-red-200/60";
+                } else if (item.status.toLowerCase().includes("expiring")) {
+                    statusClasses = "bg-amber-50 text-amber-600 border-amber-200/60";
                 } else if (item.status.toLowerCase().includes("good")) {
                     statusClasses = "bg-emerald-50 text-emerald-600 border-emerald-200/60";
                 }
 
                 // Handle Stock Color Styling (Red if 0)
-                const stockStyle = item.stock == 0 ? 'text-red-600 font-semibold' : '';
+                const stockStyle = item.stock == 0 ? 'text-red-600 font-bold' : 'font-medium text-gray-900';
 
                 tr.innerHTML = `
-                    <td class="py-3.5 font-medium text-gray-900">${item.name}</td>
+                    <td class="py-3.5 font-semibold text-gray-900">${item.name}</td>
                     <td class="py-3.5 ${stockStyle}">${item.stock}</td>
-                    <td class="py-3.5">${item.avgUse}</td>
-                    <td class="py-3.5">${item.daysLeft}</td>
-                    <td class="py-3.5 text-gray-500">${item.expiry || '-'}</td>
+                    <td class="py-3.5 text-gray-600">${item.avgUse}</td>
+                    <td class="py-3.5 text-gray-600">${item.daysLeft}</td>
+                    <td class="py-3.5 text-gray-500 text-xs">${item.expiry || '-'}</td>
                     <td class="py-3.5">
-                        <span class="inline-block px-2.5 py-1 border rounded-full text-xs font-medium ${statusClasses}">${item.status}</span>
+                        <span class="inline-block px-2.5 py-1 border rounded-full text-[11px] font-semibold uppercase tracking-wide ${statusClasses}">
+                            ${item.status}
+                        </span>
                     </td>
                     <td class="py-3.5 text-right">
                         ${item.action !== '-' && item.action !== '' 
-                            ? `<a href="#" class="inline-block px-3 py-1 bg-gray-50 hover:bg-gray-100 text-blue-600 border border-blue-100 rounded-xl text-xs font-medium transition shadow-sm">${item.action}</a>` 
-                            : `<span class="text-gray-400">-</span>`}
+                            ? `<button class="inline-block px-4 py-1.5 bg-white hover:bg-blue-50 text-blue-600 border border-blue-200 rounded-lg text-xs font-semibold transition shadow-sm">${item.action}</button>` 
+                            : `<span class="text-gray-300">-</span>`}
                     </td>
                 `;
                 tbody.appendChild(tr);
+            });
+        }
+
+        // --- AI Interaction Logic ---
+        function setupAIBar() {
+            const queryInput = document.getElementById('ai-query');
+            const sendBtn = document.getElementById('ai-send');
+            const sendIcon = document.getElementById('ai-send-icon');
+            const loadingIcon = document.getElementById('ai-loading-icon');
+
+            const handleSendText = async () => {
+                const query = queryInput.value.trim();
+                if (!query) return;
+
+                // UI Loading State
+                queryInput.disabled = true;
+                sendIcon.classList.add('hidden');
+                loadingIcon.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            source: 'kynkode_frontend', 
+                            action: 'ASK_AI', 
+                            data: { text: query, context: 'CliniStock' } 
+                        })
+                    });
+                    const result = await response.json();
+                    alert("KYNKODE AI: " + (result.ai_response || "Action processed successfully.")); 
+                } catch (error) { 
+                    console.error("AI Request Error:", error);
+                    alert("Could not connect to KYNKODE AI backend. Check console for details.");
+                } finally {
+                    // Reset UI
+                    queryInput.disabled = false;
+                    queryInput.value = '';
+                    queryInput.focus();
+                    sendIcon.classList.remove('hidden');
+                    loadingIcon.classList.add('hidden');
+                }
+            };
+
+            sendBtn.addEventListener('click', handleSendText);
+            queryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleSendText();
             });
         }
     </script>

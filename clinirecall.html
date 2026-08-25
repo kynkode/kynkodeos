@@ -177,9 +177,13 @@
                 <span class="font-bold text-emerald-900 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
                 <i class="fa-solid fa-sparkles text-emerald-500 sm:hidden pl-2"></i>
                 <input type="text" id="ai-query" placeholder="Ask to draft a recall message, check overdue appointments, or configure templates..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
-                <button class="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition-all">
-                    <i class="fa-solid fa-microphone"></i>
+                
+                <!-- Voice Recording Button -->
+                <button id="ai-mic" title="Click to record voice prompt" class="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition-all flex items-center justify-center">
+                    <i class="fa-solid fa-microphone" id="ai-mic-icon"></i>
                 </button>
+                
+                <!-- Send Button -->
                 <button id="ai-send" class="p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center min-w-[44px]">
                     <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
                     <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
@@ -192,9 +196,9 @@
     <!-- Frontend Fetch Integration -->
     <script>
         // REPLACE WITH YOUR PUBLISHED APPS SCRIPT WEB APP URL
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbw_Nim6b0w_AOPhxRdVB54KKMpxILKCLaCaFm_Ql8ZMMgzZrHBuA3g09GcfcGvb25Dp/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzo3y7oSSA4GCm6qgxry9Mg2LijmWMD_hazwaI8_OA07dvbdPoFzDqdQ06Q6nQFtuqA/exec";
 
-        // Fallback Data in case the GAS endpoint fails
+        // Fallback Data in case the GET request returns default status text
         const fallbackData = {
             status: "success",
             data: {
@@ -220,6 +224,10 @@
             }
         };
 
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchRecallData();
             setupAIBar();
@@ -228,20 +236,30 @@
         async function fetchRecallData() {
             try {
                 const response = await fetch(GAS_URL);
-                if (!response.ok) throw new Error('Network error');
+                if (!response.ok) throw new Error('Network response was not ok');
                 
-                const result = await response.json();
-                if (result.status === "success") {
+                const text = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    // Backend doGet returns plain text string "KYNKODE AGI Active." by default
+                    result = null;
+                }
+
+                if (result && result.status === "success" && result.data) {
                     populateDashboard(result.data);
                 } else {
-                    console.warn("Backend Error, using fallback data:", result.message);
                     populateDashboard(fallbackData.data);
                 }
             } catch (error) {
-                console.warn("Fetch Error, using fallback data:", error);
+                console.warn("Fetch Error, using default dashboard state:", error);
                 populateDashboard(fallbackData.data);
             } finally {
-                document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.classList.add('opacity-0', 'pointer-events-none');
+                }
             }
         }
 
@@ -333,46 +351,115 @@
         function setupAIBar() {
             const queryInput = document.getElementById('ai-query');
             const sendBtn = document.getElementById('ai-send');
+            const micBtn = document.getElementById('ai-mic');
+
+            sendBtn.addEventListener('click', () => {
+                const query = queryInput.value.trim();
+                if (query) sendToAI(query, null);
+            });
+
+            queryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const query = queryInput.value.trim();
+                    if (query) sendToAI(query, null);
+                }
+            });
+
+            micBtn.addEventListener('click', toggleVoiceRecording);
+        }
+
+        async function toggleVoiceRecording() {
+            const micBtn = document.getElementById('ai-mic');
+            const micIcon = document.getElementById('ai-mic-icon');
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = async () => {
+                            const base64Audio = reader.result;
+                            await sendToAI(null, base64Audio);
+                        };
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+
+                    // UI Recording Feedback
+                    micBtn.classList.add('bg-red-50', 'text-red-600', 'animate-pulse');
+                    micBtn.classList.remove('bg-emerald-50', 'text-emerald-600');
+                    micIcon.className = 'fa-solid fa-square';
+                } catch (err) {
+                    alert('Microphone access denied or not supported on this browser.');
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+
+                // Reset Mic UI
+                micBtn.classList.remove('bg-red-50', 'text-red-600', 'animate-pulse');
+                micBtn.classList.add('bg-emerald-50', 'text-emerald-600');
+                micIcon.className = 'fa-solid fa-microphone';
+            }
+        }
+
+        async function sendToAI(textInput, audioB64) {
+            const queryInput = document.getElementById('ai-query');
             const sendIcon = document.getElementById('ai-send-icon');
             const loadingIcon = document.getElementById('ai-loading-icon');
 
-            const handleSendText = async () => {
-                const query = queryInput.value.trim();
-                if (!query) return;
+            // Set UI to loading state
+            queryInput.disabled = true;
+            sendIcon.classList.add('hidden');
+            loadingIcon.classList.remove('hidden');
 
-                // UI Loading State
-                queryInput.disabled = true;
-                sendIcon.classList.add('hidden');
-                loadingIcon.classList.remove('hidden');
-
-                try {
-                    const response = await fetch(GAS_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({ 
-                            source: 'kynkode_frontend', 
-                            action: 'ASK_AI', 
-                            data: { text: query, context: 'CliniRecall' } 
-                        })
-                    });
-                    const result = await response.json();
-                    alert("KYNKODE AI: " + (result.ai_response || "Action processed successfully.")); 
-                } catch (error) { 
-                    console.error("AI Request Error:", error);
-                    alert("Could not connect to KYNKODE AI backend. Check console for details.");
-                } finally {
-                    // Reset UI
-                    queryInput.disabled = false;
-                    queryInput.value = '';
-                    queryInput.focus();
-                    sendIcon.classList.remove('hidden');
-                    loadingIcon.classList.add('hidden');
+            const requestPayload = {
+                source: 'kynkode_frontend',
+                action: 'ASK_AI',
+                data: {
+                    text: textInput || "",
+                    audioBase64: audioB64 || null,
+                    context: 'CliniRecall'
                 }
             };
 
-            sendBtn.addEventListener('click', handleSendText);
-            queryInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') handleSendText();
-            });
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(requestPayload)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert("KYNKODE AI Response:\n\n" + result.ai_response);
+                } else if (result.error) {
+                    alert("Backend Error: " + result.error);
+                } else {
+                    alert("KYNKODE AI: Request processed.");
+                }
+            } catch (error) {
+                console.error("AI Request Error:", error);
+                alert("Could not connect to KYNKODE AI backend. Verify Web App deployment and CORS settings.");
+            } finally {
+                // Reset UI State
+                queryInput.disabled = false;
+                queryInput.value = '';
+                queryInput.focus();
+                sendIcon.classList.remove('hidden');
+                loadingIcon.classList.add('hidden');
+            }
         }
     </script>
 </body>

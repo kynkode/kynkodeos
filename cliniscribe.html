@@ -63,14 +63,34 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body class="min-h-screen flex flex-col items-center justify-between p-0 md:p-8 relative">
 
-    <div class="w-full max-w-7xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+    <div class="w-full h-screen md:h-auto max-w-7xl md:bg-white md:rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border-0 md:border border-gray-100 relative">
+
+        <!-- Mobile Header Bar (Visible only on mobile) -->
+        <div class="md:hidden flex items-center justify-between p-4 bg-[#0b1f3f] text-white shadow-md z-30 shrink-0">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-microscope text-blue-400"></i>
+                <span class="font-bold text-base tracking-wide">CliniScribe AI</span>
+            </div>
+            <button id="mobileMenuBtn" class="p-2 rounded-lg bg-blue-900/50 text-gray-200 hover:text-white focus:outline-none transition-colors">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Backdrop Overlay -->
+        <div id="mobileBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
 
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5 shrink-0">
+        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-50 w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-full md:h-auto shadow-2xl md:shadow-none">
             <div>
-                <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase mb-8">KYNKODE</div>
+                <div class="flex items-center justify-between mb-8">
+                    <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase">KYNKODE</div>
+                    <!-- Mobile Close Button -->
+                    <button id="closeMenuBtn" class="md:hidden text-gray-400 hover:text-white p-1 focus:outline-none transition-colors">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
                 <nav class="space-y-1">
                     <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
                         <i class="fa-solid fa-house w-5"></i><span class="font-medium text-sm">Dashboard</span>
@@ -101,21 +121,21 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative overflow-y-auto max-h-[90vh]">
+        <main class="flex-1 p-4 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative overflow-y-auto max-h-[100vh] md:max-h-[90vh]">
             
             <div id="progressBarContainer" class="absolute top-0 left-0 w-full h-1 bg-gray-200 overflow-hidden hidden">
                 <div class="h-full w-full animate-shimmer"></div>
             </div>
 
-            <!-- Top Header -->
+            <!-- Top Header (Desktop & Content context) -->
             <header class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
+                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md hidden md:flex items-center justify-center">
                         <i class="fa-solid fa-pen-nib text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniScribe AI</h1>
-                        <p id="statusText" class="text-xs text-blue-600 font-medium">System ready. Waiting for input...</p>
+                        <h1 class="text-xl md:text-2xl font-bold text-gray-900 tracking-tight hidden md:block">CliniScribe AI</h1>
+                        <p id="statusText" class="text-xs md:text-sm text-blue-600 font-medium md:mt-1">System ready. Waiting for input...</p>
                     </div>
                 </div>
             </header>
@@ -147,10 +167,10 @@
                         <span class="w-1.5 h-6 bg-blue-500 rounded-full animate-wave-4"></span>
                     </div>
                     <div class="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-50">
-                        <button id="recordBtn" class="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition cursor-pointer">
+                        <button id="recordBtn" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3 md:py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition cursor-pointer">
                             <i class="fa-solid fa-microphone text-blue-600"></i> Record
                         </button>
-                        <button id="stopBtn" disabled class="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-50 text-red-600 border border-red-100 text-sm font-medium hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="stopBtn" disabled class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3 md:py-2 rounded-xl bg-red-50 text-red-600 border border-red-100 text-sm font-medium hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-square text-xs"></i> Stop
                         </button>
                     </div>
@@ -162,27 +182,27 @@
                     <div class="flex flex-col gap-3 text-sm">
                         <div class="flex flex-col gap-1">
                             <label class="text-gray-500 text-xs font-medium">Clinic Facility</label>
-                            <select id="clinicName" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                            <select id="clinicName" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                                 <option value="">Loading clinics...</option>
                             </select>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
                                 <label class="text-gray-500 text-xs font-medium">Provider Name</label>
-                                <input type="text" id="doctorName" placeholder="Dr. John Doe" value="Dr. John Doe" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                                <input type="text" id="doctorName" placeholder="Dr. John Doe" value="Dr. John Doe" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="text-gray-500 text-xs font-medium">Location</label>
-                                <input type="text" id="manualLocation" placeholder="City, Region" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                                <input type="text" id="manualLocation" placeholder="City, Region" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                             </div>
                         </div>
                         <div class="flex flex-col gap-1">
                             <label class="text-gray-500 text-xs font-medium">Patient Email</label>
-                            <input type="email" id="patientEmail" placeholder="client@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
+                            <input type="email" id="patientEmail" placeholder="client@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
                         </div>
                         <div class="flex flex-col gap-1">
                             <label class="text-gray-500 text-xs font-medium">Custom Letterhead (Optional)</label>
-                            <input type="file" id="letterheadUpload" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                            <input type="file" id="letterheadUpload" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 md:file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                         </div>
                     </div>
                 </section>
@@ -190,11 +210,11 @@
 
             <!-- Transcript Area -->
             <section id="transcriptCard" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex justify-between items-center mb-3">
+                <div class="flex flex-wrap gap-2 justify-between items-center mb-3">
                     <h2 class="font-semibold text-gray-800 text-sm">Live Transcript</h2>
                     <span class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-md">Edit manually before analyzing</span>
                 </div>
-                <textarea id="transcriptText" class="w-full bg-gray-50 text-sm text-gray-700 rounded-xl p-4 min-h-[100px] focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 border border-gray-200 resize-y placeholder-gray-400 transition-all leading-relaxed" placeholder="Transcription will appear here..."></textarea>
+                <textarea id="transcriptText" class="w-full bg-gray-50 text-sm text-gray-700 rounded-xl p-4 min-h-[100px] md:min-h-[150px] focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 border border-gray-200 resize-y placeholder-gray-400 transition-all leading-relaxed" placeholder="Transcription will appear here..."></textarea>
             </section>
 
             <!-- AI Warnings -->
@@ -206,10 +226,10 @@
             </div>
 
             <!-- Bottom Section -->
-            <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-6">
+            <section class="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-6">
                 
-                <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-                    <h2 class="font-semibold text-gray-800 text-sm flex items-center gap-2" id="generatedNoteTitle">
+                <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100 pb-3 gap-2">
+                    <h2 class="font-semibold text-gray-800 text-sm flex flex-wrap items-center gap-2" id="generatedNoteTitle">
                         AI Generated Note 
                         <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>
                     </h2>
@@ -251,47 +271,49 @@
 
                     <div class="lg:col-span-3 flex flex-col gap-2.5">
                         <!-- 1. Generate Consultation Report -->
-                        <button id="genConsultBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="genConsultBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-stethoscope"></i> Generate Consultation Report
                         </button>
                         
                         <!-- 2. Generate Radiographic Report -->
-                        <button id="genRadioBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="genRadioBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-x-ray"></i> Generate Radiographic Report
                         </button>
                         
                         <!-- 3. Generate Ultrasound Report -->
-                        <button id="genUltraBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="genUltraBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-wave-square"></i> Generate Ultrasound Report
                         </button>
                         
                         <!-- 4. Generate Surgical Report -->
-                        <button id="genSurgBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="genSurgBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-scissors-medical"></i> Generate Surgical Report
                         </button>
                         
                         <!-- 5. Generate Laboratory Report -->
-                        <button id="genLabBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="genLabBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-flask"></i> Generate Laboratory Report
                         </button>
 
                         <div class="border-t border-gray-100 my-1"></div>
 
                         <!-- Export Buttons -->
-                        <button id="downloadPdfBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-file-pdf text-red-500"></i> Download PDFs
-                        </button>
-                        <button id="emailBtn" disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-envelope text-blue-500"></i> Email Report
-                        </button>
+                        <div class="flex gap-2">
+                            <button id="downloadPdfBtn" disabled class="flex-1 flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fa-solid fa-file-pdf text-red-500"></i> PDFs
+                            </button>
+                            <button id="emailBtn" disabled class="flex-1 flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fa-solid fa-envelope text-blue-500"></i> Email
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button onclick="syncToDatabase(getEditedData(), 'save')" class="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
+                <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button onclick="syncToDatabase(getEditedData(), 'save')" class="w-full sm:w-auto px-6 py-3 md:py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
                         Quick Save
                     </button>
-                    <button class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
+                    <button class="w-full sm:w-auto px-6 py-3 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
                         Save Note & Close
                     </button>
                 </div>
@@ -299,12 +321,48 @@
         </main>
     </div>
 
-    <footer class="mt-6 text-center text-xs text-blue-900 font-medium">
+    <footer class="mt-6 mb-8 md:mb-6 text-center text-xs text-blue-900 font-medium hidden md:block">
         CliniScribe saves time, improves accuracy and keeps every record complete.
     </footer>
 
     <!-- App Logic Script -->
     <script>
+        // ==========================================
+        // MOBILE MENU LOGIC
+        // ==========================================
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+        function toggleMobileMenu(show) {
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                mobileBackdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                mobileBackdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', () => toggleMobileMenu(true));
+        closeMenuBtn.addEventListener('click', () => toggleMobileMenu(false));
+        mobileBackdrop.addEventListener('click', () => toggleMobileMenu(false));
+
+        // Auto-close menu when clicking navigation links on mobile
+        document.querySelectorAll('#sidebar nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    toggleMobileMenu(false);
+                }
+            });
+        });
+
+        // ==========================================
+        // APPLICATION LOGIC 
+        // ==========================================
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzP1vzgTNPHx_UV5PwpA8h7kkGmULFlhNUOfmY3kDLpzQr7aGfHCo62W6tKtMYDsVEcg/exec";
 
         let clinicLetterheads = {};
@@ -355,7 +413,6 @@
             }
         }
         
-        // Helper to disable/enable all generation buttons at once
         function setGenerateButtonsDisabled(disabledState) {
             dom.genConsultBtn.disabled = disabledState;
             dom.genRadioBtn.disabled = disabledState;
@@ -482,7 +539,6 @@
             dom.stopBtn.disabled = true;
         };
 
-        // Reusable Report Generator Function
         async function generateReport(requestedReportType) {
             const text = dom.transcript.value.trim();
             if (!text) return alert("Transcript is empty!");
@@ -497,7 +553,7 @@
                     body: JSON.stringify({ 
                         action: 'analyze', 
                         transcript: text,
-                        reportType: requestedReportType // Pass the selected report type to backend
+                        reportType: requestedReportType 
                     }),
                 });
                 const data = await res.json();
@@ -547,7 +603,6 @@
             }
         }
         
-        // Attach click listeners to all new buttons
         dom.genConsultBtn.onclick = () => generateReport("Consultation Report");
         dom.genRadioBtn.onclick = () => generateReport("Radiographic Report");
         dom.genUltraBtn.onclick = () => generateReport("Ultrasound Report");
@@ -569,14 +624,12 @@
             };
         }
 
-        // --- FULL-PAGE LETTERHEAD BACKGROUND LOGIC ---
         async function generatePerfectPdf(docTitle, sections, letterheadSrc) {
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const pdfDoc = await PDFDocument.create();
             const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
             const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-            // 1. Embed the letterhead image once
             let bgImage = null;
             if (letterheadSrc && letterheadSrc.trim() !== "") {
                 try {
@@ -598,33 +651,28 @@
                 }
             }
 
-            // 2. Define Margins to ensure text stays in the "editable" middle band
-            // MASSIVELY INCREASED MARGINS to clear the tall header and footer graphics in image_9fe2f5.png
-            const topMargin = 280;     // Space for the tall top header graphic
-            const bottomMargin = 160;  // Space for the tall bottom footer graphic
-            const sideMargin = 60;     // Slightly wider side margin for a cleaner central look
+            const topMargin = 280;     
+            const bottomMargin = 160;  
+            const sideMargin = 60;     
 
             let page = pdfDoc.addPage();
             const { width, height } = page.getSize();
             const usableWidth = width - sideMargin * 2;
             let y = height - topMargin;
 
-            // 3. Helper function to draw background on any new page
             const drawBackground = (targetPage) => {
                 if (bgImage) {
                     targetPage.drawImage(bgImage, {
                         x: 0,
                         y: 0,
-                        width: width,   // Spans full page width
-                        height: height, // Spans full page height
+                        width: width,   
+                        height: height, 
                     });
                 }
             };
 
-            // Draw background on the very first page
             drawBackground(page);
 
-            // Title
             page.drawText(docTitle, { x: sideMargin, y, size: 16, font: boldFont, color: rgb(0.1, 0.2, 0.4) });
             y -= 30;
 
@@ -647,16 +695,14 @@
                 return lines;
             };
 
-            // 4. Update page break logic to trigger before hitting the footer & auto-draw background
             const checkPageBreak = (neededSpace) => {
                 if (y - neededSpace < bottomMargin) {
                     page = pdfDoc.addPage();
                     drawBackground(page);
-                    y = height - topMargin; // Reset to just beneath the header
+                    y = height - topMargin; 
                 }
             };
 
-            // Render Text Sections
             for (const section of sections) {
                 checkPageBreak(40);
                 
@@ -683,7 +729,6 @@
             return await pdfDoc.save();
         }
 
-        // Helper function to safely convert raw PDF bytes to Base64 in the browser
         const convertBlobToBase64 = (blob) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -742,7 +787,6 @@
             dom.pdfBtn.disabled = false;
         };
 
-        // --- Email PDF Button Logic ---
         dom.emailBtn.onclick = async () => {
             const email = document.getElementById('patientEmail').value.trim();
             const clinic = dom.clinicSelect.value;
@@ -756,7 +800,6 @@
             try {
                 const editedData = getEditedData();
 
-                // 1. Generate Medical Report PDF Bytes
                 const medRecordSections = [
                     { title: "Signalment & Core Disease Category", content: editedData.SOAP["Signalment_Core_Disease_Category"] },
                     { title: "History", content: editedData.SOAP["History"] },
@@ -767,13 +810,11 @@
                 ];
                 const medPdfBytes = await generatePerfectPdf(currentReportType, medRecordSections, letterheadBase64);
                 
-                // Convert to Base64 safely via Blob
                 const medBlob = new Blob([medPdfBytes], { type: 'application/pdf' });
                 const reportPdfBase64 = await convertBlobToBase64(medBlob);
                 
                 let instructionsPdfBase64 = null;
 
-                // 2. Conditionally Generate Instructions PDF Bytes
                 const instructionsContent = editedData.ClientInstructions;
                 if (instructionsContent && !instructionsContent.includes("N/A — Patient deceased")) {
                     const clientSections = [
@@ -784,7 +825,6 @@
                     instructionsPdfBase64 = await convertBlobToBase64(clientBlob);
                 }
 
-                // 3. Dispatch to Backend
                 const payload = {
                     action: "email",
                     patientEmail: email,
@@ -815,7 +855,6 @@
             
             dom.emailBtn.disabled = false;
         };
-
     </script>
 </body>
 </html>

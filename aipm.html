@@ -1,389 +1,711 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KYNKODE AI Practice Manager</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
-    .sidebar-bg { background-color: #0B172E; }
-    .widget-bg { background-color: #1A2A47; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Practice Manager | KYNKODE</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    /* Custom Scrollbar for Chat */
-    .chat-scroll::-webkit-scrollbar { width: 6px; }
-    .chat-scroll::-webkit-scrollbar-track { background: transparent; }
-    .chat-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-  </style>
+    <style>
+        :root {
+            --bg-dark: #0a192f;
+            --bg-darker: #060d1a;
+            --bg-light: #f5f8fc;
+            --text-dark: #1a202c;
+            --text-gray: #718096;
+            --accent-blue: #2b6cb0;
+            --alert-red: #e53e3e;
+            --warning-orange: #dd6b20;
+            --success-green: #38a169;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            display: none;
+            background-color: var(--bg-dark);
+            color: white;
+            padding: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 50;
+        }
+
+        .hamburger {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            z-index: 40;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .brand-icon {
+            font-size: 2rem;
+            color: #63b3ed;
+        }
+
+        .brand-text h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .brand-text p {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a0aec0;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-menu a {
+            color: #cbd5e0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .practice-score {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: auto;
+        }
+
+        .practice-score p {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        .practice-score h2 {
+            font-size: 2rem;
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .practice-score span.total {
+            font-size: 1rem;
+            color: #a0aec0;
+        }
+
+        .practice-score span.status {
+            font-size: 0.8rem;
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            background-color: white;
+            border-radius: 1.5rem;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scrollable-content {
+            padding: 2rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-bottom: 100px; /* Space for floating bar */
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        header h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        header p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .date-chip {
+            background-color: var(--bg-light);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        /* Metrics Row */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .metric-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card p {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .text-red { color: var(--alert-red); }
+        .text-orange { color: var(--warning-orange); }
+        .text-blue { color: var(--accent-blue); }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        /* Priorities List */
+        .priority-list {
+            list-style: none;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+
+        .priority-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f4f8;
+            font-size: 0.9rem;
+        }
+
+        .priority-item:last-child {
+            border-bottom: none;
+        }
+
+        .priority-item .num {
+            color: var(--text-gray);
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+        .badge.high { color: var(--alert-red); }
+        .badge.medium { color: var(--warning-orange); }
+        .badge.low { color: var(--success-green); }
+
+        /* Performance Grid */
+        .performance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .perf-item p {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .perf-item h4 {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+        }
+
+        .perf-item span {
+            font-size: 0.75rem;
+            color: var(--success-green);
+            margin-left: 0.5rem;
+        }
+
+        /* Floating AI Bar */
+        .ai-floating-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .ai-header {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-response-area {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            transition: padding 0.3s ease;
+        }
+
+        .ai-response-area.active {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .ai-input-group {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+
+        .ai-input-group input {
+            flex-grow: 1;
+            border: none;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .ai-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .ai-btn {
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .ai-btn:hover {
+            background: var(--bg-light);
+        }
+
+        .ai-btn.listening {
+            color: var(--alert-red);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Footer text */
+        .footer-text {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            color: white;
+            background-color: var(--bg-darker);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar {
+                position: fixed;
+                height: 100%;
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin: 0;
+                border-radius: 0;
+                margin-top: 60px; /* Header height */
+            }
+            .footer-text { display: none; }
+        }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useRef, useEffect } = React;
-
-    // SECURE CONFIGURATION: Only point to GAS. No API keys here.
-    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwi4nCHOTE5Nqf6fjhAI5_h1lVBcvP7MKo4OAERw328aDWKnTsNvAdNVHrChK7OB8xi/exec';
-
-    function App() {
-      const [query, setQuery] = useState('');
-      const [messages, setMessages] = useState([]);
-      const [isRecording, setIsRecording] = useState(false);
-      const [isProcessing, setIsProcessing] = useState(false);
-      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-      
-      const mediaRecorder = useRef(null);
-      const audioChunks = useRef([]);
-      const chatEndRef = useRef(null);
-
-      // Auto-scroll to bottom of chat
-      useEffect(() => {
-        if (chatEndRef.current) {
-          chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, [messages]);
-
-      // Dynamic Date
-      const currentDate = new Date().toLocaleDateString('en-GB', { 
-        weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' 
-      });
-
-      const icons = {
-        bot: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-400"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>,
-        dashboard: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>,
-        mic: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>,
-        send: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>,
-        menu: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
-        close: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-        bolt: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      };
-
-      // ==========================================
-      // SECURE COMMUNICATION WITH GAS
-      // ==========================================
-      const sendToGAS = async (textData, audioBase64 = null) => {
-        setIsProcessing(true);
-        
-        // Push user message to UI
-        const userText = textData || (audioBase64 ? "🎤 [Voice Command Captured]" : "");
-        if (userText) {
-          setMessages(prev => [...prev, { sender: 'user', text: userText }]);
-        }
-
-        try {
-          // Note: Omitting Content-Type header intentionally to force text/plain and bypass CORS preflight
-          const response = await fetch(GAS_WEB_APP_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-              source: 'kynkode_frontend',
-              action: 'ASK_AI',
-              data: { text: textData, audioBase64: audioBase64 }
-            })
-          });
-          const result = await response.json();
-          setMessages(prev => [...prev, { sender: 'ai', text: result.ai_response }]);
-        } catch (error) {
-          console.error("Backend Error:", error);
-          setMessages(prev => [...prev, { sender: 'ai', text: "System Error: Unable to reach AI Core." }]);
-        }
-        setIsProcessing(false);
-      };
-
-      const handleSendText = () => {
-        if (!query.trim()) return;
-        sendToGAS(query);
-        setQuery('');
-      };
-
-      // ==========================================
-      // ACTION DISPATCHERS
-      // ==========================================
-      const executeAction = async (action, data, successMsg) => {
-        setIsProcessing(true);
-        try {
-          const response = await fetch(GAS_WEB_APP_URL, {
-            method: 'POST',
-            body: JSON.stringify({ source: 'kynkode_frontend', action, data })
-          });
-          const result = await response.json();
-          if (result.success) {
-            setMessages(prev => [...prev, { sender: 'ai', text: `✅ System Action: ${successMsg}` }]);
-          } else {
-            setMessages(prev => [...prev, { sender: 'ai', text: `❌ Action Failed: ${result.message}` }]);
-          }
-        } catch (err) {
-          console.error("Action Error:", err);
-          setMessages(prev => [...prev, { sender: 'ai', text: "System Error: Failed to execute action." }]);
-        }
-        setIsProcessing(false);
-      };
-
-      const handleUpdateStock = (itemName, actionType, quantity) => {
-        executeAction('UPDATE_CLINISTOCK', { itemName, actionType, quantity }, `Updated stock: ${actionType} ${quantity}x ${itemName}`);
-      };
-
-      const handleSendWA = (to, text) => {
-        executeAction('SEND_WHATSAPP', { to, text }, `WhatsApp message sent to ${to}.`);
-      };
-
-      // ==========================================
-      // VOICE CAPTURE (BROWSER NATIVE)
-      // ==========================================
-      const toggleVoice = async () => {
-        if (isRecording) {
-          mediaRecorder.current.stop();
-          setIsRecording(false);
-        } else {
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-            audioChunks.current = [];
-            
-            mediaRecorder.current.ondataavailable = (event) => {
-              if (event.data.size > 0) audioChunks.current.push(event.data);
-            };
-
-            mediaRecorder.current.onstop = () => {
-              const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
-              const reader = new FileReader();
-              reader.readAsDataURL(audioBlob);
-              reader.onloadend = () => {
-                const base64Audio = reader.result;
-                sendToGAS("Listen to the attached audio command.", base64Audio);
-              };
-              stream.getTracks().forEach(track => track.stop());
-            };
-
-            mediaRecorder.current.start();
-            setIsRecording(true);
-          } catch (err) {
-            console.error("Microphone access denied:", err);
-            setMessages(prev => [...prev, { sender: 'ai', text: "Microphone access denied. Please check browser permissions." }]);
-          }
-        }
-      };
-
-      // Actionable Data Array
-      const topPriorities = [
-        { t: "Approve procurement request #284", p: "High", c: "text-red-500 bg-red-50", action: null },
-        { t: "Follow up on 3 delayed relocation cases", p: "High", c: "text-red-500 bg-red-50", action: { label: "Notify Staff via WA", fn: () => handleSendWA('254700000000', 'Alert: Relocation cases delayed. Please investigate.') } },
-        { t: "Contact overdue post-operative patient", p: "Medium", c: "text-yellow-600 bg-yellow-50", action: { label: "Send Reminder", fn: () => handleSendWA('254700000000', 'Hello, this is a reminder to book your post-op review.') } },
-        { t: "Transfer Bravecto stock: Westlands → South C", p: "Medium", c: "text-yellow-600 bg-yellow-50", action: { label: "Update CliniStock", fn: () => handleUpdateStock('Bravecto (Transfer Out)', 'Deduct', 5) } },
-        { t: "Review KES 34,200 of stock expiring soon", p: "Low", c: "text-green-600 bg-green-50", action: null }
-      ];
-
-      return (
-        <div className="flex flex-col md:flex-row h-screen text-gray-800 relative overflow-hidden">
-          
-          {/* MOBILE HEADER BAR */}
-          <div className="md:hidden flex items-center justify-between p-4 sidebar-bg text-white shadow-md z-30">
-            <div className="flex items-center gap-3">
-              {icons.bot}
-              <span className="font-bold text-base">KYNKODE AI</span>
-            </div>
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-              className="p-2 rounded-lg bg-blue-950/50 text-gray-200 hover:text-white"
-            >
-              {isMobileMenuOpen ? icons.close : icons.menu}
-            </button>
-          </div>
-
-          {/* MOBILE BACKDROP OVERLAY */}
-          {isMobileMenuOpen && (
-            <div 
-              className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-          )}
-
-          {/* SIDEBAR */}
-          <div className={`
-            fixed md:relative inset-y-0 left-0 z-50 w-64 sidebar-bg text-white flex flex-col p-4 m-0 md:m-4 md:rounded-2xl shadow-xl transition-transform duration-300 ease-in-out
-            ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          `}>
-            <div className="flex items-center justify-between px-2 mb-8 mt-2">
-              <div className="flex items-center gap-3">
-                {icons.bot}
-                <div>
-                  <h1 className="font-bold text-lg leading-tight">AI Practice Manager</h1>
-                  <p className="text-xs text-gray-400">Your intelligent operations assistant</p>
-                </div>
-              </div>
-              <button className="md:hidden text-gray-400 p-1" onClick={() => setIsMobileMenuOpen(false)}>
-                {icons.close}
-              </button>
-            </div>
-
-            <div className="text-xs font-bold text-gray-500 mb-4 px-2 tracking-wider">KYNKODE</div>
-            <nav className="space-y-2 flex-1">
-              <div 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-400 font-medium cursor-pointer"
-              >
-                {icons.dashboard} <span className="text-sm">Dashboard</span>
-              </div>
-              <div 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white cursor-pointer"
-              >
-                {icons.dashboard} <span className="text-sm">Insights</span>
-              </div>
-            </nav>
-
-            <div className="widget-bg rounded-xl p-4 border border-blue-900/50 mt-auto">
-              <p className="text-sm text-gray-300">Practice Score</p>
-              <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-3xl font-bold">82</span>
-                <span className="text-sm text-gray-400">/100</span>
-              </div>
-              <p className="text-xs text-green-400 mt-1">Good</p>
-            </div>
-          </div>
-
-          {/* MAIN CONTENT */}
-          <div className="flex-1 p-4 md:p-8 overflow-y-auto flex flex-col">
-            
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold">Good morning, Dr. Chris 👋</h2>
-                <p className="text-gray-500 text-sm md:text-base">Here's your practice overview for today.</p>
-              </div>
-              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 text-sm font-medium self-start sm:self-auto text-blue-900">
-                {currentDate}
-              </div>
-            </div>
-
-            {/* KPI METRICS GRID */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              {[
-                { n: "5", l: "Critical Alerts", c: "text-red-500" },
-                { n: "11", l: "Follow-ups Due", c: "text-yellow-600" },
-                { n: "KES 86,400", l: "Expiry Risk", c: "text-orange-500" },
-                { n: "3", l: "Relocation Cases", c: "text-blue-600" }
-              ].map((kpi, i) => (
-                <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center">
-                  <div className={`text-2xl font-bold mb-1 ${kpi.c}`}>{kpi.n}</div>
-                  <div className="text-sm text-gray-500">{kpi.l}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* CONTENT SECTIONS GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
-              <div className="md:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 flex flex-col">
-                <h3 className="font-bold text-lg mb-4">Top Priorities Today</h3>
-                <div className="space-y-4 flex-1 overflow-y-auto">
-                  {topPriorities.map((row, i) => (
-                    <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 -mx-2 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors gap-3 sm:gap-0">
-                      <div className="flex items-start sm:items-center gap-3 sm:gap-4">
-                        <span className="text-gray-400 text-sm font-bold pt-0.5 sm:pt-0">{i+1}</span>
-                        <span className="text-gray-700 text-sm font-medium">{row.t}</span>
-                        <span className={`hidden sm:inline-block text-xs font-semibold px-2 py-1 rounded-md ml-2 shrink-0 ${row.c}`}>{row.p}</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 ml-7 sm:ml-0">
-                        <span className={`sm:hidden text-xs font-semibold px-2 py-1 rounded-md shrink-0 ${row.c}`}>{row.p}</span>
-                        {row.action && (
-                          <button 
-                            onClick={row.action.fn}
-                            disabled={isProcessing}
-                            className="flex items-center gap-1 text-xs bg-white border border-blue-200 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors shadow-sm disabled:opacity-50 font-medium"
-                          >
-                            {icons.bolt} {row.action.label}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
-                <h3 className="font-bold text-lg mb-4">Practice Performance <span className="text-gray-400 text-sm font-normal">(This Week)</span></h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { l: "Revenue", v: "KES 1.24M", t: "+11%" },
-                    { l: "Consultations", v: "421", t: "+6%" },
-                    { l: "New Clients", v: "83", t: "+16%" },
-                    { l: "Avg. Invoice", v: "KES 2,945", t: "+4%" }
-                  ].map((m, i) => (
-                    <div key={i} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                      <div className="text-xs text-gray-500 mb-1">{m.l}</div>
-                      <div className="font-bold text-gray-800">{m.v}</div>
-                      <div className="text-xs text-green-500 font-medium mt-1">{m.t}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* AI CHAT & INPUT SECTION */}
-            <div className="mt-6 flex flex-col gap-3">
-              
-              {/* Expandable Chat Log */}
-              {messages.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-inner border border-gray-200 p-4 max-h-60 overflow-y-auto chat-scroll flex flex-col gap-3">
-                  {messages.map((msg, idx) => (
-                    <div key={idx} className={`p-3 rounded-xl max-w-[85%] text-sm shadow-sm ${msg.sender === 'user' ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-gray-100 text-gray-800 self-start rounded-bl-sm border border-gray-200'}`}>
-                      {msg.sender === 'ai' && <div className="text-xs font-bold text-blue-700 mb-1 flex items-center gap-1">{icons.bot} KYNKODE AI</div>}
-                      <div className="whitespace-pre-wrap">{msg.text}</div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-              )}
-
-              {/* Input Bar */}
-              <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-3 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4 transition-all focus-within:border-blue-300 focus-within:ring-4 focus-within:ring-blue-50">
-                <span className="font-bold text-blue-800 whitespace-nowrap pl-2 text-sm sm:text-base hidden sm:inline-block">
-                  Ask AI
-                </span>
-                <input 
-                  type="text" 
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSendText()}
-                  placeholder={isProcessing ? "Processing command..." : "Ask anything about your practice..."}
-                  disabled={isProcessing}
-                  className="flex-1 bg-transparent border-none outline-none text-gray-700 w-full min-w-[150px] text-sm sm:text-base disabled:opacity-50 px-2" 
-                />
-                <div className="flex items-center gap-2 ml-auto sm:ml-0 shrink-0">
-                  <button 
-                    onClick={toggleVoice}
-                    disabled={isProcessing}
-                    className={`p-3 rounded-xl transition-all ${isRecording ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'} disabled:opacity-50`}
-                    title="Voice Command"
-                  >
-                    {icons.mic}
-                  </button>
-                  <button 
-                    onClick={handleSendText}
-                    disabled={isProcessing || (!query.trim() && !isRecording)}
-                    className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md transition-all disabled:bg-gray-300 disabled:shadow-none"
-                    title="Send"
-                  >
-                    {icons.send}
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="text-center mt-3 text-xs text-blue-800/60 font-medium">
-              Intelligence. Insight. Better decisions every day.
-            </div>
-
-          </div>
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="brand">
+            <i class="fa-solid fa-robot brand-icon"></i>
+            <span style="font-weight: 600;">KYNKODE AGI</span>
         </div>
-      );
-    }
+        <button class="hamburger" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-robot brand-icon"></i>
+            <div class="brand-text">
+                <h1>AI Practice Manager</h1>
+                <p>Your intelligent operations assistant</p>
+            </div>
+        </div>
+        
+        <p class="nav-label">KYNKODE</p>
+        <ul class="nav-menu">
+            <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fa-solid fa-lightbulb"></i> Insights</a></li>
+            <li><a href="#"><i class="fa-regular fa-bell"></i> Alerts</a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-line"></i> Analytics</a></li>
+            <li><a href="#"><i class="fa-regular fa-file-lines"></i> Reports</a></li>
+            <li><a href="#"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI</a></li>
+            <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+        </ul>
+
+        <div class="practice-score">
+            <p>Practice Score</p>
+            <h2 id="ui-score">82 <span class="total">/100</span></h2>
+            <span class="status">Good</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" onclick="closeSidebar(event)">
+        <div class="scrollable-content">
+            <header>
+                <div>
+                    <h2>Good morning, Dr. Chris 👋</h2>
+                    <p>Here's your practice overview for today.</p>
+                </div>
+                <div class="date-chip" id="current-date">
+                    <!-- Populated by JS -->
+                </div>
+            </header>
+
+            <section class="metrics-row">
+                <div class="metric-card">
+                    <h3 class="text-red" id="ui-alerts">5</h3>
+                    <p>Critical Alerts</p>
+                </div>
+                <div class="metric-card">
+                    <h3 class="text-orange" id="ui-followups">11</h3>
+                    <p>Follow-ups Due</p>
+                </div>
+                <div class="metric-card">
+                    <h3 class="text-orange">KES <span id="ui-expiry">86,400</span></h3>
+                    <p>Expiry Risk</p>
+                </div>
+                <div class="metric-card">
+                    <h3 class="text-blue" id="ui-relocation">3</h3>
+                    <p>Relocation Cases</p>
+                </div>
+            </section>
+
+            <div class="two-col">
+                <section>
+                    <h3 class="section-title">Top Priorities Today</h3>
+                    <ul class="priority-list">
+                        <li class="priority-item">
+                            <div><span class="num">1</span> Approve procurement request #284</div>
+                            <span class="badge high">High</span>
+                        </li>
+                        <li class="priority-item">
+                            <div><span class="num">2</span> Follow up on 3 delayed relocation cases</div>
+                            <span class="badge high">High</span>
+                        </li>
+                        <li class="priority-item">
+                            <div><span class="num">3</span> Contact 8 overdue post-operative patients</div>
+                            <span class="badge medium">Medium</span>
+                        </li>
+                        <li class="priority-item">
+                            <div><span class="num">4</span> Transfer Bravecto stock: Westlands → South C</div>
+                            <span class="badge medium">Medium</span>
+                        </li>
+                        <li class="priority-item">
+                            <div><span class="num">5</span> Review KES 34,200 of stock expiring soon</div>
+                            <span class="badge low">Low</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3 class="section-title">Practice Performance <span style="font-size:0.8rem; color:#718096; font-weight:400;">(This Week)</span></h3>
+                    <div class="performance-grid">
+                        <div class="perf-item">
+                            <p>Revenue</p>
+                            <h4>KES 1.24M <span>+11%</span></h4>
+                        </div>
+                        <div class="perf-item">
+                            <p>Consultations</p>
+                            <h4>421 <span>+6%</span></h4>
+                        </div>
+                        <div class="perf-item">
+                            <p>New Clients</p>
+                            <h4>83 <span>+18%</span></h4>
+                        </div>
+                        <div class="perf-item">
+                            <p>Avg. Invoice</p>
+                            <h4>KES 2,945 <span>+4%</span></h4>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Floating AI Input -->
+        <div class="ai-floating-container">
+            <div class="ai-header">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Ask KYNKODE AI
+            </div>
+            <div class="ai-response-area" id="ai-response"></div>
+            <div class="ai-input-group">
+                <input type="text" id="ai-input" placeholder="Ask anything about your practice..." onkeypress="handleKeyPress(event)">
+                <div class="ai-actions">
+                    <button class="ai-btn" id="mic-btn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="ai-btn" onclick="submitAIQuery()"><i class="fa-regular fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-text">Intelligence. Insight. Better decisions every day.</div>
+    </main>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION & SETUP
+        // ==========================================
+        // REPLACE THIS URL with your deployed Google Apps Script Web App URL
+        const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
+
+        // Set Current Date in Header
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-GB', dateOptions);
+
+        // ==========================================
+        // UI INTERACTIONS
+        // ==========================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        function closeSidebar(e) {
+            if(window.innerWidth <= 768 && document.getElementById('sidebar').classList.contains('show')) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+        }
+
+        // ==========================================
+        // BACKEND COMMUNICATION
+        // ==========================================
+        async function fetchFromBackend(action, dataObj = {}) {
+            try {
+                const response = await fetch(GAS_BACKEND_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        source: 'kynkode_frontend',
+                        action: action,
+                        data: dataObj
+                    }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' } // 'text/plain' avoids CORS preflight in standard GAS
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Backend Error:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // ==========================================
+        // LOAD DASHBOARD METRICS
+        // ==========================================
+        async function loadMetrics() {
+            // Note: If GAS backend URL is not set, we keep the static UI values to prevent blanking the screen
+            if (GAS_BACKEND_URL.includes("YOUR_SCRIPT_ID")) {
+                console.warn("Please replace GAS_BACKEND_URL with your actual Web App URL.");
+                return;
+            }
+
+            const res = await fetchFromBackend('GET_DASHBOARD_METRICS');
+            if (res.success && res.metrics) {
+                document.getElementById('ui-alerts').innerText = res.metrics.criticalAlerts;
+                document.getElementById('ui-followups').innerText = res.metrics.followUpsDue;
+                document.getElementById('ui-relocation').innerText = res.metrics.relocationCases;
+                document.getElementById('ui-score').innerHTML = `${res.metrics.practiceScore} <span class="total">/100</span>`;
+                // Expiry requires formatting
+                // document.getElementById('ui-expiry').innerText = res.metrics.expiryRiskAmount; 
+            }
+        }
+
+        // ==========================================
+        // AI CHAT HANDLING
+        // ==========================================
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') submitAIQuery();
+        }
+
+        async function submitAIQuery() {
+            const inputEl = document.getElementById('ai-input');
+            const responseArea = document.getElementById('ai-response');
+            const query = inputEl.value.trim();
+            
+            if (!query) return;
+
+            // UI Update: Show loading
+            inputEl.value = "";
+            responseArea.classList.add('active');
+            responseArea.innerHTML = `<span style="color:#718096;"><i class="fa-solid fa-spinner fa-spin"></i> KYNKODE AI is thinking...</span>`;
+            
+            // Call Backend
+            const res = await fetchFromBackend('ASK_AI', { text: query });
+            
+            // UI Update: Show result
+            if (res.success) {
+                responseArea.innerHTML = `<strong>You:</strong> ${query}<br><br><strong>AI:</strong> ${res.ai_response.replace(/\n/g, '<br>')}`;
+            } else {
+                responseArea.innerHTML = `<span style="color:#e53e3e;">Connection error or backend not configured.</span>`;
+            }
+            
+            // Auto scroll to bottom of response area
+            responseArea.scrollTop = responseArea.scrollHeight;
+        }
+
+        // ==========================================
+        // MIC SIMULATION
+        // ==========================================
+        let isListening = false;
+        function toggleMic() {
+            const micBtn = document.getElementById('mic-btn');
+            const inputEl = document.getElementById('ai-input');
+            
+            isListening = !isListening;
+            if (isListening) {
+                micBtn.classList.add('listening');
+                inputEl.placeholder = "Listening...";
+                // In production, integrate Web Audio API here to capture Base64 audio 
+                // and pass it as { audioBase64: '...' } in the ASK_AI payload.
+            } else {
+                micBtn.classList.remove('listening');
+                inputEl.placeholder = "Ask anything about your practice...";
+            }
+        }
+
+        // Initialize
+        window.onload = loadMetrics;
+    </script>
 </body>
 </html>

@@ -4,857 +4,403 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CliniScribe AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     
-    <!-- PDF Generation Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fb;
+        :root {
+            --bg-body: #f8fafc;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #1d4ed8;
+            --primary-hover: #1e40af;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
         }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .animate-shimmer {
-            background: linear-gradient(90deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.6) 50%, rgba(59,130,246,0.1) 100%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite linear;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        @keyframes wave-bars {
-            0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
-            50% { transform: scaleY(1.2); opacity: 1; }
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
-        .animate-wave-1 { animation: wave-bars 0.8s infinite ease-in-out 0.0s; }
-        .animate-wave-2 { animation: wave-bars 0.8s infinite ease-in-out 0.15s; }
-        .animate-wave-3 { animation: wave-bars 0.8s infinite ease-in-out 0.3s; }
-        .animate-wave-4 { animation: wave-bars 0.8s infinite ease-in-out 0.45s; }
 
-        [contenteditable="true"] {
-            transition: all 0.2s ease-in-out;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            padding: 4px 8px;
-            margin-left: -8px;
-            display: block;
-            min-height: 1.5rem;
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 50;
         }
-        [contenteditable="true"]:hover {
-            background-color: rgba(243, 244, 246, 0.8);
-            border-color: rgba(229, 231, 235, 1);
+        .brand { padding: 24px; font-size: 20px; font-weight: 700; letter-spacing: 1px; border-bottom: 1px solid #1e293b; }
+        .nav-links { list-style: none; padding: 16px 0; flex-grow: 1; }
+        .nav-links li { padding: 0 16px; margin-bottom: 8px; }
+        .nav-links a {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: 0.2s;
         }
-        [contenteditable="true"]:focus {
-            background-color: #ffffff;
-            border-color: rgba(59, 130, 246, 0.5);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        .nav-links a:hover, .nav-links a.active { background-color: #1e293b; color: white; }
+        .nav-links a.active { background-color: var(--primary); }
+        .sidebar-bottom { padding: 24px; font-size: 14px; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
+
+        /* --- Main Content Area --- */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
+        
+        /* Mobile Header */
+        .mobile-header {
+            display: none; justify-content: space-between; align-items: center;
+            padding: 16px 24px; background: white; border-bottom: 1px solid var(--border);
+        }
+        .menu-btn { background: none; border: none; cursor: pointer; color: var(--text-main); }
+
+        /* Page Header */
+        .page-header { padding: 24px 32px; display: flex; align-items: center; gap: 16px; }
+        .page-header .icon-wrap { 
+            background: var(--primary); color: white; width: 48px; height: 48px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+        .page-header h1 { font-size: 24px; color: var(--primary); }
+        .page-header p { color: var(--text-muted); font-size: 14px; }
+
+        /* Dashboard Grid */
+        .grid-container { padding: 0 32px 32px; display: grid; gap: 24px; grid-template-columns: 1fr 1fr; }
+        .card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        /* Live Scribe Card */
+        .live-scribe { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .waveform { width: 100%; height: 60px; background: repeating-linear-gradient(90deg, #93c5fd 0, #93c5fd 2px, transparent 2px, transparent 8px); margin: 24px 0; opacity: 0.5; }
+        .recording-active .waveform { opacity: 1; animation: pulse 1s infinite; }
+        .timer { font-size: 24px; font-weight: 600; color: var(--primary); }
+        .status-text { color: var(--danger); font-size: 14px; font-weight: 500; margin-bottom: 16px; display: none; }
+        .recording-active .status-text { display: block; }
+        .controls { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: white; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn:hover { background: #f1f5f9; }
+        .btn-stop { color: var(--danger); border-color: #fca5a5; }
+        .btn-stop:hover { background: #fee2e2; }
+
+        /* Patient Info Card */
+        .patient-info { display: flex; flex-direction: column; gap: 12px; }
+        .info-row { display: flex; font-size: 14px; }
+        .info-label { width: 100px; color: var(--text-muted); }
+        .info-value { font-weight: 500; }
+
+        /* AI Generated Note Area */
+        .note-section { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 200px; gap: 24px; }
+        .editor-container { display: flex; flex-direction: column; gap: 16px; }
+        textarea { 
+            width: 100%; height: 300px; padding: 16px; border: 1px solid var(--border); 
+            border-radius: 8px; resize: none; font-size: 14px; line-height: 1.6;
+        }
+        textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1); }
+        
+        .side-actions { display: flex; flex-direction: column; gap: 12px; }
+        .btn-action { background: #f8fafc; border: 1px solid var(--border); color: var(--primary); justify-content: center; }
+        
+        .save-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        /* --- Floating AI Bar --- */
+        .floating-bar {
+            position: fixed; bottom: 24px; right: 24px; width: 380px;
+            background: white; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border); display: flex; flex-direction: column;
+            overflow: hidden; z-index: 100; transition: 0.3s;
+        }
+        .floating-messages { max-height: 300px; overflow-y: auto; padding: 16px; display: none; background: #f8fafc; flex-direction: column; gap: 12px; }
+        .floating-messages.active { display: flex; }
+        .msg { padding: 10px 14px; border-radius: 12px; font-size: 14px; max-width: 85%; }
+        .msg.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.ai { background: #e2e8f0; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+        
+        .floating-input { display: flex; align-items: center; padding: 8px 12px; background: white; border-top: 1px solid var(--border); }
+        .floating-input input { flex-grow: 1; border: none; padding: 10px; font-size: 14px; outline: none; }
+        .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 8px; border-radius: 50%; display: flex; transition: 0.2s; }
+        .btn-icon:hover { background: #f1f5f9; color: var(--primary); }
+        .btn-icon.recording { color: white; background: var(--danger); animation: pulse 1s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; height: 100%; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-header { display: flex; }
+            .grid-container, .note-section { grid-template-columns: 1fr; padding: 0 16px 16px; }
+            .floating-bar { width: calc(100% - 32px); bottom: 16px; right: 16px; }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-0 md:p-8 relative">
+<body>
 
-    <div class="w-full h-screen md:h-auto max-w-7xl md:bg-white md:rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border-0 md:border border-gray-100 relative">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">KYNKODE</div>
+        <ul class="nav-links">
+            <li><a href="#"><span class="material-icons-round">home</span> Dashboard</a></li>
+            <li><a href="#" class="active"><span class="material-icons-round">mic</span> Scribe</a></li>
+            <li><a href="#"><span class="material-icons-round">folder</span> Records</a></li>
+            <li><a href="#"><span class="material-icons-round">description</span> Templates</a></li>
+            <li><a href="#"><span class="material-icons-round">bar_chart</span> Reports</a></li>
+            <li><a href="#"><span class="material-icons-round">settings</span> Settings</a></li>
+        </ul>
+        <div class="sidebar-bottom">
+            <span class="material-icons-round" style="font-size: 18px;">info</span> AI Core Online
+        </div>
+    </aside>
 
-        <!-- Mobile Header Bar (Visible only on mobile) -->
-        <div class="md:hidden flex items-center justify-between p-4 bg-[#0b1f3f] text-white shadow-md z-30 shrink-0">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-microscope text-blue-400"></i>
-                <span class="font-bold text-base tracking-wide">CliniScribe AI</span>
-            </div>
-            <button id="mobileMenuBtn" class="p-2 rounded-lg bg-blue-900/50 text-gray-200 hover:text-white focus:outline-none transition-colors">
-                <i class="fa-solid fa-bars text-xl"></i>
+    <!-- Main Application Area -->
+    <main class="main-content">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <div style="font-weight: 700;">KYNKODE Scribe</div>
+            <button class="menu-btn" onclick="toggleSidebar()">
+                <span class="material-icons-round">menu</span>
             </button>
         </div>
 
-        <!-- Mobile Backdrop Overlay -->
-        <div id="mobileBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-50 w-64 bg-[#0b1f3f] text-white flex flex-col justify-between p-5 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-full md:h-auto shadow-2xl md:shadow-none">
+        <!-- Page Header -->
+        <header class="page-header">
+            <div class="icon-wrap"><span class="material-icons-round">edit_note</span></div>
             <div>
-                <div class="flex items-center justify-between mb-8">
-                    <div class="text-xs font-semibold tracking-wider text-blue-300 uppercase">KYNKODE</div>
-                    <!-- Mobile Close Button -->
-                    <button id="closeMenuBtn" class="md:hidden text-gray-400 hover:text-white p-1 focus:outline-none transition-colors">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-house w-5"></i><span class="font-medium text-sm">Dashboard</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium text-sm shadow-md">
-                        <i class="fa-solid fa-microphone-lines w-5"></i><span>Scribe</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-folder-open w-5"></i><span class="font-medium text-sm">Records</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-file-lines w-5"></i><span class="font-medium text-sm">Templates</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-chart-pie w-5"></i><span class="font-medium text-sm">Reports</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 transition">
-                        <i class="fa-solid fa-gear w-5"></i><span class="font-medium text-sm">Settings</span>
-                    </a>
-                </nav>
+                <h1>CliniScribe AI</h1>
+                <p>AI-powered medical documentation for vets</p>
             </div>
-            <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl text-xs text-blue-200 transition">
-                    <i id="sidebarStatusIcon" class="fa-solid fa-circle-waveform-lines text-blue-400"></i>
-                    <span id="sidebarStatusText">System Ready...</span>
-                </div>
-            </div>
-        </aside>
+        </header>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 md:p-8 bg-[#f8fafc] flex flex-col gap-6 relative overflow-y-auto max-h-[100vh] md:max-h-[90vh]">
+        <!-- Content Grid -->
+        <div class="grid-container">
             
-            <div id="progressBarContainer" class="absolute top-0 left-0 w-full h-1 bg-gray-200 overflow-hidden hidden">
-                <div class="h-full w-full animate-shimmer"></div>
-            </div>
-
-            <!-- Top Header (Desktop & Content context) -->
-            <header class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md hidden md:flex items-center justify-center">
-                        <i class="fa-solid fa-pen-nib text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl md:text-2xl font-bold text-gray-900 tracking-tight hidden md:block">CliniScribe AI</h1>
-                        <p id="statusText" class="text-xs md:text-sm text-blue-600 font-medium md:mt-1">System ready. Waiting for input...</p>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Top Grid: Live Scribe & Patient Information -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Live Scribe Box -->
-                <section class="lg:col-span-7 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="font-semibold text-gray-800 text-sm">Live Scribe</h2>
-                        <div id="recordingIndicator" class="hidden flex items-center gap-2 text-red-600 font-semibold text-sm">
-                            <span class="flex items-center gap-1 text-xs text-red-500 font-normal">
-                                <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span> Recording...
-                            </span>
-                        </div>
-                    </div>
-                    <div id="audioWave" class="flex items-center justify-center gap-1 py-4 my-auto h-24 opacity-20 transition-opacity duration-300">
-                        <span class="w-1.5 h-4 bg-blue-400 rounded-full animate-wave-1"></span>
-                        <span class="w-1.5 h-8 bg-blue-500 rounded-full animate-wave-2"></span>
-                        <span class="w-1.5 h-12 bg-blue-600 rounded-full animate-wave-3"></span>
-                        <span class="w-1.5 h-6 bg-blue-400 rounded-full animate-wave-4"></span>
-                        <span class="w-1.5 h-10 bg-blue-500 rounded-full animate-wave-1"></span>
-                        <span class="w-1.5 h-16 bg-blue-700 rounded-full animate-wave-2"></span>
-                        <span class="w-1.5 h-12 bg-blue-600 rounded-full animate-wave-3"></span>
-                        <span class="w-1.5 h-14 bg-blue-600 rounded-full animate-wave-4"></span>
-                        <span class="w-1.5 h-8 bg-blue-500 rounded-full animate-wave-1"></span>
-                        <span class="w-1.5 h-16 bg-blue-700 rounded-full animate-wave-2"></span>
-                        <span class="w-1.5 h-10 bg-blue-600 rounded-full animate-wave-3"></span>
-                        <span class="w-1.5 h-6 bg-blue-500 rounded-full animate-wave-4"></span>
-                    </div>
-                    <div class="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-50">
-                        <button id="recordBtn" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3 md:py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition cursor-pointer">
-                            <i class="fa-solid fa-microphone text-blue-600"></i> Record
-                        </button>
-                        <button id="stopBtn" disabled class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3 md:py-2 rounded-xl bg-red-50 text-red-600 border border-red-100 text-sm font-medium hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-square text-xs"></i> Stop
-                        </button>
-                    </div>
-                </section>
-
-                <!-- Settings Box -->
-                <section class="lg:col-span-5 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                    <h2 class="font-semibold text-gray-800 text-sm mb-4">Consultation Settings</h2>
-                    <div class="flex flex-col gap-3 text-sm">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-gray-500 text-xs font-medium">Clinic Facility</label>
-                            <select id="clinicName" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
-                                <option value="">Loading clinics...</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-gray-500 text-xs font-medium">Provider Name</label>
-                                <input type="text" id="doctorName" placeholder="Dr. John Doe" value="Dr. John Doe" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-gray-500 text-xs font-medium">Location</label>
-                                <input type="text" id="manualLocation" placeholder="City, Region" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-gray-500 text-xs font-medium">Patient Email</label>
-                            <input type="email" id="patientEmail" placeholder="client@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-2 text-gray-800 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 text-sm">
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-gray-500 text-xs font-medium">Custom Letterhead (Optional)</label>
-                            <input type="file" id="letterheadUpload" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 md:file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Transcript Area -->
-            <section id="transcriptCard" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex flex-wrap gap-2 justify-between items-center mb-3">
-                    <h2 class="font-semibold text-gray-800 text-sm">Live Transcript</h2>
-                    <span class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-md">Edit manually before analyzing</span>
-                </div>
-                <textarea id="transcriptText" class="w-full bg-gray-50 text-sm text-gray-700 rounded-xl p-4 min-h-[100px] md:min-h-[150px] focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 border border-gray-200 resize-y placeholder-gray-400 transition-all leading-relaxed" placeholder="Transcription will appear here..."></textarea>
-            </section>
-
-            <!-- AI Warnings -->
-            <div id="aiWarningsCard" class="hidden bg-red-50 border border-red-200 rounded-2xl p-4 shadow-sm transition-all">
-                <h2 class="text-sm font-bold tracking-wider text-red-600 mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> AI Intelligence Warning: Improbable Data Detected
-                </h2>
-                <ul id="aiWarningsList" class="list-disc list-inside text-sm text-red-700 space-y-1"></ul>
-            </div>
-
-            <!-- Bottom Section -->
-            <section class="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-6">
-                
-                <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100 pb-3 gap-2">
-                    <h2 class="font-semibold text-gray-800 text-sm flex flex-wrap items-center gap-2" id="generatedNoteTitle">
-                        AI Generated Note 
-                        <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>
-                    </h2>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start" id="reportUI">
-                    <div class="lg:col-span-9 text-sm text-gray-700 space-y-5">
-                        
-                        <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Signalment & Core Disease Category</h3>
-                            <div id="soap1" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">History</h3>
-                            <div id="soap23" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Findings</h3>
-                            <div id="soap4" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Diagnostics</h3>
-                            <div id="soap567" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Plan</h3>
-                            <div id="soap89" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-900 mb-1">Takeaways & Differentiation</h3>
-                            <div id="soap1011" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                        
-                        <div class="pt-4 border-t border-gray-100">
-                            <h3 class="font-semibold text-emerald-700 mb-1">Patient / Client Instructions</h3>
-                            <div id="instructionsText" contenteditable="true" class="text-gray-600 whitespace-pre-wrap leading-relaxed">-</div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-3 flex flex-col gap-2.5">
-                        <!-- 1. Generate Consultation Report -->
-                        <button id="genConsultBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-stethoscope"></i> Generate Consultation Report
-                        </button>
-                        
-                        <!-- 2. Generate Radiographic Report -->
-                        <button id="genRadioBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-x-ray"></i> Generate Radiographic Report
-                        </button>
-                        
-                        <!-- 3. Generate Ultrasound Report -->
-                        <button id="genUltraBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-wave-square"></i> Generate Ultrasound Report
-                        </button>
-                        
-                        <!-- 4. Generate Surgical Report -->
-                        <button id="genSurgBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-scissors-medical"></i> Generate Surgical Report
-                        </button>
-                        
-                        <!-- 5. Generate Laboratory Report -->
-                        <button id="genLabBtn" disabled class="w-full flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-100 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fa-solid fa-flask"></i> Generate Laboratory Report
-                        </button>
-
-                        <div class="border-t border-gray-100 my-1"></div>
-
-                        <!-- Export Buttons -->
-                        <div class="flex gap-2">
-                            <button id="downloadPdfBtn" disabled class="flex-1 flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i class="fa-solid fa-file-pdf text-red-500"></i> PDFs
-                            </button>
-                            <button id="emailBtn" disabled class="flex-1 flex items-center justify-center gap-2 py-3 md:py-2.5 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i class="fa-solid fa-envelope text-blue-500"></i> Email
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button onclick="syncToDatabase(getEditedData(), 'save')" class="w-full sm:w-auto px-6 py-3 md:py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium text-xs rounded-xl transition shadow-sm">
-                        Quick Save
-                    </button>
-                    <button class="w-full sm:w-auto px-6 py-3 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
-                        Save Note & Close
+            <!-- Live Scribe Card -->
+            <div class="card live-scribe" id="scribe-card">
+                <h3 style="align-self: flex-start; margin-bottom: 8px;">Live Scribe</h3>
+                <div class="timer" id="timer">00:00</div>
+                <div class="status-text">Recording...</div>
+                <div class="waveform"></div>
+                <div class="controls">
+                    <button class="btn" id="btn-pause"><span class="material-icons-round">pause</span> Pause</button>
+                    <button class="btn btn-stop" id="btn-record" onclick="toggleMainRecording()">
+                        <span class="material-icons-round">mic</span> <span id="record-text">Start</span>
                     </button>
                 </div>
-            </section>
-        </main>
+            </div>
+
+            <!-- Patient Info Card -->
+            <div class="card patient-info">
+                <h3 style="margin-bottom: 12px;">Patient Information</h3>
+                <div class="info-row"><div class="info-label">Patient</div><div class="info-value">Bella</div></div>
+                <div class="info-row"><div class="info-label">Species</div><div class="info-value">Canine</div></div>
+                <div class="info-row"><div class="info-label">Breed</div><div class="info-value">German Shepherd</div></div>
+                <div class="info-row"><div class="info-label">Weight</div><div class="info-value">29.4 kg</div></div>
+                <div class="info-row"><div class="info-label">Visit Type</div><div class="info-value">Consultation</div></div>
+            </div>
+
+            <!-- AI Note Section -->
+            <div class="note-section">
+                <div class="card editor-container">
+                    <h3>AI Generated Note <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Edit before save)</span></h3>
+                    <textarea id="clinical-note">Presenting Complaint&#10;Inappetence, lethargy and vomiting since yesterday.&#10;&#10;History&#10;Owner reports Bella vomited 3 times since last night. No diarrhea. Still drinking water.&#10;&#10;Examination&#10;T: 38.7°C, P: 110 bpm, R: 28 bpm. MM pink and moist. Mild dehydration (5%). Abdomen mildly painful on palpation.&#10;&#10;Plan&#10;• CBC, Biochemistry&#10;• IV Fluids&#10;• Antiemetic (Maropitant)&#10;• Recheck tomorrow</textarea>
+                    
+                    <div class="save-actions">
+                        <button class="btn btn-primary" onclick="saveNote()">Save Note</button>
+                        <button class="btn">Save & Close</button>
+                    </div>
+                </div>
+
+                <div class="side-actions">
+                    <div style="font-weight: 500; margin-bottom: 8px;">Smart Suggestions</div>
+                    <button class="btn btn-action">Add Vaccination</button>
+                    <button class="btn btn-action">Add Prescription</button>
+                    <button class="btn btn-action">Add Follow-up</button>
+                    <button class="btn btn-action">Generate Discharge</button>
+                    <button class="btn btn-action">Attach Lab Result</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Global AI Bar -->
+    <div class="floating-bar">
+        <div class="floating-messages" id="chat-window">
+            <div class="msg ai">Hello! I'm your KYNKODE AI assistant. Need to update stock, check tasks, or ask a clinical question?</div>
+        </div>
+        <div class="floating-input">
+            <button class="btn-icon" id="float-mic-btn" onclick="toggleFloatingMic()" title="Voice Command">
+                <span class="material-icons-round">mic</span>
+            </button>
+            <input type="text" id="chat-input" placeholder="Message AI or use voice..." onkeypress="handleEnter(event)">
+            <button class="btn-icon" onclick="sendChatMessage()" title="Send">
+                <span class="material-icons-round">send</span>
+            </button>
+        </div>
     </div>
 
-    <footer class="mt-6 mb-8 md:mb-6 text-center text-xs text-blue-900 font-medium hidden md:block">
-        CliniScribe saves time, improves accuracy and keeps every record complete.
-    </footer>
-
-    <!-- App Logic Script -->
+    <!-- Application Logic -->
     <script>
-        // ==========================================
-        // MOBILE MENU LOGIC
-        // ==========================================
-        const sidebar = document.getElementById('sidebar');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileBackdrop = document.getElementById('mobileBackdrop');
+        // REPLACE WITH YOUR ACTUAL DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec';
 
-        function toggleMobileMenu(show) {
-            if (show) {
-                sidebar.classList.remove('-translate-x-full');
-                mobileBackdrop.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                mobileBackdrop.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
+        /* --- UI Logic --- */
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
         }
 
-        mobileMenuBtn.addEventListener('click', () => toggleMobileMenu(true));
-        closeMenuBtn.addEventListener('click', () => toggleMobileMenu(false));
-        mobileBackdrop.addEventListener('click', () => toggleMobileMenu(false));
+        /* --- Main Scribe Recording Logic --- */
+        let isMainRecording = false;
+        let timerInterval;
+        let seconds = 0;
 
-        // Auto-close menu when clicking navigation links on mobile
-        document.querySelectorAll('#sidebar nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    toggleMobileMenu(false);
-                }
-            });
-        });
-
-        // ==========================================
-        // APPLICATION LOGIC 
-        // ==========================================
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzP1vzgTNPHx_UV5PwpA8h7kkGmULFlhNUOfmY3kDLpzQr7aGfHCo62W6tKtMYDsVEcg/exec";
-
-        let clinicLetterheads = {};
-        let letterheadBase64 = ""; 
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let generatedData = null;
-        
-        let currentReportType = "Consultation Report"; 
-
-        const dom = {
-            statusText: document.getElementById('statusText'),
-            sidebarStatusIcon: document.getElementById('sidebarStatusIcon'),
-            sidebarStatusText: document.getElementById('sidebarStatusText'),
-            wave: document.getElementById('audioWave'),
-            recordingIndicator: document.getElementById('recordingIndicator'),
-            progress: document.getElementById('progressBarContainer'),
-            transcript: document.getElementById('transcriptText'),
-            recordBtn: document.getElementById('recordBtn'),
-            stopBtn: document.getElementById('stopBtn'),
-            // New Buttons
-            genConsultBtn: document.getElementById('genConsultBtn'),
-            genRadioBtn: document.getElementById('genRadioBtn'),
-            genUltraBtn: document.getElementById('genUltraBtn'),
-            genSurgBtn: document.getElementById('genSurgBtn'),
-            genLabBtn: document.getElementById('genLabBtn'),
+        function toggleMainRecording() {
+            const card = document.getElementById('scribe-card');
+            const btnText = document.getElementById('record-text');
+            const btn = document.getElementById('btn-record');
             
-            pdfBtn: document.getElementById('downloadPdfBtn'),
-            emailBtn: document.getElementById('emailBtn'),
-            clinicSelect: document.getElementById('clinicName'),
-            locationInput: document.getElementById('manualLocation'),
-            warningsCard: document.getElementById('aiWarningsCard'),
-            warningsList: document.getElementById('aiWarningsList'),
-            letterheadInput: document.getElementById('letterheadUpload'),
-            noteTitle: document.getElementById('generatedNoteTitle')
-        };
+            isMainRecording = !isMainRecording;
 
-        function setProgress(message, show) {
-            dom.statusText.innerText = message;
-            dom.sidebarStatusText.innerText = show ? "Working..." : message;
-            
-            if(show) {
-                dom.progress.classList.remove('hidden');
-                dom.sidebarStatusIcon.classList.add('animate-spin');
+            if (isMainRecording) {
+                card.classList.add('recording-active');
+                btnText.innerText = 'Stop';
+                btn.innerHTML = `<span class="material-icons-round">stop</span> <span id="record-text">Stop</span>`;
+                seconds = 0;
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+                    const s = String(seconds % 60).padStart(2, '0');
+                    document.getElementById('timer').innerText = `${m}:${s}`;
+                }, 1000);
             } else {
-                dom.progress.classList.add('hidden');
-                dom.sidebarStatusIcon.classList.remove('animate-spin');
+                card.classList.remove('recording-active');
+                btnText.innerText = 'Start';
+                btn.innerHTML = `<span class="material-icons-round">mic</span> <span id="record-text">Start</span>`;
+                clearInterval(timerInterval);
+                
+                // Simulate sending audio to backend and receiving updated text
+                alert("Audio processing complete. (Integration ready for Base64 passing)");
             }
         }
-        
-        function setGenerateButtonsDisabled(disabledState) {
-            dom.genConsultBtn.disabled = disabledState;
-            dom.genRadioBtn.disabled = disabledState;
-            dom.genUltraBtn.disabled = disabledState;
-            dom.genSurgBtn.disabled = disabledState;
-            dom.genLabBtn.disabled = disabledState;
-        }
 
-        async function syncToDatabase(data, mode) {
-            console.log(`Syncing DB (${mode}):`, data);
-            setProgress("Saved successfully.", false);
-            setTimeout(() => setProgress("System ready. Waiting for input...", false), 3000);
-        }
-
-        async function loadClinics() {
-            try {
-                const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "getLetterheads" }) });
-                const responseData = await res.json();
-
-                if (responseData.status === "success" && responseData.data && responseData.data.length > 0) {
-                    dom.clinicSelect.innerHTML = ""; 
-                    responseData.data.forEach(item => {
-                        clinicLetterheads[item.clinicName] = `https://lh3.googleusercontent.com/d/${item.fileId}`;
-                        const opt = document.createElement('option');
-                        opt.value = item.clinicName;
-                        opt.textContent = item.clinicName;
-                        dom.clinicSelect.appendChild(opt);
-                    });
-                    letterheadBase64 = clinicLetterheads[dom.clinicSelect.value] || "";
-                } else {
-                    dom.clinicSelect.innerHTML = '<option value="Unknown Clinic">No saved clinics found</option>';
-                }
-            } catch (err) {
-                console.error("Failed to load clinics from backend:", err);
-                dom.clinicSelect.innerHTML = '<option value="Default Clinic">Failed to load clinics</option>';
-            }
-        }
-        window.addEventListener('DOMContentLoaded', loadClinics);
-
-        dom.clinicSelect.addEventListener('change', (e) => {
-            letterheadBase64 = clinicLetterheads[e.target.value] || "";
-            dom.letterheadInput.value = ""; 
-        });
-
-        dom.letterheadInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) { letterheadBase64 = event.target.result; }
-                reader.readAsDataURL(file);
-            } else {
-                letterheadBase64 = clinicLetterheads[dom.clinicSelect.value] || "";
-            }
-        });
-
-        dom.recordBtn.onclick = async () => {
-            try {
-                audioChunks = [];
-                dom.transcript.value = "";
-                dom.warningsCard.classList.add('hidden');
-                setGenerateButtonsDisabled(true);
-
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-
-                mediaRecorder.onstop = async () => {
-                    setProgress("Uploading audio to cloud for transcription...", true);
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    const reader = new FileReader();
-
-                    reader.readAsDataURL(audioBlob);
-                    reader.onloadend = async () => {
-                        const base64Audio = reader.result.split(',')[1];
-                        stream.getTracks().forEach(t => t.stop());
-
-                        try {
-                            const res = await fetch(APPS_SCRIPT_URL, {
-                                method: 'POST',
-                                body: JSON.stringify({ action: 'transcribe', audioBase64: base64Audio }),
-                            });
-                            const json = await res.json();
-
-                            if (json.error) {
-                                const errorMsg = typeof json.error === 'object' ? (json.error.message || JSON.stringify(json.error)) : json.error;
-                                setProgress(`API Error: ${errorMsg}`, false);
-                                dom.recordBtn.disabled = false;
-                                return;
-                            }
-
-                            if (json.text) {
-                                dom.transcript.value = json.text;
-                                setProgress("Transcription complete. Edit text if needed.", false);
-                                setGenerateButtonsDisabled(false);
-                                dom.recordBtn.disabled = false;
-                            } else {
-                                setProgress("Transcription failed. Please try again.", false);
-                                dom.recordBtn.disabled = false;
-                            }
-                        } catch (err) {
-                            setProgress(`Server Error: ${err.message}`, false);
-                            dom.recordBtn.disabled = false;
-                        }
-                    };
-                };
-
-                mediaRecorder.start();
-                setProgress("Recording conversation...", false);
-                dom.wave.classList.remove('opacity-20');
-                dom.wave.classList.add('opacity-100');
-                dom.recordingIndicator.classList.remove('hidden');
-                dom.recordBtn.disabled = true;
-                dom.stopBtn.disabled = false;
-            } catch (err) {
-                setProgress(`Mic Error: ${err.message}`, false);
-            }
-        };
-
-        dom.stopBtn.onclick = () => {
-            if (mediaRecorder) mediaRecorder.stop();
-            dom.wave.classList.remove('opacity-100');
-            dom.wave.classList.add('opacity-20');
-            dom.recordingIndicator.classList.add('hidden');
-            dom.stopBtn.disabled = true;
-        };
-
-        async function generateReport(requestedReportType) {
-            const text = dom.transcript.value.trim();
-            if (!text) return alert("Transcript is empty!");
-
-            setGenerateButtonsDisabled(true);
-            dom.warningsCard.classList.add('hidden');
-            setProgress(`Analyzing transcript for ${requestedReportType}...`, true);
-
-            try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ 
-                        action: 'analyze', 
-                        transcript: text,
-                        reportType: requestedReportType 
-                    }),
-                });
-                const data = await res.json();
-
-                if (data.error) {
-                   const errorMsg = typeof data.error === 'object' ? (data.error.message || JSON.stringify(data.error)) : data.error;
-                   throw new Error(errorMsg);
-                }
-
-                generatedData = data.result;
-
-                currentReportType = generatedData.ReportType || requestedReportType;
-                dom.noteTitle.innerHTML = `${currentReportType} <span class="text-blue-600 font-normal text-xs">(Click text below to edit)</span>`;
-
-                const soap = generatedData.SOAP || {};
-                document.getElementById('soap1').innerText = soap["Signalment_Core_Disease_Category"] || "Not reported";
-                document.getElementById('soap23').innerText = soap["History"] || "Unremarkable";
-                document.getElementById('soap4').innerText = soap["Findings"] || "Unremarkable";
-                document.getElementById('soap567').innerText = soap["Diagnostics"] || "None documented";
-                document.getElementById('soap89').innerText = soap["Plan"] || "None documented";
-                document.getElementById('soap1011').innerText = soap["Takeaways_Differentiation"] || "None documented";
-
-                let instList = Array.isArray(generatedData.ClientInstructions) ? generatedData.ClientInstructions : (generatedData.ClientInstructions ? [generatedData.ClientInstructions] : []);
-                instList = instList.filter(i => i && i.trim() !== "");
-
-                if (instList.length > 0) {
-                    document.getElementById('instructionsText').innerText = instList.map(i => `• ${i}`).join('\n\n');
-                } else {
-                    document.getElementById('instructionsText').innerText = "N/A — Patient deceased or no discharge instructions required.";
-                }
-
-                if (generatedData.Warnings && Array.isArray(generatedData.Warnings) && generatedData.Warnings.length > 0 && generatedData.Warnings[0] !== "") {
-                    dom.warningsList.innerHTML = generatedData.Warnings.map(w => `<li>${w}</li>`).join('');
-                    dom.warningsCard.classList.remove('hidden');
-                }
-
-                dom.pdfBtn.disabled = false;
-                dom.emailBtn.disabled = false;
-
-                setProgress("Analysis complete! Saving to database...", false);
-                syncToDatabase(getEditedData(), "save");
-                setGenerateButtonsDisabled(false);
-
-            } catch (err) {
-                setProgress(`Generation Error: ${err.message}`, false);
-                setGenerateButtonsDisabled(false);
-            }
-        }
-        
-        dom.genConsultBtn.onclick = () => generateReport("Consultation Report");
-        dom.genRadioBtn.onclick = () => generateReport("Radiographic Report");
-        dom.genUltraBtn.onclick = () => generateReport("Ultrasound Report");
-        dom.genSurgBtn.onclick = () => generateReport("Surgical Report");
-        dom.genLabBtn.onclick = () => generateReport("Laboratory Report");
-
-        function getEditedData() {
-            return {
-                reportType: currentReportType,
-                SOAP: {
-                    "Signalment_Core_Disease_Category": document.getElementById('soap1').innerText,
-                    "History": document.getElementById('soap23').innerText,
-                    "Findings": document.getElementById('soap4').innerText,
-                    "Diagnostics": document.getElementById('soap567').innerText,
-                    "Plan": document.getElementById('soap89').innerText,
-                    "Takeaways_Differentiation": document.getElementById('soap1011').innerText
-                },
-                ClientInstructions: document.getElementById('instructionsText').innerText
-            };
-        }
-
-        async function generatePerfectPdf(docTitle, sections, letterheadSrc) {
-            const { PDFDocument, rgb, StandardFonts } = PDFLib;
-            const pdfDoc = await PDFDocument.create();
-            const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-            const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-            let bgImage = null;
-            if (letterheadSrc && letterheadSrc.trim() !== "") {
-                try {
-                    let imgBytes;
-                    if (letterheadSrc.startsWith('data:')) {
-                        imgBytes = letterheadSrc;
-                    } else {
-                        const res = await fetch(letterheadSrc);
-                        imgBytes = await res.arrayBuffer();
-                    }
-                    
-                    try { 
-                        bgImage = await pdfDoc.embedPng(imgBytes); 
-                    } catch(e) { 
-                        bgImage = await pdfDoc.embedJpg(imgBytes); 
-                    }
-                } catch (err) {
-                    console.warn("Letterhead failed to load or embed:", err);
-                }
-            }
-
-            const topMargin = 280;     
-            const bottomMargin = 160;  
-            const sideMargin = 60;     
-
-            let page = pdfDoc.addPage();
-            const { width, height } = page.getSize();
-            const usableWidth = width - sideMargin * 2;
-            let y = height - topMargin;
-
-            const drawBackground = (targetPage) => {
-                if (bgImage) {
-                    targetPage.drawImage(bgImage, {
-                        x: 0,
-                        y: 0,
-                        width: width,   
-                        height: height, 
-                    });
+        /* --- API Interactions --- */
+        async function saveNote() {
+            const noteText = document.getElementById('clinical-note').value;
+            const payload = {
+                source: "kynkode_frontend",
+                action: "SAVE_SCRIBE_NOTE",
+                data: {
+                    patientName: "Bella",
+                    species: "Canine",
+                    breed: "German Shepherd",
+                    history: noteText // Passing the entire note block for simplicity in this demo
                 }
             };
 
-            drawBackground(page);
-
-            page.drawText(docTitle, { x: sideMargin, y, size: 16, font: boldFont, color: rgb(0.1, 0.2, 0.4) });
-            y -= 30;
-
-            const wrapText = (text, textFont, textSize, maxWidth) => {
-                const words = text.split(/\s+/);
-                let lines = [];
-                let currentLine = words[0] || "";
-                
-                for (let i = 1; i < words.length; i++) {
-                    const word = words[i];
-                    const lineWidth = textFont.widthOfTextAtSize(currentLine + " " + word, textSize);
-                    if (lineWidth < maxWidth) {
-                        currentLine += " " + word;
-                    } else {
-                        lines.push(currentLine);
-                        currentLine = word;
-                    }
-                }
-                if (currentLine) lines.push(currentLine);
-                return lines;
-            };
-
-            const checkPageBreak = (neededSpace) => {
-                if (y - neededSpace < bottomMargin) {
-                    page = pdfDoc.addPage();
-                    drawBackground(page);
-                    y = height - topMargin; 
-                }
-            };
-
-            for (const section of sections) {
-                checkPageBreak(40);
-                
-                page.drawText(section.title, { x: sideMargin, y, size: 12, font: boldFont, color: rgb(0, 0, 0) });
-                y -= 18;
-
-                const paragraphs = (section.content || "-").split('\n');
-                for (const para of paragraphs) {
-                    if (!para.trim()) {
-                        y -= 6;
-                        continue;
-                    }
-                    const lines = wrapText(para, font, 10, usableWidth);
-                    for (const line of lines) {
-                        checkPageBreak(15);
-                        page.drawText(line, { x: sideMargin, y, size: 10, font: font, color: rgb(0.2, 0.2, 0.2) });
-                        y -= 14;
-                    }
-                    y -= 6;
-                }
-                y -= 12;
-            }
-
-            return await pdfDoc.save();
-        }
-
-        const convertBlobToBase64 = (blob) => {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        };
-
-        function downloadBlob(bytes, filename) {
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        dom.pdfBtn.onclick = async () => {
-            const editedData = getEditedData();
-            dom.pdfBtn.disabled = true;
-            setProgress("Generating precise PDFs...", true);
-
             try {
-                const medRecordSections = [
-                    { title: "Signalment & Core Disease Category", content: editedData.SOAP["Signalment_Core_Disease_Category"] },
-                    { title: "History", content: editedData.SOAP["History"] },
-                    { title: "Findings", content: editedData.SOAP["Findings"] },
-                    { title: "Diagnostics", content: editedData.SOAP["Diagnostics"] },
-                    { title: "Plan", content: editedData.SOAP["Plan"] },
-                    { title: "Takeaways & Differentiation", content: editedData.SOAP["Takeaways_Differentiation"] }
-                ];
-                
-                const medPdfBytes = await generatePerfectPdf(currentReportType, medRecordSections, letterheadBase64);
-                const formattedFileName = currentReportType.replace(/ /g, "_") + ".pdf";
-                downloadBlob(medPdfBytes, formattedFileName);
-
-                const instructionsContent = editedData.ClientInstructions;
-                if (instructionsContent && !instructionsContent.includes("N/A — Patient deceased")) {
-                    const clientSections = [
-                        { title: "Patient / Client Instructions", content: instructionsContent }
-                    ];
-                    
-                    const clientPdfBytes = await generatePerfectPdf("Client Instructions", clientSections, letterheadBase64);
-                    downloadBlob(clientPdfBytes, "Client_Instructions.pdf");
-                }
-
-                setProgress("PDFs downloaded successfully!", false);
-            } catch (err) {
-                console.error("PDF Gen Error:", err);
-                setProgress(`PDF Error: ${err.message}`, false);
-            }
-            dom.pdfBtn.disabled = false;
-        };
-
-        dom.emailBtn.onclick = async () => {
-            const email = document.getElementById('patientEmail').value.trim();
-            const clinic = dom.clinicSelect.value;
-            const doctor = document.getElementById('doctorName').value;
-
-            if(!email) return alert("Please enter a patient email in the Settings panel.");
-
-            dom.emailBtn.disabled = true;
-            setProgress("Generating PDFs and sending email via cloud...", true);
-
-            try {
-                const editedData = getEditedData();
-
-                const medRecordSections = [
-                    { title: "Signalment & Core Disease Category", content: editedData.SOAP["Signalment_Core_Disease_Category"] },
-                    { title: "History", content: editedData.SOAP["History"] },
-                    { title: "Findings", content: editedData.SOAP["Findings"] },
-                    { title: "Diagnostics", content: editedData.SOAP["Diagnostics"] },
-                    { title: "Plan", content: editedData.SOAP["Plan"] },
-                    { title: "Takeaways & Differentiation", content: editedData.SOAP["Takeaways_Differentiation"] }
-                ];
-                const medPdfBytes = await generatePerfectPdf(currentReportType, medRecordSections, letterheadBase64);
-                
-                const medBlob = new Blob([medPdfBytes], { type: 'application/pdf' });
-                const reportPdfBase64 = await convertBlobToBase64(medBlob);
-                
-                let instructionsPdfBase64 = null;
-
-                const instructionsContent = editedData.ClientInstructions;
-                if (instructionsContent && !instructionsContent.includes("N/A — Patient deceased")) {
-                    const clientSections = [
-                        { title: "Patient / Client Instructions", content: instructionsContent }
-                    ];
-                    const clientPdfBytes = await generatePerfectPdf("Client Instructions", clientSections, letterheadBase64);
-                    const clientBlob = new Blob([clientPdfBytes], { type: 'application/pdf' });
-                    instructionsPdfBase64 = await convertBlobToBase64(clientBlob);
-                }
-
-                const payload = {
-                    action: "email",
-                    patientEmail: email,
-                    clinicName: clinic,
-                    doctorName: doctor,
-                    reportType: currentReportType,
-                    reportPdfBase64: reportPdfBase64,
-                    instructionsPdfBase64: instructionsPdfBase64
-                };
-
-                const res = await fetch(APPS_SCRIPT_URL, {
+                const response = await fetch(GAS_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                
-                const data = await res.json();
-
-                if (data.status === "success") {
-                    setProgress("Records emailed to patient successfully!", false);
-                } else {
-                    throw new Error(data.error || "Failed to send email through server.");
+                const result = await response.json();
+                if(result.success) {
+                    alert('Note saved to CliniScribe database successfully!');
                 }
-
             } catch (err) {
-                console.error("Email Error:", err);
-                setProgress(`Email Error: ${err.message}`, false);
+                console.error("Backend connection required:", err);
+                alert("Failed to connect to backend. Make sure your GAS_URL is set.");
             }
+        }
+
+        /* --- Floating AI Chat Logic --- */
+        let isFloatingMicActive = false;
+
+        function toggleFloatingMic() {
+            const micBtn = document.getElementById('float-mic-btn');
+            isFloatingMicActive = !isFloatingMicActive;
             
-            dom.emailBtn.disabled = false;
-        };
+            if (isFloatingMicActive) {
+                micBtn.classList.add('recording');
+                document.getElementById('chat-input').placeholder = "Listening...";
+                // Here you would implement MediaRecorder API to capture audio to Base64
+            } else {
+                micBtn.classList.remove('recording');
+                document.getElementById('chat-input').placeholder = "Processing voice...";
+                setTimeout(() => {
+                    document.getElementById('chat-input').placeholder = "Message AI or use voice...";
+                    appendMessage("Audio recorded and sent to core.", 'user');
+                    triggerBackendAI(null, "fake_audio_base64_string_here");
+                }, 1000);
+            }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            input.value = '';
+            
+            triggerBackendAI(text, null);
+        }
+
+        function appendMessage(text, sender) {
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.classList.add('active'); // Ensure chat is visible
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${sender}`;
+            msgDiv.innerText = text;
+            
+            chatWindow.appendChild(msgDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function triggerBackendAI(text, audioBase64) {
+            appendMessage("...", 'ai'); // Loading state
+            
+            const payload = {
+                source: "kynkode_frontend",
+                action: "ASK_AI",
+                data: {
+                    text: text,
+                    audioBase64: audioBase64
+                }
+            };
+
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                
+                // Remove loading state
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.removeChild(chatWindow.lastChild);
+
+                if(result.success) {
+                    appendMessage(result.ai_response, 'ai');
+                } else {
+                    appendMessage("Error: " + result.message, 'ai');
+                }
+            } catch (err) {
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.removeChild(chatWindow.lastChild);
+                appendMessage("System offline. Please check endpoint URL.", 'ai');
+            }
+        }
     </script>
 </body>
 </html>

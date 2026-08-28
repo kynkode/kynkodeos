@@ -1,452 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniMove - KYNKODE AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fb;
-        }
-        .loader {
-            border-top-color: #d97706;
-            animation: spinner 1.5s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CliniMove - KYNKODE AGI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #fff9f5;
+      --sidebar-bg: #4a2311;
+      --sidebar-hover: #5c2d16;
+      --primary-orange: #f06522;
+      --text-dark: #1f2937;
+      --text-gray: #6b7280;
+      --border-color: #f3f4f6;
+      --card-bg: #ffffff;
+      
+      --status-completed-bg: #d1fae5;
+      --status-completed-txt: #065f46;
+      --status-progress-bg: #e0e7ff;
+      --status-progress-txt: #3730a3;
+      --status-pending-bg: #ffedd5;
+      --status-pending-txt: #c2410c;
+      --status-due-txt: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Mobile Header & Hamburger */
+    .mobile-header {
+      display: none;
+      background-color: var(--sidebar-bg);
+      padding: 15px 20px;
+      color: white;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 100;
+    }
+
+    .hamburger {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+      z-index: 99;
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .nav-menu {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 0 10px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 20px;
+      color: #d1d5db;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background-color: var(--sidebar-hover);
+      color: white;
+    }
+
+    .nav-item.active {
+      background-color: var(--primary-orange);
+      color: white;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+    }
+
+    .active-cases-widget {
+      background-color: #8c421b;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .active-cases-widget span {
+      display: block;
+      font-size: 0.85rem;
+      color: #fca5a5;
+    }
+
+    .active-cases-widget h2 {
+      font-size: 2rem;
+      margin-top: 5px;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      padding-bottom: 120px; /* Space for floating bar */
+    }
+
+    .top-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .app-icon {
+      background-color: var(--primary-orange);
+      color: white;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 1.5rem;
+    }
+
+    .app-title h1 {
+      color: var(--primary-orange);
+      font-size: 1.8rem;
+    }
+
+    .app-title p {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      margin-bottom: 25px;
+      border: 1px solid var(--border-color);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .card-header a {
+      color: #3b82f6;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    /* Relocation Case Layout */
+    .case-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .route-info h3 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge.progress { background: var(--status-completed-bg); color: var(--status-completed-txt); }
+    .badge.pending { background: var(--status-pending-bg); color: var(--status-pending-txt); }
+
+    .route-path {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar-container {
+      background: #e5e7eb;
+      height: 8px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      background: #3b82f6;
+      height: 100%;
+      border-radius: 4px;
+      width: 67%;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+
+    .pet-details-grid {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+    .pet-details-grid span:nth-child(odd) { color: var(--text-gray); }
+    .pet-details-grid span:nth-child(even) { font-weight: 500; color: var(--text-dark); }
+
+    /* Checklist & Deadlines */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+    }
+
+    .checklist-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .checklist-table td {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .checklist-table tr:last-child td { border-bottom: none; }
+    
+    .icon-completed { color: #10b981; }
+    .icon-progress { color: #3b82f6; }
+    .icon-pending { color: #ef4444; }
+
+    .deadline-item {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .deadline-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+    
+    .deadline-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 5px;}
+    .deadline-due-red { color: var(--status-due-txt); font-size: 0.8rem; font-weight: 500;}
+    .deadline-due-orange { color: var(--status-pending-txt); font-size: 0.8rem; font-weight: 500;}
+    .deadline-date { float: right; font-size: 0.85rem; color: var(--text-gray); }
+
+    .footer-tagline {
+      text-align: center;
+      color: var(--primary-orange);
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+
+    /* Floating AI Bar */
+    .floating-ai-bar {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 700px;
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      padding: 8px 15px;
+      border: 1px solid var(--primary-orange);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+
+    .floating-ai-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 12px 15px;
+      font-size: 1rem;
+      background: transparent;
+    }
+
+    .ai-btn {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 10px;
+      transition: color 0.2s;
+    }
+
+    .ai-btn:hover { color: var(--primary-orange); }
+    .ai-btn.send-btn { color: var(--primary-orange); background: #fff5ee; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;}
+
+    /* Responsiveness */
+    @media (max-width: 900px) {
+      .case-grid, .bottom-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .mobile-header { display: flex; }
+      .sidebar {
+        position: fixed;
+        height: 100vh;
+        transform: translateX(-100%);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { padding: 80px 20px 100px 20px; }
+      .floating-ai-bar { width: 95%; bottom: 15px; }
+    }
+  </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-0 md:p-8">
+<body>
 
-    <!-- Mobile Backdrop Overlay -->
-    <div id="mobile-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
+  <div class="mobile-header">
+    <div class="font-bold tracking-wider">KYNKODE</div>
+    <i class="fas fa-bars hamburger" onclick="toggleSidebar()"></i>
+  </div>
 
-    <!-- Main App Container -->
-    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white md:rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">KYNKODE</div>
+    <nav class="nav-menu">
+      <a href="#" class="nav-item"><i class="fas fa-home w-5 text-center"></i> Dashboard</a>
+      <a href="#" class="nav-item active"><i class="fas fa-plane w-5 text-center"></i> Relocations</a>
+      <a href="#" class="nav-item"><i class="fas fa-file-alt w-5 text-center"></i> Documents</a>
+      <a href="#" class="nav-item"><i class="fas fa-check-square w-5 text-center"></i> Checklists</a>
+      <a href="#" class="nav-item"><i class="fas fa-layer-group w-5 text-center"></i> Templates</a>
+      <a href="#" class="nav-item"><i class="fas fa-chart-bar w-5 text-center"></i> Reports</a>
+      <a href="#" class="nav-item"><i class="fas fa-cog w-5 text-center"></i> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="active-cases-widget">
+        <span>Active Cases</span>
+        <h2>7</h2>
+      </div>
+    </div>
+  </aside>
 
-        <!-- Mobile Top Header Bar with Hamburger Button -->
-        <div class="md:hidden flex items-center justify-between bg-[#2b180a] text-white px-5 py-3.5 border-b border-white/10 shrink-0 z-20">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-plane-departure text-amber-500 text-lg"></i>
-                <div>
-                    <h1 class="font-bold text-sm leading-tight uppercase tracking-wider text-amber-400">KYNKODE</h1>
-                    <p class="text-[9px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
-                </div>
-            </div>
-            <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2 rounded-lg focus:outline-none hover:bg-white/10 transition" aria-label="Open Menu">
-                <i class="fa-solid fa-bars text-xl"></i>
-            </button>
-        </div>
-
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-        </div>
-
-        <!-- Sidebar Drawer (Slide-out on Mobile, Static on Desktop) -->
-        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-40 w-64 bg-[#2b180a] text-white flex flex-col justify-between p-5 flex-shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none h-full overflow-y-auto">
-            <div>
-                <!-- Brand / Logo & Close Button for Mobile -->
-                <div class="flex items-center justify-between mb-8 px-2">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-plane-departure text-amber-500 text-xl"></i>
-                        <div>
-                            <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-amber-400">KYNKODE</h1>
-                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
-                        </div>
-                    </div>
-                    <button id="mobile-close-btn" class="md:hidden text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition" aria-label="Close Menu">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-
-                <!-- Navigation Links -->
-                <nav class="space-y-2">
-                    <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                        <i class="fa-solid fa-diagram-project w-5"></i>
-                        <span class="font-medium text-sm">CliniFlow</span>
-                    </a>
-                    <a href="clinimove.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#5c3214] text-white font-medium text-sm shadow-md transition">
-                        <i class="fa-solid fa-plane-departure w-5 text-amber-400"></i>
-                        <span>CliniMove</span>
-                    </a>
-                    <a href="clinistock.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                        <i class="fa-solid fa-boxes-stacked w-5"></i>
-                        <span class="font-medium text-sm">CliniStock</span>
-                    </a>
-                </nav>
-
-                <!-- Module Specific Links -->
-                <div class="mt-8 pt-6 border-t border-white/10 space-y-1">
-                    <p class="px-4 text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Relocation Tools</p>
-                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                        <i class="fa-solid fa-file-lines w-4 text-center"></i> Documents
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                        <i class="fa-solid fa-square-check w-4 text-center"></i> Checklists
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                        <i class="fa-solid fa-file-invoice w-4 text-center"></i> Templates
-                    </a>
-                </div>
-            </div>
-
-            <!-- Sidebar Footer Stats Card -->
-            <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="bg-[#5c3214] px-4 py-3.5 rounded-2xl text-white shadow-inner">
-                    <p class="text-xs text-gray-300 mb-1">Active Cases</p>
-                    <div id="sb-active-cases" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
-                    <p class="text-[11px] text-amber-400 font-medium">In Progress</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
-
-            <!-- Scrollable Content -->
-            <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
-
-                <!-- Top Header -->
-                <header class="flex items-center gap-3">
-                    <div class="bg-amber-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                        <i class="fa-solid fa-plane text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniMove</h1>
-                        <p class="text-xs text-gray-500 font-medium">Pet relocation made simple</p>
-                    </div>
-                </header>
-
-                <!-- Top Grid: Relocation Cases Card -->
-                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="font-semibold text-gray-800 text-sm">Active Relocation Case</h2>
-                        <a href="#" class="text-amber-600 hover:underline text-xs font-medium">View all cases</a>
-                    </div>
-
-                    <!-- Case Box container -->
-                    <div class="bg-gray-50/60 p-5 rounded-2xl border border-gray-100 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                        
-                        <!-- Left: Progress & Travel Date -->
-                        <div class="lg:col-span-7 flex flex-col gap-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <span id="case-id" class="font-bold text-gray-900 text-base">--</span>
-                                    <span id="case-status" class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">--</span>
-                                </div>
-                            </div>
-                            <div class="text-sm text-gray-600 font-medium flex items-center gap-2">
-                                <span id="case-origin">--</span>
-                                <i class="fa-solid fa-arrow-right text-xs text-gray-400"></i>
-                                <span id="case-destination">--</span>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="flex-1 bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                                    <div id="case-progress-bar" class="bg-amber-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%;"></div>
-                                </div>
-                                <span id="case-progress-text" class="text-xs font-semibold text-gray-700">0%</span>
-                            </div>
-                            <div class="text-xs text-gray-500">
-                                Travel Date: <span id="case-travel-date" class="font-medium text-gray-800">--</span>
-                            </div>
-                        </div>
-
-                        <!-- Right: Pet Details -->
-                        <div class="lg:col-span-5 grid grid-cols-2 gap-y-2.5 text-sm bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                            <div>
-                                <span class="text-gray-400 text-[11px] uppercase tracking-wide block">Pet</span>
-                                <span id="pet-name" class="font-semibold text-gray-900">--</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-400 text-[11px] uppercase tracking-wide block">Species</span>
-                                <span id="pet-species" class="font-semibold text-gray-900">--</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-400 text-[11px] uppercase tracking-wide block">Owner</span>
-                                <span id="pet-owner" class="font-semibold text-gray-900">--</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-400 text-[11px] uppercase tracking-wide block">Microchip</span>
-                                <span id="pet-microchip" class="font-semibold text-gray-900 text-xs">--</span>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
-
-                <!-- Bottom Grid: Relocation Checklist & Upcoming Deadlines -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                    <!-- Relocation Checklist Section -->
-                    <section class="lg:col-span-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                        <h2 class="font-semibold text-gray-800 text-sm">Relocation Checklist</h2>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <tbody id="checklist-table-body" class="divide-y divide-gray-50 text-gray-700">
-                                    <!-- Injected via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
-
-                    <!-- Upcoming Deadlines Section -->
-                    <section class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                        <h2 class="font-semibold text-gray-800 text-sm">Upcoming Deadlines</h2>
-
-                        <div id="deadlines-container" class="space-y-4">
-                            <!-- Injected via JS -->
-                        </div>
-                    </section>
-
-                </div>
-
-                <!-- Footer Text inside scrolling area -->
-                <footer class="mt-4 text-center text-xs text-amber-900/60 font-medium pb-2">
-                    All documents. All deadlines. Stress-free pet travel.
-                </footer>
-            </div>
-
-            <!-- KYNKODE AI Input Bar -->
-            <div class="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-amber-100 p-3 flex items-center gap-4 z-20">
-                <span class="font-bold text-amber-800 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
-                <i class="fa-solid fa-sparkles text-amber-500 sm:hidden pl-2"></i>
-                <input type="text" id="ai-query" placeholder="Ask anything about this relocation case..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
-                <button class="p-3 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-100 transition-all">
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-                <button id="ai-send" class="p-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all flex items-center justify-center min-w-[44px]">
-                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
-                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
-                </button>
-            </div>
-
-        </main>
+  <main class="main-content">
+    
+    <div class="top-header">
+      <div class="app-icon">
+        <i class="fas fa-plane"></i>
+      </div>
+      <div class="app-title">
+        <h1>CliniMove</h1>
+        <p>Pet relocation made simple</p>
+      </div>
     </div>
 
-    <!-- Frontend Fetch Integration & Mobile Navigation Script -->
-    <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwi4nCHOTE5Nqf6fjhAI5_h1lVBcvP7MKo4OAERw328aDWKnTsNvAdNVHrChK7OB8xi/exec";
+    <div class="card">
+      <div class="card-header">
+        <span>Relocation Cases</span>
+        <a href="#">View all</a>
+      </div>
+      <div class="case-grid">
+        <div class="route-info">
+          <h3>Case #1048 <span class="badge progress">In Progress</span></h3>
+          <p class="route-path">Kenya <i class="fas fa-arrow-right mx-2 text-xs"></i> United Kingdom</p>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill"></div>
+          </div>
+          <div class="progress-text">
+            <span>Travel Date: 15/09/2026</span>
+            <span>67%</span>
+          </div>
+        </div>
+        <div class="pet-details-grid">
+          <span>Pet</span><span>Luna</span>
+          <span>Species</span><span>Canine</span>
+          <span>Owner</span><span>Sarah Wanjiku</span>
+          <span>Microchip</span><span>900215004123456</span>
+        </div>
+      </div>
+    </div>
 
-        const fallbackData = {
-            status: "success",
-            data: {
-                totalActiveCases: 14,
-                activeCase: {
-                    caseId: "REL-2026-08",
-                    status: "In Progress",
-                    origin: "Nairobi, KE",
-                    destination: "London, UK",
-                    progress: "65",
-                    travelDate: "28 Aug 2026",
-                    petName: "Luna",
-                    species: "Feline (Cat)",
-                    owner: "Jane Doe",
-                    microchip: "98102000039485"
-                },
-                checklist: [
-                    { item: "Rabies Vaccination", status: "Completed", dateOrRange: "10 Jul 2026" },
-                    { item: "RNATT Blood Test", status: "Completed", dateOrRange: "10 Aug 2026" },
-                    { item: "Import Permit (UK)", status: "In Progress", dateOrRange: "Pending" },
-                    { item: "Health Certificate", status: "Pending", dateOrRange: "-" }
-                ],
-                deadlines: [
-                    { task: "Submit Import Permit", dueDate: "20 Aug 2026", dueDays: "2 Days (Urgent)", assignedTo: "Admin" },
-                    { task: "Final Vet Check", dueDate: "26 Aug 2026", dueDays: "8 Days", assignedTo: "Dr. Sarah" }
-                ]
-            }
-        };
+    <div class="bottom-grid">
+      <div class="card">
+        <div class="card-header">
+          <span>Relocation Checklist</span>
+        </div>
+        <table class="checklist-table">
+          <tr>
+            <td><i class="fas fa-check-circle icon-completed"></i></td>
+            <td>Microchip</td>
+            <td><span class="badge progress" style="background:#f0fdf4; color:#16a34a; font-weight:400">Completed</span></td>
+            <td style="text-align:right; color:var(--text-gray)">10/07/2026</td>
+          </tr>
+          <tr>
+            <td><i class="fas fa-check-circle icon-completed"></i></td>
+            <td>Rabies Vaccination</td>
+            <td><span class="badge progress" style="background:#f0fdf4; color:#16a34a; font-weight:400">Completed</span></td>
+            <td style="text-align:right; color:var(--text-gray)">10/07/2026</td>
+          </tr>
+          <tr>
+            <td><i class="fas fa-check-circle icon-completed"></i></td>
+            <td>Rabies Titre Test</td>
+            <td><span class="badge progress" style="background:#f0fdf4; color:#16a34a; font-weight:400">Completed</span></td>
+            <td style="text-align:right; color:var(--text-gray)">10/08/2026</td>
+          </tr>
+          <tr>
+            <td><i class="far fa-dot-circle icon-progress"></i></td>
+            <td>Waiting Period</td>
+            <td><span class="badge pending" style="background:transparent; color:#ea580c">In Progress</span></td>
+            <td style="text-align:right; color:var(--text-gray)">(21/07 - 11/08)</td>
+          </tr>
+          <tr>
+            <td><i class="far fa-stop-circle icon-pending"></i></td>
+            <td>Health Certificate</td>
+            <td><span class="badge pending" style="background:transparent; color:#ea580c">Pending</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><i class="far fa-stop-circle icon-pending"></i></td>
+            <td>Export Permit</td>
+            <td><span class="badge pending" style="background:transparent; color:#ea580c">Pending</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><i class="far fa-stop-circle icon-pending"></i></td>
+            <td>Travel Arrangement</td>
+            <td><span class="badge pending" style="background:transparent; color:#ea580c">Pending</span></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setupMobileMenu();
-            fetchMoveData();
-            setupAIBar();
+      <div class="card">
+        <div class="card-header">
+          <span>Upcoming Deadlines</span>
+        </div>
+        <div class="deadline-item">
+          <div class="deadline-title">Health Certificate <span class="deadline-date">23/08/2026</span></div>
+          <div class="deadline-due-red">Due in 5 days</div>
+        </div>
+        <div class="deadline-item">
+          <div class="deadline-title">Export Permit <span class="deadline-date">30/08/2026</span></div>
+          <div class="deadline-due-orange">Due in 12 days</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer-tagline">All documents. All deadlines. Stress-free pet travel.</p>
+
+  </main>
+
+  <div class="floating-ai-bar">
+    <button class="ai-btn" id="micBtn"><i class="fas fa-microphone"></i></button>
+    <input type="text" id="aiInput" placeholder="Ask AI Practice Manager..." autocomplete="off">
+    <button class="ai-btn send-btn" id="sendBtn" onclick="triggerAI()"><i class="fas fa-paper-plane"></i></button>
+  </div>
+
+  <script>
+    // ==========================================
+    // UI INTERACTIONS
+    // ==========================================
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    const aiInput = document.getElementById('aiInput');
+    aiInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        triggerAI();
+      }
+    });
+
+    // ==========================================
+    // BACKEND INTEGRATION
+    // ==========================================
+    
+    // ⚠️ REPLACE THIS WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
+    const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
+
+    async function triggerAI() {
+      const inputText = aiInput.value.trim();
+      if (!inputText) return;
+
+      const sendBtn = document.getElementById('sendBtn');
+      const originalIcon = sendBtn.innerHTML;
+      
+      // UI Loading State
+      aiInput.value = "";
+      aiInput.placeholder = "AI is thinking...";
+      sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+      const payload = {
+        source: 'kynkode_frontend',
+        action: 'ASK_AI',
+        data: {
+          text: inputText
+        }
+      };
+
+      try {
+        const response = await fetch(GAS_ENDPOINT, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8', 
+          }
         });
-
-        /* --- Mobile Navigation Drawer Logic --- */
-        function setupMobileMenu() {
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            const closeBtn = document.getElementById('mobile-close-btn');
-            const overlay = document.getElementById('mobile-overlay');
-            const sidebar = document.getElementById('sidebar');
-
-            function openSidebar() {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            }
-
-            function closeSidebar() {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-
-            if (menuBtn) menuBtn.addEventListener('click', openSidebar);
-            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-            if (overlay) overlay.addEventListener('click', closeSidebar);
-
-            const navLinks = sidebar.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth < 768) {
-                        closeSidebar();
-                    }
-                });
-            });
+        
+        const result = await response.json();
+        
+        if(result.success) {
+            alert("AI Response:\n" + result.ai_response);
+            // Example: If AI responds with tool calling logic, you can trigger UI updates here.
+        } else {
+            alert("Error: " + result.message);
         }
 
-        async function fetchMoveData() {
-            try {
-                const response = await fetch(GAS_URL);
-                if (!response.ok) throw new Error('Network error');
-
-                const result = await response.json();
-                if (result.status === "success") {
-                    populateDashboard(result.data);
-                } else {
-                    console.warn("Backend Error, using fallback data:", result.message);
-                    populateDashboard(fallbackData.data);
-                }
-            } catch (error) {
-                console.warn("Fetch Error, using fallback data:", error);
-                populateDashboard(fallbackData.data);
-            } finally {
-                document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
-            }
-        }
-
-        function populateDashboard(data) {
-            document.getElementById('sb-active-cases').textContent = data.totalActiveCases || 0;
-
-            const active = data.activeCase;
-            document.getElementById('case-id').textContent = active.caseId;
-            document.getElementById('case-status').textContent = active.status;
-            document.getElementById('case-origin').textContent = active.origin;
-            document.getElementById('case-destination').textContent = active.destination;
-            
-            const rawProgress = String(active.progress).replace('%', '');
-            document.getElementById('case-progress-bar').style.width = `${rawProgress}%`;
-            document.getElementById('case-progress-text').textContent = `${rawProgress}%`;
-            document.getElementById('case-travel-date').textContent = active.travelDate;
-
-            document.getElementById('pet-name').textContent = active.petName;
-            document.getElementById('pet-species').textContent = active.species;
-            document.getElementById('pet-owner').textContent = active.owner;
-            document.getElementById('pet-microchip').textContent = active.microchip;
-
-            const checklistBody = document.getElementById('checklist-table-body');
-            checklistBody.innerHTML = '';
-
-            data.checklist.forEach(item => {
-                const tr = document.createElement('tr');
-                const lowerStatus = String(item.status).toLowerCase();
-
-                let iconHtml = '<span class="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-xmark"></i></span>';
-                let badgeHtml = '<span class="px-2.5 py-0.5 bg-gray-100 text-gray-600 border border-gray-200/60 rounded-full text-xs font-medium">Pending</span>';
-
-                if (lowerStatus === 'completed') {
-                    iconHtml = '<span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-check"></i></span>';
-                    badgeHtml = '<span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full text-xs font-medium">Completed</span>';
-                } else if (lowerStatus === 'in progress') {
-                    iconHtml = '<span class="w-5 h-5 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-clock"></i></span>';
-                    badgeHtml = '<span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-medium">In Progress</span>';
-                }
-
-                const dateVal = (item.dateOrRange && item.dateOrRange !== '-') ? item.dateOrRange : '';
-
-                tr.innerHTML = `
-                    <td class="py-3 flex items-center gap-2.5 font-medium text-gray-900">
-                        ${iconHtml}
-                        ${item.item}
-                    </td>
-                    <td class="py-3" ${dateVal ? '' : 'colspan="2"'}>
-                        ${badgeHtml}
-                    </td>
-                    ${dateVal ? `<td class="py-3 text-right text-xs text-gray-400">${dateVal}</td>` : ''}
-                `;
-                checklistBody.appendChild(tr);
-            });
-
-            const deadlinesContainer = document.getElementById('deadlines-container');
-            deadlinesContainer.innerHTML = '';
-
-            data.deadlines.forEach(dl => {
-                const div = document.createElement('div');
-                div.className = 'p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2 hover:bg-white hover:shadow-sm transition-all';
-
-                let badgeColor = "bg-amber-50 text-amber-700 border-amber-200/60";
-                if (String(dl.dueDays).toLowerCase().includes("urgent") || String(dl.dueDays).match(/[1-5]\s*days?/)) {
-                    badgeColor = "bg-red-50 text-red-600 border-red-200/60";
-                }
-
-                div.innerHTML = `
-                    <div class="flex items-center justify-between text-sm font-semibold text-gray-900">
-                        <span>${dl.task}</span>
-                        <span class="text-xs font-normal text-gray-500">${dl.dueDate}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="px-2.5 py-0.5 border rounded-full font-medium ${badgeColor}">${dl.dueDays}</span>
-                        <span class="text-gray-400"><i class="fa-regular fa-user mr-1"></i> ${dl.assignedTo}</span>
-                    </div>
-                `;
-                deadlinesContainer.appendChild(div);
-            });
-        }
-
-        function setupAIBar() {
-            const queryInput = document.getElementById('ai-query');
-            const sendBtn = document.getElementById('ai-send');
-            const sendIcon = document.getElementById('ai-send-icon');
-            const loadingIcon = document.getElementById('ai-loading-icon');
-
-            const handleSendText = async () => {
-                const query = queryInput.value.trim();
-                if (!query) return;
-
-                queryInput.disabled = true;
-                sendIcon.classList.add('hidden');
-                loadingIcon.classList.remove('hidden');
-
-                try {
-                    const response = await fetch(GAS_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'text/plain;charset=utf-8'
-                        },
-                        body: JSON.stringify({ 
-                            source: 'kynkode_frontend', 
-                            action: 'ASK_AI', 
-                            data: { text: query, context: 'CliniMove' } 
-                        })
-                    });
-                    const result = await response.json();
-                    alert("KYNKODE AI: " + (result.ai_response || "Action processed successfully.")); 
-                } catch (error) { 
-                    console.error("AI Request Error:", error);
-                    alert("Could not connect to KYNKODE AI backend. Check console for details.");
-                } font-medium {
-                    queryInput.disabled = false;
-                    queryInput.value = '';
-                    queryInput.focus();
-                    sendIcon.classList.remove('hidden');
-                    loadingIcon.classList.add('hidden');
-                }
-            };
-
-            sendBtn.addEventListener('click', handleSendText);
-            queryInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') handleSendText();
-            });
-        }
-    </script>
+      } catch (error) {
+        console.error("Backend communication failed:", error);
+        alert("Failed to reach KYNKODE backend. Check your GAS URL and CORS settings.");
+      } finally {
+        // Reset UI
+        aiInput.placeholder = "Ask AI Practice Manager...";
+        sendBtn.innerHTML = originalIcon;
+      }
+    }
+  </script>
 </body>
 </html>

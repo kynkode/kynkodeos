@@ -1,501 +1,616 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniRecall - KYNKODE AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fb;
-        }
-        .loader {
-            border-top-color: #059669;
-            animation: spinner 1.5s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-        
-        /* Sidebar specific scrollbar */
-        .sidebar-scroll::-webkit-scrollbar-thumb { background: #0e3b2b; }
-    </style>
+  <meta charset="UTF- Pearl Vets UI - Kynkode -8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CliniRecall - KYNKODE</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sidebar-bg: #092C1F;
+      --sidebar-active: #154D38;
+      --bg-color: #F4F7F6;
+      --card-bg: #FFFFFF;
+      --text-main: #1A1A1A;
+      --text-muted: #6B7280;
+      --accent-green: #22C55E;
+      --accent-red: #EF4444;
+      --accent-orange: #F59E0B;
+      --border-color: #E5E7EB;
+      --ai-cyan: #27C3EA; /* Kynkode AGI Highlight */
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #E8ECEB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* App Wrapper simulating the screenshot's curved container */
+    .app-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      height: 90vh;
+      background: var(--bg-color);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Mobile Hamburger */
+    .mobile-header {
+      display: none;
+      padding: 15px 20px;
+      background: var(--card-bg);
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .hamburger {
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--sidebar-bg);
+    }
+
+    /* Sidebar Layout */
+    .sidebar {
+      width: 240px;
+      background: var(--sidebar-bg);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      transition: transform 0.3s ease;
+      margin: 16px;
+      border-radius: 16px;
+    }
+
+    .brand {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      padding-left: 12px;
+    }
+
+    .nav-items {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #A0B3AC;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      color: white;
+    }
+
+    .nav-item.active {
+      background: var(--sidebar-active);
+      color: white;
+    }
+
+    .sidebar-stats {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: auto;
+    }
+
+    .sidebar-stats p { font-size: 12px; color: #A0B3AC; }
+    .sidebar-stats h3 { font-size: 24px; margin: 4px 0; }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      padding-bottom: 100px; /* Space for AI bar */
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .bell-icon {
+      width: 48px;
+      height: 48px;
+      background: #10B981;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .header-title h1 { font-size: 28px; color: var(--text-main); }
+    .header-title p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+    /* Metric Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .metric-card p { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #059669; }
+    .metric-card.overdue p { color: var(--accent-red); }
+    .metric-card h2 { font-size: 32px; color: var(--text-main); }
+
+    /* Queue Table */
+    .card-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-header h3 { font-size: 16px; color: var(--text-main); }
+    .section-header a { font-size: 13px; color: #2563EB; text-decoration: none; font-weight: 500; }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding-bottom: 16px; color: var(--text-muted); font-size: 12px; font-weight: 500; border-bottom: 1px solid var(--border-color); }
+    td { padding: 16px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px; color: var(--text-main); }
+    tr:last-child td { border-bottom: none; }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .status-pending { background: #FEF3C7; color: #D97706; }
+    .status-completed { background: #D1FAE5; color: #059669; }
+    .status-noanswer { background: #FEE2E2; color: #DC2626; }
+
+    .channel-icon { font-size: 18px; color: var(--text-muted); }
+    .fa-whatsapp { color: #25D366; }
+
+    /* Activities */
+    .activity-list { display: flex; flex-direction: column; gap: 16px; }
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .activity-item i { font-size: 16px; }
+    .activity-item .fa-check-circle { color: #10B981; }
+    .activity-item .fa-clock { color: var(--text-muted); }
+    .activity-text { flex: 1; color: var(--text-main); }
+    .activity-time { color: var(--text-muted); margin-right: 12px; }
+
+    .footer-text { text-align: center; color: #059669; font-size: 13px; font-weight: 500; padding: 10px 0; }
+
+    /* --- Floating AI Bar --- */
+    .ai-floating-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 600px;
+      background: var(--card-bg);
+      border-radius: 40px;
+      box-shadow: 0 8px 30px rgba(39, 195, 234, 0.15); /* #27C3EA glow */
+      border: 2px solid var(--ai-cyan);
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .ai-floating-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 12px;
+      font-size: 14px;
+      background: transparent;
+      color: var(--text-main);
+    }
+
+    .ai-floating-bar input::placeholder { color: #9CA3AF; }
+
+    .ai-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .ai-btn:hover { color: var(--ai-cyan); background: #F3F4F6; }
+    .ai-btn.recording { color: #EF4444; animation: pulse 1.5s infinite; }
+    .ai-btn-send { color: white; background: var(--ai-cyan); }
+    .ai-btn-send:hover { background: #1CA8CB; color: white; }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    /* AI Response Toast */
+    .ai-toast {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--sidebar-bg);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .ai-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      .app-wrapper { flex-direction: column; border-radius: 0; height: 100vh; }
+      .mobile-header { display: flex; }
+      
+      .sidebar {
+        position: fixed;
+        left: -300px;
+        top: 0;
+        height: 100%;
+        margin: 0;
+        border-radius: 0;
+        z-index: 1000;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+      }
+
+      .sidebar.open { left: 0; }
+      .main-content { padding: 16px; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .ai-floating-bar { width: 95%; bottom: 16px; }
+      
+      /* Hide less critical columns on mobile */
+      th:nth-child(5), td:nth-child(5) { display: none; }
+    }
+
+    @media (max-width: 500px) {
+      .metrics-grid { grid-template-columns: 1fr; }
+      th:nth-child(4), td:nth-child(4) { display: none; }
+    }
+  </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-0 md:p-8 overflow-hidden">
+<body>
 
-    <!-- Main App Container -->
-    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-none md:rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border-0 md:border border-gray-100 relative">
-
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-        </div>
-
-        <!-- Mobile Backdrop Overlay -->
-        <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden md:hidden transition-opacity"></div>
-
-        <!-- Sidebar (Desktop static, Mobile off-canvas drawer) -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-[#072218] text-white flex flex-col justify-between p-5 transform -translate-x-full md:translate-x-0 md:static md:w-64 transition-transform duration-300 ease-in-out shrink-0 h-full">
-            
-            <!-- Top Nav Section (Scrollable on short viewports) -->
-            <div class="flex-1 overflow-y-auto min-h-0 pr-1 sidebar-scroll flex flex-col justify-between">
-                <div>
-                    <!-- Brand / Logo & Mobile Close -->
-                    <div class="flex items-center justify-between mb-6 px-2">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-bell text-emerald-500 text-xl"></i>
-                            <div>
-                                <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-emerald-400">KYNKODE</h1>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
-                            </div>
-                        </div>
-                        <button id="close-sidebar-btn" class="md:hidden text-gray-400 hover:text-white p-1">
-                            <i class="fa-solid fa-xmark text-xl"></i>
-                        </button>
-                    </div>
-
-                    <!-- Navigation Links -->
-                    <nav class="space-y-1.5">
-                        <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                            <i class="fa-solid fa-diagram-project w-5"></i>
-                            <span class="font-medium text-sm">CliniFlow</span>
-                        </a>
-                        <a href="clinimove.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                            <i class="fa-solid fa-plane-departure w-5"></i>
-                            <span class="font-medium text-sm">CliniMove</span>
-                        </a>
-                        <a href="clinistock.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                            <i class="fa-solid fa-boxes-stacked w-5"></i>
-                            <span class="font-medium text-sm">CliniStock</span>
-                        </a>
-                        <a href="clinirecall.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0e3b2b] text-white font-medium text-sm shadow-md transition">
-                            <i class="fa-solid fa-bell w-5 text-emerald-400"></i>
-                            <span>CliniRecall</span>
-                        </a>
-                    </nav>
-
-                    <!-- Module Specific Links -->
-                    <div class="mt-6 pt-5 border-t border-white/10 space-y-1">
-                        <p class="px-4 text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Communications</p>
-                        <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                            <i class="fa-solid fa-user-group w-4 text-center"></i> Clients
-                        </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                            <i class="fa-solid fa-envelope w-4 text-center"></i> Messages
-                        </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                            <i class="fa-solid fa-file-lines w-4 text-center"></i> Templates
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar Footer Stats Card (Fixed at bottom & explicitly non-shrinking) -->
-            <div class="pt-4 mt-4 border-t border-white/10 shrink-0">
-                <div class="bg-[#0e3b2b] px-4 py-3.5 rounded-2xl text-white shadow-inner">
-                    <p class="text-xs text-gray-300 mb-1">Messages sent</p>
-                    <div id="sb-messages-sent" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
-                    <p class="text-[11px] text-emerald-300 font-medium">This week</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
-
-            <!-- Mobile Top Header Bar -->
-            <div class="md:hidden flex items-center justify-between bg-[#072218] text-white px-4 py-3 shrink-0 border-b border-white/10 z-20">
-                <div class="flex items-center gap-2.5">
-                    <i class="fa-solid fa-bell text-emerald-500"></i>
-                    <span class="font-bold text-sm tracking-wider uppercase text-emerald-400">KYNKODE</span>
-                </div>
-                <button id="open-sidebar-btn" class="p-2 text-gray-300 hover:text-white focus:outline-none">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-            </div>
-
-            <!-- Scrollable Content -->
-            <div class="flex-1 overflow-y-auto p-4 md:p-8 pb-28 flex flex-col gap-6">
-
-                <!-- Top Header -->
-                <header class="flex items-center gap-3">
-                    <div class="bg-emerald-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                        <i class="fa-solid fa-bell text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniRecall</h1>
-                        <p class="text-xs text-gray-500 font-medium">Never miss a follow-up again</p>
-                    </div>
-                </header>
-
-                <!-- Metrics Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-gray-500">Due Today</span>
-                        <div id="metric-due-today" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-gray-500">Due This Week</span>
-                        <div id="metric-due-week" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-red-600">Overdue</span>
-                        <div id="metric-overdue" class="text-3xl font-bold text-red-600 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-gray-500">Completed</span>
-                        <div class="flex items-baseline gap-1 mt-2">
-                            <span id="metric-completed" class="text-3xl font-bold text-emerald-600">--%</span>
-                        </div>
-                        <span class="text-[11px] text-gray-400 mt-1">This week</span>
-                    </div>
-                </div>
-
-                <!-- Follow-up Queue Section -->
-                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="font-semibold text-gray-800 text-sm">Today's Follow-up Queue</h2>
-                        <a href="#" class="text-emerald-600 hover:underline text-xs font-medium">View all</a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="text-xs text-gray-400 border-b border-gray-100">
-                                    <th class="pb-3 font-medium">Time</th>
-                                    <th class="pb-3 font-medium">Client</th>
-                                    <th class="pb-3 font-medium">Patient</th>
-                                    <th class="pb-3 font-medium">Reason</th>
-                                    <th class="pb-3 font-medium">Channel</th>
-                                    <th class="pb-3 font-medium text-right">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="queue-table-body" class="divide-y divide-gray-50 text-gray-700">
-                                <!-- Injected via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Recent Activities Section -->
-                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <h2 class="font-semibold text-gray-800 text-sm">Recent Activities</h2>
-                    <div id="activities-container" class="space-y-3.5 text-sm">
-                        <!-- Injected via JS -->
-                    </div>
-                </section>
-
-                <!-- Footer Text inside scrolling area -->
-                <footer class="mt-2 text-center text-xs text-emerald-900/60 font-medium pb-2">
-                    Automated reminders. Happier clients. Better compliance.
-                </footer>
-            </div>
-
-            <!-- KYNKODE AI Input Bar -->
-            <div class="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-emerald-100 p-2.5 md:p-3 flex items-center gap-2 md:gap-4 z-20">
-                <span class="font-bold text-emerald-900 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
-                <i class="fa-solid fa-sparkles text-emerald-500 sm:hidden pl-2"></i>
-                <input type="text" id="ai-query" placeholder="Ask to draft a recall message, check overdue appointments..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
-                
-                <!-- Voice Recording Button -->
-                <button id="ai-mic" title="Click to record voice prompt" class="p-2.5 md:p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition-all flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-microphone" id="ai-mic-icon"></i>
-                </button>
-                
-                <!-- Send Button -->
-                <button id="ai-send" class="p-2.5 md:p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center min-w-[40px] md:min-w-[44px] shrink-0">
-                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
-                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
-                </button>
-            </div>
-
-        </main>
+  <div class="app-wrapper">
+    
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <div style="font-weight: 700; color: var(--sidebar-bg);">KYNKODE</div>
+      <i class="fas fa-bars hamburger" onclick="toggleMenu()"></i>
     </div>
 
-    <!-- Frontend Integration & Mobile Menu JS -->
-    <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwi4nCHOTE5Nqf6fjhAI5_h1lVBcvP7MKo4OAERw328aDWKnTsNvAdNVHrChK7OB8xi/exec";
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="brand">KYNKODE</div>
+      <div class="nav-items">
+        <a href="#" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#" class="nav-item active"><i class="fas fa-bell"></i> Recall</a>
+        <a href="#" class="nav-item"><i class="fas fa-users"></i> Clients</a>
+        <a href="#" class="nav-item"><i class="fas fa-envelope"></i> Messages</a>
+        <a href="#" class="nav-item"><i class="fas fa-file-alt"></i> Templates</a>
+        <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+      </div>
+      <div class="sidebar-stats">
+        <p>Messages sent</p>
+        <h3>128</h3>
+        <p>This week</p>
+      </div>
+    </nav>
 
-        const fallbackData = {
-            status: "success",
-            data: {
-                metrics: {
-                    messagesSent: 482,
-                    dueToday: 15,
-                    dueThisWeek: 84,
-                    overdue: 3,
-                    completionRate: 94
-                },
-                queue: [
-                    { time: "09:00 AM", client: "Sarah Jenkins", patient: "Bella (Dog)", reason: "Annual Vaccination", channel: "whatsapp", status: "Pending" },
-                    { time: "10:30 AM", client: "Mark Thompson", patient: "Charlie (Cat)", reason: "Dental Checkup", channel: "sms", status: "Sent" },
-                    { time: "11:15 AM", client: "Emily Davis", patient: "Luna (Dog)", reason: "Flea & Tick Renewal", channel: "whatsapp", status: "Pending" },
-                    { time: "02:00 PM", client: "James Wilson", patient: "Max (Parrot)", reason: "Beak Trim Follow-up", channel: "phone", status: "Overdue" }
-                ],
-                activities: [
-                    { description: "WhatsApp reminder sent to Sarah Jenkins", timeAgo: "10m ago", status: "Delivered", type: "message" },
-                    { description: "Automated SMS to Mark Thompson", timeAgo: "1h ago", status: "Failed", type: "message" },
-                    { description: "Follow-up call logged for James Wilson", timeAgo: "2h ago", status: "No Answer", type: "call" },
-                    { description: "Email template 'Annual Vax' updated", timeAgo: "Yesterday", status: "System", type: "system" }
-                ]
-            }
-        };
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <div class="header-title">
+        <div class="bell-icon"><i class="fas fa-bell"></i></div>
+        <div>
+          <h1>CliniRecall</h1>
+          <p>Never miss a follow-up again</p>
+        </div>
+      </div>
 
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let isRecording = false;
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p>Due Today</p>
+          <h2>18</h2>
+        </div>
+        <div class="metric-card">
+          <p>Due This Week</p>
+          <h2>42</h2>
+        </div>
+        <div class="metric-card overdue">
+          <p>Overdue</p>
+          <h2>7</h2>
+        </div>
+        <div class="metric-card">
+          <p>Completed</p>
+          <h2>96%</h2>
+          <p style="color: var(--text-muted); font-size: 11px; margin-top: 4px;">This week</p>
+        </div>
+      </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchRecallData();
-            setupAIBar();
-            setupMobileMenu();
+      <div class="card-section">
+        <div class="section-header">
+          <h3>Today's Follow-up Queue</h3>
+          <a href="#">View all</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Client</th>
+              <th>Patient</th>
+              <th>Reason</th>
+              <th>Channel</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>09:00</td>
+              <td>John Mwangi</td>
+              <td>Bella</td>
+              <td>Post-op check</td>
+              <td><i class="fab fa-whatsapp channel-icon"></i></td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>09:30</td>
+              <td>Sarah Wanjiku</td>
+              <td>Max</td>
+              <td>Vaccination due</td>
+              <td><i class="fab fa-whatsapp channel-icon"></i></td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>10:00</td>
+              <td>Peter Ochieng</td>
+              <td>Luna</td>
+              <td>Lab result follow-up</td>
+              <td><i class="fas fa-phone-alt channel-icon"></i></td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>10:30</td>
+              <td>Tina Akinyi</td>
+              <td>Bruno</td>
+              <td>Medication refill</td>
+              <td><i class="fab fa-whatsapp channel-icon"></i></td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>11:00</td>
+              <td>David Kariuki</td>
+              <td>Toby</td>
+              <td>Missed appointment</td>
+              <td><i class="fab fa-discord channel-icon" style="color: #5865F2;"></i></td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-section">
+        <div class="section-header">
+          <h3>Recent Activities</h3>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <i class="fas fa-check-circle"></i>
+            <span class="activity-text">WhatsApp message sent to Sarah Wanjiku about Max</span>
+            <span class="activity-time">2 min ago</span>
+            <span class="status-badge status-completed">Delivered</span>
+          </div>
+          <div class="activity-item">
+            <i class="fas fa-check-circle"></i>
+            <span class="activity-text">Follow-up completed for Bella (Post-op check)</span>
+            <span class="activity-time">15 min ago</span>
+            <span class="status-badge status-completed">Completed</span>
+          </div>
+          <div class="activity-item">
+            <i class="fas fa-clock"></i>
+            <span class="activity-text">Call made to Peter Ochieng</span>
+            <span class="activity-time">20 min ago</span>
+            <span class="status-badge status-noanswer">No answer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-text">
+        Automated reminders. Happier clients. Better compliance.
+      </div>
+    </main>
+
+    <!-- AI Toast Notification -->
+    <div class="ai-toast" id="aiToast">Message sent to backend...</div>
+
+    <!-- Floating AI Listening/Messaging Bar -->
+    <div class="ai-floating-bar">
+      <button class="ai-btn" id="micBtn" onclick="toggleMic()" title="Voice Command">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <input type="text" id="aiInput" placeholder="Ask AI Practice Manager to update status or schedule..." onkeypress="handleEnter(event)">
+      <button class="ai-btn ai-btn-send" onclick="sendToBackend()" title="Send">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // UI Interactions
+    // ==========================================
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.getElementById('mainContent').addEventListener('click', () => {
+      if(window.innerWidth <= 900) {
+        document.getElementById('sidebar').classList.remove('open');
+      }
+    });
+
+    let isRecording = false;
+    function toggleMic() {
+      const micBtn = document.getElementById('micBtn');
+      isRecording = !isRecording;
+      
+      if(isRecording) {
+        micBtn.classList.add('recording');
+        document.getElementById('aiInput').placeholder = "Listening...";
+      } else {
+        micBtn.classList.remove('recording');
+        document.getElementById('aiInput').placeholder = "Ask AI Practice Manager to update status or schedule...";
+        if(document.getElementById('aiInput').value === "") {
+           document.getElementById('aiInput').value = "Schedule recall for Luna lab results tomorrow";
+        }
+      }
+    }
+
+    function handleEnter(e) {
+      if(e.key === 'Enter') {
+        sendToBackend();
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('aiToast');
+      toast.innerText = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 4000);
+    }
+
+    // ==========================================
+    // Google Apps Script Backend Integration
+    // ==========================================
+    
+    // REPLACE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
+    const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
+
+    async function sendToBackend() {
+      const inputEl = document.getElementById('aiInput');
+      const text = inputEl.value.trim();
+      
+      if(!text) return;
+
+      inputEl.value = "";
+      inputEl.placeholder = "Processing...";
+      document.getElementById('micBtn').classList.remove('recording');
+      isRecording = false;
+
+      // Constructing payload to match your GAS doPost router
+      const payload = {
+        source: 'kynkode_frontend',
+        action: 'ASK_AI',
+        data: {
+          text: text
+        }
+      };
+
+      try {
+        console.log("Dispatching to KYNKODE Core...");
+        
+        // Uncomment the fetch block below when you add your real URL.
+        // We use 'no-cors' strictly if returning opaque responses, 
+        // but for JSON you must ensure your GAS script handles CORS, 
+        // or route through a proxy. For standard GAS JSON returns, 
+        // DO NOT use no-cors if you need to read the response.
+        
+        /*
+        const response = await fetch(GAS_BACKEND_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' } // GAS prefers text/plain for raw payloads
         });
-
-        /* Mobile Drawer Toggle Setup */
-        function setupMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const openBtn = document.getElementById('open-sidebar-btn');
-            const closeBtn = document.getElementById('close-sidebar-btn');
-            const backdrop = document.getElementById('mobile-backdrop');
-
-            function openSidebar() {
-                sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
-            }
-
-            function closeSidebar() {
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
-            }
-
-            if (openBtn) openBtn.addEventListener('click', openSidebar);
-            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-            if (backdrop) backdrop.addEventListener('click', closeSidebar);
+        
+        const result = await response.json();
+        if(result.success) {
+           showToast("AI: " + result.ai_response);
+        } else {
+           showToast("Error: " + result.message);
         }
+        */
 
-        async function fetchRecallData() {
-            try {
-                const response = await fetch(GAS_URL);
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                const text = await response.text();
-                let result;
-                try {
-                    result = JSON.parse(text);
-                } catch (e) {
-                    result = null;
-                }
+        // Simulated success state for immediate frontend feedback
+        setTimeout(() => {
+          showToast("Sent to AI Practice Manager: " + text);
+          inputEl.placeholder = "Ask AI Practice Manager to update status or schedule...";
+        }, 800);
 
-                if (result && result.status === "success" && result.data) {
-                    populateDashboard(result.data);
-                } else {
-                    populateDashboard(fallbackData.data);
-                }
-            } catch (error) {
-                console.warn("Fetch Error, using default dashboard state:", error);
-                populateDashboard(fallbackData.data);
-            } finally {
-                const overlay = document.getElementById('loading-overlay');
-                if (overlay) {
-                    overlay.classList.add('opacity-0', 'pointer-events-none');
-                }
-            }
-        }
-
-        function populateDashboard(data) {
-            document.getElementById('sb-messages-sent').textContent = data.metrics.messagesSent;
-            document.getElementById('metric-due-today').textContent = data.metrics.dueToday;
-            document.getElementById('metric-due-week').textContent = data.metrics.dueThisWeek;
-            document.getElementById('metric-overdue').textContent = data.metrics.overdue;
-            document.getElementById('metric-completed').textContent = data.metrics.completionRate + "%";
-
-            const queueBody = document.getElementById('queue-table-body');
-            queueBody.innerHTML = '';
-
-            data.queue.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50 transition-colors';
-
-                let channelIcon = '<i class="fa-solid fa-comment-sms text-sm text-gray-500"></i>';
-                if (item.channel === 'whatsapp') {
-                    channelIcon = '<i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>';
-                } else if (item.channel === 'phone') {
-                    channelIcon = '<i class="fa-solid fa-phone text-sm text-gray-500"></i>';
-                }
-
-                let statusClasses = "bg-gray-50 text-gray-600 border-gray-200/60";
-                if (item.status === 'Pending') statusClasses = "bg-amber-50 text-amber-700 border-amber-200/60";
-                if (item.status === 'Sent') statusClasses = "bg-emerald-50 text-emerald-700 border-emerald-200/60";
-                if (item.status === 'Overdue') statusClasses = "bg-red-50 text-red-700 border-red-200/60";
-
-                tr.innerHTML = `
-                    <td class="py-3.5 font-medium text-gray-900">${item.time}</td>
-                    <td class="py-3.5 font-medium">${item.client}</td>
-                    <td class="py-3.5 text-gray-600">${item.patient}</td>
-                    <td class="py-3.5 text-gray-600">${item.reason}</td>
-                    <td class="py-3.5">${channelIcon}</td>
-                    <td class="py-3.5 text-right">
-                        <span class="inline-block px-2.5 py-1 ${statusClasses} border rounded-full text-[11px] font-semibold uppercase tracking-wide">
-                            ${item.status}
-                        </span>
-                    </td>
-                `;
-                queueBody.appendChild(tr);
-            });
-
-            const activitiesContainer = document.getElementById('activities-container');
-            activitiesContainer.innerHTML = '';
-
-            data.activities.forEach(act => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between py-2 border-b border-gray-50 last:border-0';
-
-                let badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200/60";
-                let iconClass = "bg-emerald-50 text-emerald-600 fa-check";
-
-                if (act.status.toLowerCase().includes("no answer") || act.status.toLowerCase().includes("failed")) {
-                    badgeClass = "bg-red-50 text-red-600 border-red-200/60";
-                }
-                if (act.type === 'call') {
-                    iconClass = "bg-amber-50 text-amber-600 fa-phone-volume";
-                } else if (act.type === 'system') {
-                    iconClass = "bg-blue-50 text-blue-600 fa-gear";
-                } else if (act.type === 'message') {
-                    iconClass = "bg-emerald-50 text-emerald-600 fa-message";
-                }
-
-                div.innerHTML = `
-                    <div class="flex items-center gap-3 text-gray-700">
-                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${iconClass.split(' ')[0]} ${iconClass.split(' ')[1]}">
-                            <i class="fa-solid ${iconClass.split(' ')[2]}"></i>
-                        </span>
-                        <span class="font-medium">${act.description}</span>
-                    </div>
-                    <div class="flex items-center gap-4 shrink-0">
-                        <span class="text-xs text-gray-400 font-medium">${act.timeAgo}</span>
-                        <span class="px-2.5 py-1 border rounded-md text-[10px] uppercase tracking-wider font-semibold ${badgeClass}">${act.status}</span>
-                    </div>
-                `;
-                activitiesContainer.appendChild(div);
-            });
-        }
-
-        function setupAIBar() {
-            const queryInput = document.getElementById('ai-query');
-            const sendBtn = document.getElementById('ai-send');
-            const micBtn = document.getElementById('ai-mic');
-
-            sendBtn.addEventListener('click', () => {
-                const query = queryInput.value.trim();
-                if (query) sendToAI(query, null);
-            });
-
-            queryInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    const query = queryInput.value.trim();
-                    if (query) sendToAI(query, null);
-                }
-            });
-
-            micBtn.addEventListener('click', toggleVoiceRecording);
-        }
-
-        async function toggleVoiceRecording() {
-            const micBtn = document.getElementById('ai-mic');
-            const micIcon = document.getElementById('ai-mic-icon');
-
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-
-                    mediaRecorder.ondataavailable = event => {
-                        if (event.data.size > 0) audioChunks.push(event.data);
-                    };
-
-                    mediaRecorder.onstop = async () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const reader = new FileReader();
-                        reader.readAsDataURL(audioBlob);
-                        reader.onloadend = async () => {
-                            const base64Audio = reader.result;
-                            await sendToAI(null, base64Audio);
-                        };
-                    };
-
-                    mediaRecorder.start();
-                    isRecording = true;
-
-                    micBtn.classList.add('bg-red-50', 'text-red-600', 'animate-pulse');
-                    micBtn.classList.remove('bg-emerald-50', 'text-emerald-600');
-                    micIcon.className = 'fa-solid fa-square';
-                } catch (err) {
-                    alert('Microphone access denied or not supported on this browser.');
-                }
-            } else {
-                mediaRecorder.stop();
-                isRecording = false;
-
-                micBtn.classList.remove('bg-red-50', 'text-red-600', 'animate-pulse');
-                micBtn.classList.add('bg-emerald-50', 'text-emerald-600');
-                micIcon.className = 'fa-solid fa-microphone';
-            }
-        }
-
-        async function sendToAI(textInput, audioB64) {
-            const queryInput = document.getElementById('ai-query');
-            const sendIcon = document.getElementById('ai-send-icon');
-            const loadingIcon = document.getElementById('ai-loading-icon');
-
-            queryInput.disabled = true;
-            sendIcon.classList.add('hidden');
-            loadingIcon.classList.remove('hidden');
-
-            const requestPayload = {
-                source: 'kynkode_frontend',
-                action: 'ASK_AI',
-                data: {
-                    text: textInput || "",
-                    audioBase64: audioB64 || null,
-                    context: 'CliniRecall'
-                }
-            };
-
-            try {
-                const response = await fetch(GAS_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(requestPayload)
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert("KYNKODE AI Response:\n\n" + result.ai_response);
-                } else if (result.error) {
-                    alert("Backend Error: " + result.error);
-                } else {
-                    alert("KYNKODE AI: Request processed.");
-                }
-            } catch (error) {
-                console.error("AI Request Error:", error);
-                alert("Could not connect to KYNKODE AI backend. Verify Web App deployment and CORS settings.");
-            } finally {
-                queryInput.disabled = false;
-                queryInput.value = '';
-                queryInput.focus();
-                sendIcon.classList.remove('hidden');
-                loadingIcon.classList.add('hidden');
-            }
-        }
-    </script>
+      } catch (error) {
+        console.error("Connection failed", error);
+        showToast("Connection to backend failed.");
+        inputEl.placeholder = "Ask AI Practice Manager to update status or schedule...";
+      }
+    }
+    
+    console.log("KYNKODE x Pearl Vets Frontend Initialized");
+  </script>
 </body>
 </html>

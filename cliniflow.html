@@ -3,369 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniFlow - KYNKODE AI</title>
+    <title>KYNKODE - CliniFlow</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            dark: '#1E1B4B',    // Sidebar bg
+                            primary: '#6D28D9', // Active purple
+                            accent: '#4C1D95',  // Darker purple for widgets
+                            light: '#F8FAFC'    // Main bg
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fb;
-        }
-        .loader {
-            border-top-color: #9333ea;
-            animation: spinner 1.5s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        ::-webkit-scrollbar { width: 6px; }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-4 md:p-8">
+<body class="bg-brand-light text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
 
-    <!-- Main App Container -->
-    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
-
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+    <!-- Mobile Header -->
+    <div class="lg:hidden absolute top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 z-40">
+        <div class="flex items-center gap-2 text-brand-dark font-bold text-xl tracking-wide">
+            KYNKODE
         </div>
-
-        <!-- MOBILE HEADER BAR -->
-        <header class="md:hidden flex items-center justify-between p-4 bg-[#120f2e] text-white z-30 shrink-0 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-robot text-purple-400 text-lg"></i>
-                <span class="font-bold text-sm text-purple-300 tracking-wider uppercase">KYNKODE</span>
-            </div>
-            <button id="mobile-menu-btn" class="p-2 rounded-xl bg-[#29225c] text-gray-200 hover:text-white focus:outline-none">
-                <i id="mobile-menu-icon" class="fa-solid fa-bars text-lg"></i>
-            </button>
-        </header>
-
-        <!-- MOBILE BACKDROP OVERLAY -->
-        <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden transition-opacity duration-300"></div>
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-50 w-64 bg-[#120f2e] text-white flex flex-col justify-between p-5 flex-shrink-0 transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none h-full">
-            <div>
-                <div class="flex items-center justify-between mb-8 px-2">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-robot text-purple-400 text-xl"></i>
-                        <div>
-                            <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-purple-300">KYNKODE</h1>
-                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
-                        </div>
-                    </div>
-                    <button id="close-menu-btn" class="md:hidden text-gray-400 hover:text-white p-1">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-
-                <nav class="space-y-2">
-                    <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#29225c] text-white font-medium text-sm shadow-md transition">
-                        <i class="fa-solid fa-diagram-project w-5 text-purple-300"></i>
-                        <span>CliniFlow</span>
-                    </a>
-                    <a href="clinimove.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                        <i class="fa-solid fa-plane-departure w-5"></i>
-                        <span class="font-medium text-sm">CliniMove</span>
-                    </a>
-                    <a href="clinistock.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                        <i class="fa-solid fa-boxes-stacked w-5"></i>
-                        <span class="font-medium text-sm">CliniStock</span>
-                    </a>
-                </nav>
-            </div>
-
-            <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="bg-[#29225c] px-4 py-3.5 rounded-2xl text-white">
-                    <p class="text-xs text-gray-300 mb-1">My Tasks</p>
-                    <div id="sb-my-tasks" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
-                    <p class="text-[11px] text-purple-300 font-medium">Pending</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden w-full">
-            <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
-                
-                <header class="flex items-center gap-3">
-                    <div class="bg-purple-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                        <i class="fa-solid fa-clipboard-check text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniFlow</h1>
-                        <p class="text-xs text-gray-500 font-medium">Tasks, workflows and accountability</p>
-                    </div>
-                </header>
-
-                <!-- Metrics -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-gray-500">My Tasks</span>
-                        <div id="metric-my-tasks" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                        <span class="text-[11px] text-gray-400 mt-1">Pending</span>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-gray-500">Due Today</span>
-                        <div id="metric-due-today" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                        <span class="text-[11px] text-gray-400 mt-1">Tasks</span>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-red-600">Overdue</span>
-                        <div id="metric-overdue" class="text-3xl font-bold text-red-600 mt-2">--</div>
-                        <span class="text-[11px] text-red-400 mt-1">Tasks</span>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-gray-500">Completed</span>
-                        <div id="metric-completed" class="text-3xl font-bold text-gray-900 mt-2">--</div>
-                        <span class="text-[11px] text-gray-400 mt-1">This week</span>
-                    </div>
-                </div>
-
-                <!-- Task List Section -->
-                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <div class="flex items-center justify-between flex-wrap gap-3">
-                        <div class="flex items-center gap-3">
-                            <h2 class="font-semibold text-gray-800 text-sm">Task List</h2>
-                            <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border border-gray-100 text-xs hidden sm:flex">
-                                <a href="#" class="px-3 py-1 bg-white shadow-sm font-medium text-gray-800 rounded-lg">All</a>
-                                <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">Today</a>
-                                <a href="#" class="px-3 py-1 text-gray-500 hover:text-gray-800 transition">This Week</a>
-                            </div>
-                        </div>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition">
-                            <i class="fa-solid fa-plus text-xs"></i> New Task
-                        </a>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="text-xs text-gray-400 border-b border-gray-100">
-                                    <th class="pb-3 font-medium">Task</th>
-                                    <th class="pb-3 font-medium">Workflow</th>
-                                    <th class="pb-3 font-medium">Assigned To</th>
-                                    <th class="pb-3 font-medium">Due Date</th>
-                                    <th class="pb-3 font-medium">Priority</th>
-                                    <th class="pb-3 font-medium">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tasks-table-body" class="divide-y divide-gray-50 text-gray-700"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Workflow Progress Section -->
-                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4 mb-4">
-                    <h2 class="font-semibold text-gray-800 text-sm">Workflow Progress</h2>
-                    <div id="workflows-container" class="space-y-4 text-sm"></div>
-                </section>
-            </div>
-
-            <!-- KYNKODE AI Input Bar -->
-            <div class="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-purple-100 p-3 flex items-center gap-4 z-20">
-                <span class="font-bold text-purple-800 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
-                <i class="fa-solid fa-sparkles text-purple-500 sm:hidden pl-2"></i>
-                <input type="text" id="ai-query" placeholder="Ask anything about tasks..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
-                <button class="p-3 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-100 transition-all">
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-                <button id="ai-send" class="p-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all flex items-center justify-center min-w-[44px]">
-                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
-                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
-                </button>
-            </div>
-        </main>
+        <button id="mobileMenuBtn" class="text-slate-600 text-2xl focus:outline-none">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </div>
 
-    <footer class="mt-4 text-center text-xs text-purple-900/60 font-medium pb-4">
-        Every task. Every step. No patient falls through the cracks.
-    </footer>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-brand-dark text-white w-64 flex flex-col fixed lg:static h-full transition-transform transform -translate-x-full lg:translate-x-0 z-50">
+        <div class="p-6 flex items-center justify-between">
+            <h1 class="text-xl font-bold tracking-wider">KYNKODE</h1>
+            <button id="closeSidebarBtn" class="lg:hidden text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
 
+        <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-house w-5"></i> <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-primary text-white rounded-lg shadow-md transition-colors">
+                <i class="fa-solid fa-clipboard-check w-5"></i> <span class="text-sm font-medium">Flow</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-list-check w-5"></i> <span class="text-sm font-medium">Tasks</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-network-wired w-5"></i> <span class="text-sm font-medium">Workflows</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-regular fa-calendar w-5"></i> <span class="text-sm font-medium">Calendar</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-chart-pie w-5"></i> <span class="text-sm font-medium">Reports</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-gear w-5"></i> <span class="text-sm font-medium">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Bottom Widget -->
+        <div class="p-4 mb-4">
+            <div class="bg-brand-accent rounded-xl p-4 shadow-inner">
+                <h4 class="text-sm text-purple-200 font-medium">My Tasks</h4>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span class="text-3xl font-bold text-white">12</span>
+                </div>
+                <p class="text-xs text-purple-300 mt-1">Pending</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto relative pt-16 lg:pt-0">
+        <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full pb-32">
+            
+            <!-- Header -->
+            <header class="flex items-center gap-4 mb-8">
+                <div class="bg-brand-primary text-white p-3 rounded-2xl shadow-sm">
+                    <i class="fa-solid fa-clipboard-list text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-brand-dark">CliniFlow</h1>
+                    <p class="text-slate-500 text-sm mt-1 font-medium">Tasks, workflows and accountability</p>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-semibold text-brand-primary mb-2">My Tasks</h3>
+                    <div class="text-3xl font-bold text-slate-800">12</div>
+                    <p class="text-xs text-slate-400 mt-1 font-medium">Pending</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-semibold text-brand-dark mb-2">Due Today</h3>
+                    <div class="text-3xl font-bold text-slate-800">5</div>
+                    <p class="text-xs text-slate-400 mt-1 font-medium">Tasks</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-semibold text-purple-900 mb-2">Overdue</h3>
+                    <div class="text-3xl font-bold text-red-600">3</div>
+                    <p class="text-xs text-slate-400 mt-1 font-medium">Tasks</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-semibold text-brand-dark mb-2">Completed</h3>
+                    <div class="text-3xl font-bold text-slate-800">89%</div>
+                    <p class="text-xs text-slate-400 mt-1 font-medium">This week</p>
+                </div>
+            </div>
+
+            <!-- Task List Section -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-8 overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 overflow-x-auto pb-2 sm:pb-0">
+                        <h2 class="text-lg font-bold text-slate-800 mr-2 whitespace-nowrap">Task List</h2>
+                        <button class="px-4 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-full whitespace-nowrap">All</button>
+                        <button class="px-4 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold rounded-full whitespace-nowrap transition-colors">Today</button>
+                        <button class="px-4 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold rounded-full whitespace-nowrap transition-colors">This Week</button>
+                        <button class="px-4 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold rounded-full whitespace-nowrap transition-colors">Overdue</button>
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> New Task
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                <th class="p-4 font-semibold">Task</th>
+                                <th class="p-4 font-semibold">Workflow</th>
+                                <th class="p-4 font-semibold">Assigned To</th>
+                                <th class="p-4 font-semibold">Due Date</th>
+                                <th class="p-4 font-semibold">Priority</th>
+                                <th class="p-4 font-semibold">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-slate-50">
+                            <!-- Row 1 -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Call owner - lab results</td>
+                                <td class="p-4 text-slate-500">Lab Results</td>
+                                <td class="p-4 text-slate-700">Jane</td>
+                                <td class="p-4 text-slate-500">18/08/2026</td>
+                                <td class="p-4"><span class="text-red-500 font-semibold text-xs">High</span></td>
+                                <td class="p-4"><span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-semibold border border-red-100">Overdue</span></td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Prepare discharge note</td>
+                                <td class="p-4 text-slate-500">Hospitalization</td>
+                                <td class="p-4 text-slate-700">Dr. Chris</td>
+                                <td class="p-4 text-slate-500">18/08/2026</td>
+                                <td class="p-4"><span class="text-red-500 font-semibold text-xs">High</span></td>
+                                <td class="p-4"><span class="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-xs font-semibold border border-amber-100">Today</span></td>
+                            </tr>
+                            <!-- Row 3 -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Relocation docs check</td>
+                                <td class="p-4 text-slate-500">Pet Relocation</td>
+                                <td class="p-4 text-slate-700">Mary</td>
+                                <td class="p-4 text-slate-500">19/08/2026</td>
+                                <td class="p-4"><span class="text-amber-500 font-semibold text-xs">Medium</span></td>
+                                <td class="p-4"><span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100">Tomorrow</span></td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Stock count - Pharmacy</td>
+                                <td class="p-4 text-slate-500">Inventory</td>
+                                <td class="p-4 text-slate-700">Brian</td>
+                                <td class="p-4 text-slate-500">21/08/2026</td>
+                                <td class="p-4"><span class="text-amber-500 font-semibold text-xs">Medium</span></td>
+                                <td class="p-4"><span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100">This Week</span></td>
+                            </tr>
+                            <!-- Row 5 -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Follow-up: Post-op</td>
+                                <td class="p-4 text-slate-500">Follow-up</td>
+                                <td class="p-4 text-slate-700">Jane</td>
+                                <td class="p-4 text-slate-500">22/08/2026</td>
+                                <td class="p-4"><span class="text-emerald-500 font-semibold text-xs">Low</span></td>
+                                <td class="p-4"><span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100">This Week</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Workflow Progress -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-6">Workflow Progress</h2>
+                <div class="space-y-5">
+                    <!-- Progress Item 1 -->
+                    <div class="flex items-center gap-4 text-sm">
+                        <div class="w-1/3 sm:w-1/4 font-medium text-slate-800 truncate">Pet Relocation #1048</div>
+                        <div class="w-20 text-blue-600 font-semibold text-xs text-center">In Progress</div>
+                        <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full" style="width: 67%"></div>
+                        </div>
+                        <div class="w-10 text-right text-slate-500 font-semibold text-xs">67%</div>
+                    </div>
+                    <!-- Progress Item 2 -->
+                    <div class="flex items-center gap-4 text-sm">
+                        <div class="w-1/3 sm:w-1/4 font-medium text-slate-800 truncate">Hospitalization - Bella</div>
+                        <div class="w-20 text-blue-600 font-semibold text-xs text-center">In Progress</div>
+                        <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full" style="width: 45%"></div>
+                        </div>
+                        <div class="w-10 text-right text-slate-500 font-semibold text-xs">45%</div>
+                    </div>
+                    <!-- Progress Item 3 -->
+                    <div class="flex items-center gap-4 text-sm">
+                        <div class="w-1/3 sm:w-1/4 font-medium text-slate-800 truncate">Dental Procedure - Max</div>
+                        <div class="w-20 text-emerald-600 font-semibold text-xs text-center bg-emerald-50 py-0.5 rounded-full border border-emerald-100">Completed</div>
+                        <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 100%"></div>
+                        </div>
+                        <div class="w-10 text-right text-slate-500 font-semibold text-xs">100%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Text -->
+            <div class="text-center pb-8">
+                <p class="text-brand-primary font-semibold text-sm italic tracking-wide">Every task. Every step. No patient falls through the cracks.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Floating AI Listening & Messaging Bar -->
+    <div class="fixed bottom-4 left-0 right-0 px-4 pointer-events-none flex flex-col items-center z-50">
+        
+        <!-- AI Response Toast (Hidden by default) -->
+        <div id="aiResponseContainer" class="hidden w-full max-w-2xl bg-white rounded-xl shadow-lg border border-purple-100 p-4 mb-3 pointer-events-auto transform transition-all translate-y-4 opacity-0 relative">
+            <button id="closeAiResponse" class="absolute top-2 right-2 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-start gap-3">
+                <div class="bg-purple-100 text-brand-primary p-2 rounded-lg mt-0.5">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div id="aiResponseText" class="text-sm text-slate-700 leading-relaxed">
+                    <!-- AI response goes here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="w-full max-w-2xl glass-panel shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-full p-2 flex items-center gap-2 border border-white pointer-events-auto transition-all focus-within:ring-2 focus-within:ring-brand-primary focus-within:shadow-xl">
+            <!-- Voice Record Button -->
+            <button id="recordBtn" class="h-10 w-10 flex-shrink-0 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-brand-primary flex items-center justify-center transition-colors focus:outline-none relative group">
+                <i class="fa-solid fa-microphone"></i>
+                <span id="recordingIndicator" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
+            </button>
+            
+            <!-- Text Input -->
+            <input type="text" id="aiInput" placeholder="Ask KYNKODE AI (e.g. 'Update Max's relocation status')" class="flex-1 bg-transparent border-none focus:ring-0 text-sm px-2 text-slate-700 placeholder-slate-400 outline-none">
+            
+            <!-- Loading Spinner (Hidden) -->
+            <div id="aiLoading" class="hidden h-10 w-10 items-center justify-center text-brand-primary">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+            </div>
+
+            <!-- Send Button -->
+            <button id="sendBtn" class="h-10 w-10 flex-shrink-0 rounded-full bg-brand-primary text-white hover:bg-purple-700 flex items-center justify-center transition-transform hover:scale-105 shadow-sm focus:outline-none">
+                <i class="fa-solid fa-paper-plane text-sm translate-x-[-1px] translate-y-[1px]"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwi4nCHOTE5Nqf6fjhAI5_h1lVBcvP7MKo4OAERw328aDWKnTsNvAdNVHrChK7OB8xi/exec";
-
-        const fallbackData = {
-            status: "success",
-            data: {
-                metrics: { myTasks: 12, dueToday: 5, overdue: 3, completedPct: 89 },
-                tasks: [
-                    { task: 'Call owner - lab results', workflow: 'Lab Results', assignedTo: 'Dr. Sarah', dueDate: '18/08/2026', priority: 'High', status: 'Overdue' },
-                    { task: 'Prepare discharge note', workflow: 'Hospitalization', assignedTo: 'Dr. John', dueDate: '18/08/2026', priority: 'High', status: 'Today' },
-                    { task: 'Relocation docs check', workflow: 'Pet Relocation', assignedTo: 'Admin', dueDate: '19/08/2026', priority: 'Medium', status: 'Pending' }
-                ],
-                workflows: [
-                    { name: 'Pet Relocation - Luna', status: 'In Progress', progress: 67 },
-                    { name: 'Surgery - Max', status: 'Pending', progress: 25 },
-                    { name: 'Discharge - Bella', status: 'Completed', progress: 100 }
-                ]
-            }
+        /**
+         * KYNKODE Configuration
+         * Replace with your Google Apps Script Web App URL.
+         */
+        const CONFIG = {
+            API_URL: 'https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec'
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setupMobileMenu();
-            fetchFlowData();
-            setupAIBar();
+        // --- UI Interactions ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeSidebarBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // --- AI Backend Integration ---
+        const aiInput = document.getElementById('aiInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const aiLoading = document.getElementById('aiLoading');
+        const aiResponseContainer = document.getElementById('aiResponseContainer');
+        const aiResponseText = document.getElementById('aiResponseText');
+        const closeAiResponse = document.getElementById('closeAiResponse');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        closeAiResponse.addEventListener('click', () => {
+            hideAiResponse();
         });
 
-        function setupMobileMenu() {
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            const closeBtn = document.getElementById('close-menu-btn');
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('mobile-backdrop');
-            const menuIcon = document.getElementById('mobile-menu-icon');
-            const navLinks = sidebar.querySelectorAll('nav a');
-
-            function openMenu() {
-                sidebar.classList.remove('-translate-x-full');
-                sidebar.classList.add('translate-x-0');
-                backdrop.classList.remove('hidden');
-                menuIcon.classList.remove('fa-bars');
-                menuIcon.classList.add('fa-xmark');
-            }
-
-            function closeMenu() {
-                sidebar.classList.add('-translate-x-full');
-                sidebar.classList.remove('translate-x-0');
-                backdrop.classList.add('hidden');
-                menuIcon.classList.remove('fa-xmark');
-                menuIcon.classList.add('fa-bars');
-            }
-
-            if (menuBtn) {
-                menuBtn.addEventListener('click', () => {
-                    const isOpen = sidebar.classList.contains('translate-x-0');
-                    isOpen ? closeMenu() : openMenu();
-                });
-            }
-
-            if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-            if (backdrop) backdrop.addEventListener('click', closeMenu);
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', closeMenu);
-            });
+        function showAiResponse(text) {
+            aiResponseText.innerHTML = text.replace(/\n/g, '<br>');
+            aiResponseContainer.classList.remove('hidden');
+            // Trigger reflow for animation
+            void aiResponseContainer.offsetWidth; 
+            aiResponseContainer.classList.remove('translate-y-4', 'opacity-0');
         }
 
-        async function fetchFlowData() {
-            try {
-                const response = await fetch(GAS_URL);
-                if (!response.ok) throw new Error('Network error');
-                const result = await response.json();
-                if (result.status === "success") {
-                    populateDashboard(result.data);
-                } else {
-                    populateDashboard(fallbackData.data);
-                }
-            } catch (error) {
-                console.warn("Fetch fallback active:", error);
-                populateDashboard(fallbackData.data);
-            } finally {
-                document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
-            }
+        function hideAiResponse() {
+            aiResponseContainer.classList.add('translate-y-4', 'opacity-0');
+            setTimeout(() => {
+                aiResponseContainer.classList.add('hidden');
+            }, 300); // match tailwind transition duration
         }
 
-        function populateDashboard(data) {
-            const metrics = data.metrics;
-            document.getElementById('sb-my-tasks').textContent = metrics.myTasks;
-            document.getElementById('metric-my-tasks').textContent = metrics.myTasks;
-            document.getElementById('metric-due-today').textContent = metrics.dueToday;
-            document.getElementById('metric-overdue').textContent = metrics.overdue;
-            document.getElementById('metric-completed').textContent = String(metrics.completedPct).includes('%') ? metrics.completedPct : `${metrics.completedPct}%`;
+        async function sendToBackend(payloadData) {
+            // UI Loading state
+            sendBtn.classList.add('hidden');
+            aiLoading.classList.remove('hidden');
+            hideAiResponse();
 
-            const tasksBody = document.getElementById('tasks-table-body');
-            tasksBody.innerHTML = '';
-            data.tasks.forEach(t => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50 transition-colors';
-                
-                const lowerPrio = String(t.priority).toLowerCase();
-                let prioClass = lowerPrio === 'high' ? 'bg-red-50 text-red-600 border-red-200/60' : (lowerPrio === 'low' ? 'bg-emerald-50 text-emerald-600 border-emerald-200/60' : 'bg-amber-50 text-amber-700 border-amber-200/60');
-                
-                const lowerStatus = String(t.status).toLowerCase();
-                let statusClass = lowerStatus === 'overdue' ? 'bg-red-50 text-red-600 border-red-200/60' : (lowerStatus === 'completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-200/60' : (lowerStatus === 'today' ? 'bg-amber-50 text-amber-700 border-amber-200/60' : 'bg-blue-50 text-blue-600 border-blue-200/60'));
-
-                tr.innerHTML = `
-                    <td class="py-3.5 font-medium text-gray-900">${t.task}</td>
-                    <td class="py-3.5 text-gray-600">${t.workflow}</td>
-                    <td class="py-3.5 text-gray-600">${t.assignedTo}</td>
-                    <td class="py-3.5 text-gray-600">${t.dueDate}</td>
-                    <td class="py-3.5"><span class="inline-block px-2.5 py-0.5 border rounded-full text-xs font-medium ${prioClass}">${t.priority}</span></td>
-                    <td class="py-3.5"><span class="inline-block px-2.5 py-1 border rounded-full text-xs font-medium ${statusClass}">${t.status}</span></td>
-                `;
-                tasksBody.appendChild(tr);
-            });
-
-            const wfContainer = document.getElementById('workflows-container');
-            wfContainer.innerHTML = '';
-            data.workflows.forEach(wf => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between gap-4';
-                const rawProgress = String(wf.progress).replace('%', '');
-                let badgeClass = (String(wf.status).toLowerCase() === 'completed' || rawProgress === '100') ? 'bg-emerald-50 text-emerald-600 border-emerald-200/60' : 'bg-blue-50 text-blue-600 border-blue-200/60';
-                let barClass = (String(wf.status).toLowerCase() === 'completed' || rawProgress === '100') ? 'bg-emerald-600' : 'bg-blue-600';
-
-                div.innerHTML = `
-                    <div class="w-48 font-medium text-gray-800 shrink-0 truncate">${wf.name}</div>
-                    <div class="shrink-0 hidden sm:block"><span class="px-2.5 py-0.5 border rounded-full text-xs font-medium ${badgeClass}">${wf.status}</span></div>
-                    <div class="flex-1 max-w-md bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="${barClass} h-full rounded-full transition-all duration-1000 ease-out" style="width: ${rawProgress}%;"></div>
-                    </div>
-                    <div class="w-12 text-right font-medium text-gray-600 shrink-0">${rawProgress}%</div>
-                `;
-                wfContainer.appendChild(div);
-            });
-        }
-
-        function setupAIBar() {
-            const queryInput = document.getElementById('ai-query');
-            const sendBtn = document.getElementById('ai-send');
-            const sendIcon = document.getElementById('ai-send-icon');
-            const loadingIcon = document.getElementById('ai-loading-icon');
-
-            const handleSendText = async () => {
-                const query = queryInput.value.trim();
-                if (!query) return;
-
-                queryInput.disabled = true;
-                sendIcon.classList.add('hidden');
-                loadingIcon.classList.remove('hidden');
-
-                try {
-                    const response = await fetch(GAS_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ 
-                            source: 'kynkode_frontend', 
-                            action: 'ASK_AI', 
-                            data: { text: query } 
-                        })
-                    });
-                    const result = await response.json();
-                    alert("KYNKODE AI: " + (result.ai_response || "Action processed successfully.")); 
-                } catch (error) { 
-                    console.error("AI Request Error:", error);
-                    alert("Could not connect to KYNKODE AI backend.");
-                } finally {
-                    queryInput.disabled = false;
-                    queryInput.value = '';
-                    queryInput.focus();
-                    sendIcon.classList.remove('hidden');
-                    loadingIcon.classList.add('hidden');
-                }
+            const payload = {
+                source: 'kynkode_frontend',
+                action: 'ASK_AI',
+                data: payloadData
             };
 
-            sendBtn.addEventListener('click', handleSendText);
-            queryInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') handleSendText();
-            });
+            try {
+                // If API_URL is a placeholder, simulate a response for presentation
+                if (CONFIG.API_URL.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+                    console.log("Mock Payload Sent:", payload);
+                    setTimeout(() => {
+                        showAiResponse("<b>Mock Mode:</b> Connect your Google Apps Script URL in the frontend code to see live AI responses. Payload successfully formatted.");
+                        resetInputUI();
+                    }, 1500);
+                    return;
+                }
+
+                const response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAiResponse(result.ai_response);
+                } else {
+                    showAiResponse("<b>Error:</b> " + (result.error || result.message || "Unknown error"));
+                }
+            } catch (error) {
+                console.error("Backend request failed:", error);
+                showAiResponse("<b>Connection Error:</b> Failed to reach KYNKODE backend.");
+            } finally {
+                resetInputUI();
+            }
         }
+
+        function resetInputUI() {
+            sendBtn.classList.remove('hidden');
+            aiLoading.classList.add('hidden');
+            aiInput.value = '';
+        }
+
+        // Send Text
+        sendBtn.addEventListener('click', () => {
+            const text = aiInput.value.trim();
+            if (text) sendToBackend({ text: text });
+        });
+
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const text = aiInput.value.trim();
+                if (text) sendToBackend({ text: text });
+            }
+        });
+
+        // Voice Recording Logic
+        recordBtn.addEventListener('click', async () => {
+            if (isRecording) {
+                // Stop recording
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.classList.remove('bg-red-100', 'text-red-600');
+                recordBtn.classList.add('bg-slate-100', 'text-slate-600');
+                recordingIndicator.classList.add('hidden');
+                recordBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+            } else {
+                // Start recording
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            const base64Audio = reader.result; // Data URL format
+                            sendToBackend({ audioBase64: base64Audio });
+                        };
+                        // Release mic track
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    
+                    // Update UI to recording state
+                    recordBtn.classList.remove('bg-slate-100', 'text-slate-600');
+                    recordBtn.classList.add('bg-red-100', 'text-red-600');
+                    recordingIndicator.classList.remove('hidden');
+                    recordBtn.innerHTML = '<i class="fa-solid fa-stop"></i><span id="recordingIndicator" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>';
+                    
+                } catch (err) {
+                    console.error("Microphone access denied:", err);
+                    alert("Microphone access is required to use voice commands.");
+                }
+            }
+        });
     </script>
 </body>
 </html>

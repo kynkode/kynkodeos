@@ -3,500 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliniStock - KYNKODE AI</title>
+    <title>CliniStock - KYNKODE AGI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fb;
-        }
-        .loader {
-            border-top-color: #2563eb;
-            animation: spinner 1.5s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        ::-webkit-scrollbar { width: 6px; }
+        /* Custom scrollbar and subtle transitions */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Floating Bar Pulse Animation for Recording */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .recording-active {
+            animation: pulse-red 2s infinite;
+            background-color: #ef4444 !important;
+            color: white !important;
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-0 md:p-8">
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex">
 
-    <!-- Mobile Top Navigation Header -->
-    <header class="w-full bg-[#0a182b] text-white p-4 flex items-center justify-between md:hidden z-20 border-b border-gray-800 shrink-0">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-cube text-blue-500 text-lg"></i>
-            <div>
-                <h1 class="font-bold text-base leading-tight uppercase tracking-wider text-blue-400">KYNKODE</h1>
-                <p class="text-[9px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
-            </div>
-        </div>
-        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2 focus:outline-none">
-            <i class="fa-solid fa-bars text-xl"></i>
+    <div class="lg:hidden fixed top-0 w-full bg-[#0f2041] text-white p-4 flex justify-between items-center z-40 shadow">
+        <div class="font-bold tracking-wider">KYNKODE</div>
+        <button id="mobileMenuBtn" class="text-xl focus:outline-none">
+            <i class="fa-solid fa-bars"></i>
         </button>
-    </header>
-
-    <!-- Main App Container -->
-    <div class="w-full max-w-7xl h-full max-h-[900px] bg-white rounded-none md:rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100 relative">
-        
-        <!-- Mobile Sidebar Overlay Backdrop -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden transition-opacity"></div>
-
-        <!-- Toast Notification Container -->
-        <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-        </div>
-
-        <!-- Sidebar (Off-canvas drawer on mobile, relative layout on desktop) -->
-        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-40 w-64 bg-[#0a182b] text-white flex flex-col justify-between p-5 -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 h-full">
-            <div>
-                <!-- Brand / Logo & Mobile Close Button -->
-                <div class="flex items-center justify-between mb-8 px-2">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-cube text-blue-500 text-xl"></i>
-                        <div>
-                            <h1 class="font-bold text-lg leading-tight uppercase tracking-wider text-blue-400">KYNKODE</h1>
-                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Practice Manager</p>
-                        </div>
-                    </div>
-                    <button id="close-sidebar-btn" class="md:hidden text-gray-400 hover:text-white p-1 focus:outline-none">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-
-                <!-- Navigation Links -->
-                <nav class="space-y-2">
-                    <a href="cliniflow.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                        <i class="fa-solid fa-diagram-project w-5"></i>
-                        <span class="font-medium text-sm">CliniFlow</span>
-                    </a>
-                    <a href="clinimove.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition">
-                        <i class="fa-solid fa-plane-departure w-5"></i>
-                        <span class="font-medium text-sm">CliniMove</span>
-                    </a>
-                    <a href="clinistock.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#162d4c] text-white font-medium text-sm shadow-md transition">
-                        <i class="fa-solid fa-boxes-stacked w-5 text-blue-400"></i>
-                        <span>CliniStock</span>
-                    </a>
-                </nav>
-
-                <!-- Module Specific Links -->
-                <div class="mt-8 pt-6 border-t border-white/10 space-y-1">
-                    <p class="px-4 text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Inventory Tools</p>
-                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                        <i class="fa-solid fa-cart-shopping w-4 text-center"></i> Purchase Orders
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                        <i class="fa-solid fa-truck-fast w-4 text-center"></i> Suppliers
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5 transition text-sm">
-                        <i class="fa-solid fa-chart-pie w-4 text-center"></i> Analytics
-                    </a>
-                </div>
-            </div>
-
-            <!-- Sidebar Footer Stats Card -->
-            <div class="mt-8 pt-4 border-t border-white/10">
-                <div class="bg-[#162d4c] px-4 py-3.5 rounded-2xl text-white shadow-inner">
-                    <p class="text-xs text-gray-300 mb-1">Total Stock Value</p>
-                    <div id="sb-stock-value" class="text-2xl font-bold tracking-tight mb-0.5">--</div>
-                    <p class="text-[11px] text-blue-400 font-medium">Updated just now</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 bg-[#f8fafc] flex flex-col relative z-10 h-full overflow-hidden">
-            
-            <!-- Scrollable Content -->
-            <div class="flex-1 overflow-y-auto p-6 md:p-8 pb-28 flex flex-col gap-6">
-
-                <!-- Header -->
-                <header class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-md flex items-center justify-center">
-                        <i class="fa-solid fa-cube text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">CliniStock</h1>
-                        <p class="text-xs text-gray-500 font-medium">Inventory intelligence that saves you money</p>
-                    </div>
-                </header>
-
-                <!-- Metrics Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-blue-600">Total Items</span>
-                        <div id="metric-total" class="text-2xl font-bold text-gray-900 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-blue-600">Stock Value</span>
-                        <div id="metric-value" class="text-2xl font-bold text-gray-900 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-red-600">Need Ordering</span>
-                        <div id="metric-order" class="text-2xl font-bold text-red-600 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-medium text-amber-600">Expiring Soon</span>
-                        <div id="metric-expiry" class="text-2xl font-bold text-amber-600 mt-2">--</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
-                        <span class="text-xs font-medium text-blue-600">Pending Orders</span>
-                        <div id="metric-pending" class="text-2xl font-bold text-gray-900 mt-2">--</div>
-                    </div>
-                </div>
-
-                <!-- Table Section -->
-                <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="font-semibold text-gray-800 text-sm">Low Stock / At Risk Items</h2>
-                        <a href="#" class="text-blue-600 hover:underline text-xs font-medium">View all inventory</a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="text-xs text-gray-400 border-b border-gray-100">
-                                    <th class="pb-3 font-medium">Item</th>
-                                    <th class="pb-3 font-medium">Stock</th>
-                                    <th class="pb-3 font-medium">Avg. Use / month</th>
-                                    <th class="pb-3 font-medium">Days Left</th>
-                                    <th class="pb-3 font-medium">Expiry</th>
-                                    <th class="pb-3 font-medium">Status</th>
-                                    <th class="pb-3 font-medium text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventory-table-body" class="divide-y divide-gray-50 text-gray-700">
-                                <!-- Injected via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Recommendation Box -->
-                <section class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-inner">
-                    <div class="flex flex-col gap-1.5">
-                        <h2 class="font-bold text-blue-900 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-lightbulb text-amber-400"></i> KYNKODE Recommendation
-                        </h2>
-                        <p id="recommendation-text" class="text-sm text-gray-700 font-medium leading-relaxed">Loading recommendations...</p>
-                    </div>
-                    <button id="btn-gen-po" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow-md transition shrink-0">
-                        Generate Purchase Order
-                    </button>
-                </section>
-
-                <!-- Footer Text -->
-                <footer class="mt-2 text-center text-xs text-blue-900/60 font-medium pb-2">
-                    Right stock. Right time. Right price.
-                </footer>
-            </div>
-
-            <!-- KYNKODE AI Input Bar -->
-            <div class="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border border-blue-100 p-3 flex items-center gap-4 z-20">
-                <span class="font-bold text-blue-900 whitespace-nowrap pl-2 hidden sm:inline">Ask KYNKODE AI</span>
-                <i class="fa-solid fa-sparkles text-blue-500 sm:hidden pl-2"></i>
-                <input type="text" id="ai-query" placeholder="Ask about stock levels, expiry dates, or order history..." class="flex-1 bg-transparent border-none outline-none text-gray-700 w-full text-sm sm:text-base" />
-                
-                <button id="mic-btn" class="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all flex items-center justify-center min-w-[44px]">
-                    <i class="fa-solid fa-microphone" id="mic-icon"></i>
-                </button>
-                
-                <button id="ai-send" class="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all flex items-center justify-center min-w-[44px]">
-                    <i class="fa-solid fa-paper-plane" id="ai-send-icon"></i>
-                    <i class="fa-solid fa-circle-notch fa-spin hidden" id="ai-loading-icon"></i>
-                </button>
-            </div>
-
-        </main>
     </div>
 
-    <!-- App Logic -->
+    <nav id="sidebar" class="bg-[#0f2041] text-white w-64 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out z-50">
+        <div class="p-6 font-bold tracking-widest text-lg flex justify-between items-center">
+            KYNKODE
+            <button id="closeSidebarBtn" class="lg:hidden text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <ul class="flex-1 px-4 space-y-1">
+            <li>
+                <a href="#" class="flex items-center space-x-3 bg-blue-900/50 text-blue-200 px-4 py-3 rounded-lg border-l-4 border-blue-400">
+                    <i class="fa-solid fa-house w-5"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-solid fa-box w-5"></i> <span>Stock</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-regular fa-bell w-5"></i> <span>Alerts</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-regular fa-calendar-check w-5"></i> <span>Orders</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-solid fa-right-left w-5"></i> <span>Transfers</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-solid fa-chart-line w-5"></i> <span>Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-solid fa-gear w-5"></i> <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="p-4">
+            <div class="bg-[#1a2f55] rounded-xl p-4 text-center">
+                <div class="text-slate-400 text-xs mb-1">Stock Value</div>
+                <div class="font-bold text-xl text-white">KES 2.14M</div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 hidden z-40 lg:hidden"></div>
+
+    <main class="flex-1 h-full overflow-y-auto pt-16 lg:pt-0 pb-24">
+        <div class="max-w-6xl mx-auto p-4 lg:p-8">
+            
+            <header class="flex items-center mb-8">
+                <div class="bg-[#0f2041] text-white p-3 rounded-lg mr-4">
+                    <i class="fa-solid fa-cube text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-[#0f2041]">CliniStock</h1>
+                    <p class="text-slate-500 text-sm">Inventory intelligence that saves you money</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8 text-center bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                <div class="lg:border-r border-slate-200 p-2">
+                    <p class="text-blue-600 font-medium text-sm mb-1">Total Items</p>
+                    <p class="text-2xl font-bold text-slate-800">1,248</p>
+                </div>
+                <div class="lg:border-r border-slate-200 p-2">
+                    <p class="text-blue-600 font-medium text-sm mb-1">Stock Value</p>
+                    <p class="text-2xl font-bold text-slate-800">KES 2.14M</p>
+                </div>
+                <div class="lg:border-r border-slate-200 p-2">
+                    <p class="text-red-600 font-medium text-sm mb-1">Need Ordering</p>
+                    <p class="text-2xl font-bold text-red-600">6</p>
+                </div>
+                <div class="lg:border-r border-slate-200 p-2">
+                    <p class="text-orange-500 font-medium text-sm mb-1">Expiring Soon</p>
+                    <p class="text-2xl font-bold text-orange-500">14</p>
+                </div>
+                <div class="p-2">
+                    <p class="text-blue-600 font-medium text-sm mb-1">Pending Orders</p>
+                    <p class="text-2xl font-bold text-blue-600">3</p>
+                </div>
+            </div>
+
+            <section class="bg-white rounded-xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="font-bold text-[#0f2041]">Low Stock / At Risk Items</h2>
+                    <a href="#" class="text-blue-600 text-sm font-medium hover:underline">View all</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50/50">
+                            <tr>
+                                <th class="px-6 py-4 font-medium">Item</th>
+                                <th class="px-6 py-4 font-medium text-center">Stock</th>
+                                <th class="px-6 py-4 font-medium text-center">Avg. Use / month</th>
+                                <th class="px-6 py-4 font-medium text-center">Days Left</th>
+                                <th class="px-6 py-4 font-medium text-center">Expiry</th>
+                                <th class="px-6 py-4 font-medium">Status</th>
+                                <th class="px-6 py-4 font-medium text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 text-slate-800 font-medium">DHLP Vaccine</td>
+                                <td class="px-6 py-4 text-center">4</td>
+                                <td class="px-6 py-4 text-center">18</td>
+                                <td class="px-6 py-4 text-center">6 days</td>
+                                <td class="px-6 py-4 text-center">12/12/2026</td>
+                                <td class="px-6 py-4"><span class="text-red-500 font-medium bg-red-50 px-2 py-1 rounded">Low</span></td>
+                                <td class="px-6 py-4 text-right"><a href="#" class="text-blue-600 hover:underline">Order</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 text-slate-800 font-medium">Rabies Vaccine</td>
+                                <td class="px-6 py-4 text-center text-red-600 font-bold">0</td>
+                                <td class="px-6 py-4 text-center">15</td>
+                                <td class="px-6 py-4 text-center">0 days</td>
+                                <td class="px-6 py-4 text-center text-slate-400">-</td>
+                                <td class="px-6 py-4"><span class="text-red-600 font-medium bg-red-100 px-2 py-1 rounded text-xs">Out of Stock</span></td>
+                                <td class="px-6 py-4 text-right"><a href="#" class="text-blue-600 hover:underline">Order</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 text-slate-800 font-medium">Bravecto 1000mg</td>
+                                <td class="px-6 py-4 text-center">3</td>
+                                <td class="px-6 py-4 text-center">10</td>
+                                <td class="px-6 py-4 text-center">8 days</td>
+                                <td class="px-6 py-4 text-center">12/12/2026</td>
+                                <td class="px-6 py-4"><span class="text-red-500 font-medium bg-red-50 px-2 py-1 rounded">Low</span></td>
+                                <td class="px-6 py-4 text-right"><a href="#" class="text-blue-600 hover:underline">Order</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 text-slate-800 font-medium">Bravecto 500mg</td>
+                                <td class="px-6 py-4 text-center">2</td>
+                                <td class="px-6 py-4 text-center">8</td>
+                                <td class="px-6 py-4 text-center">7 days</td>
+                                <td class="px-6 py-4 text-center">12/11/2026</td>
+                                <td class="px-6 py-4"><span class="text-red-500 font-medium bg-red-50 px-2 py-1 rounded">Low</span></td>
+                                <td class="px-6 py-4 text-right"><a href="#" class="text-blue-600 hover:underline">Transfer</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 text-slate-800 font-medium">Cat Flu Vaccine</td>
+                                <td class="px-6 py-4 text-center">5</td>
+                                <td class="px-6 py-4 text-center">6</td>
+                                <td class="px-6 py-4 text-center">20 days</td>
+                                <td class="px-6 py-4 text-center">12/10/2026</td>
+                                <td class="px-6 py-4"><span class="text-green-600 font-medium">Good</span></td>
+                                <td class="px-6 py-4 text-right text-slate-300">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="bg-blue-50/50 rounded-xl shadow-sm border border-blue-100 p-6 flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
+                <div>
+                    <h3 class="text-[#0f2041] font-bold mb-2">KYNKODE Recommendation</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        You have <strong>KES 31,400</strong> worth of stock expiring within 60 days.<br>
+                        Consider transferring Bravecto 500mg (5 units) to South C.
+                    </p>
+                </div>
+                <button class="bg-[#0f2041] hover:bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap shadow">
+                    View Recommendations
+                </button>
+            </section>
+
+            <footer class="text-center text-blue-600 font-medium text-sm pb-10">
+                Right stock. Right time. Right price.
+            </footer>
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 flex justify-center px-4 z-40 pointer-events-none">
+        <div id="aiToast" class="absolute bottom-20 bg-[#0f2041] text-white px-4 py-3 rounded-lg shadow-lg text-sm max-w-md w-full transition-opacity opacity-0 pointer-events-auto flex justify-between items-start hidden">
+            <div id="aiToastText" class="flex-1 pr-2">Processing...</div>
+            <button onclick="document.getElementById('aiToast').classList.add('hidden')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="bg-white p-2 rounded-full shadow-xl border border-slate-200 flex items-center w-full max-w-2xl pointer-events-auto">
+            <button id="micBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 w-12 h-12 rounded-full flex justify-center items-center transition-colors focus:outline-none shrink-0">
+                <i class="fa-solid fa-microphone text-lg"></i>
+            </button>
+            
+            <input type="text" id="aiInput" placeholder="Ask KYNKODE AI (e.g., 'Update Rabies stock to 10')" class="flex-1 bg-transparent border-none outline-none px-4 text-slate-700 placeholder-slate-400">
+            
+            <button id="sendBtn" class="bg-[#0f2041] hover:bg-blue-900 text-white w-12 h-12 rounded-full flex justify-center items-center transition-colors focus:outline-none shrink-0">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwi4nCHOTE5Nqf6fjhAI5_h1lVBcvP7MKo4OAERw328aDWKnTsNvAdNVHrChK7OB8xi/exec"; 
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        // REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
 
-        const fallbackData = {
-            status: "success",
-            data: {
-                metrics: {
-                    totalItems: 342,
-                    stockValue: "$24,850",
-                    needOrdering: 12,
-                    expiringSoon: 4,
-                    pendingOrders: 3,
-                    recommendation: "Order Amoxicillin 250mg today to avoid stockout by next Tuesday. Consider switching supplier for Syringes (5ml) to save 12% on your next order."
-                },
-                items: [
-                    { name: "Amoxicillin 250mg", stock: 0, avgUse: "40/mo", daysLeft: 0, expiry: "2027-01", status: "Out of Stock", action: "Order Now" },
-                    { name: "Syringes 5ml", stock: 15, avgUse: "100/mo", daysLeft: 4, expiry: "2028-05", status: "Low Stock", action: "Order Now" },
-                    { name: "Rabies Vaccine", stock: 5, avgUse: "10/mo", daysLeft: 15, expiry: "2026-09", status: "Expiring Soon", action: "Review" },
-                    { name: "Bandages (Standard)", stock: 120, avgUse: "30/mo", daysLeft: 120, expiry: "2030-12", status: "Good", action: "-" }
-                ]
+        // ==========================================
+        // UI INTERACTIONS
+        // ==========================================
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const aiToast = document.getElementById('aiToast');
+        const aiToastText = document.getElementById('aiToastText');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeSidebarBtn.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        function showAiToast(message, isError = false) {
+            aiToast.classList.remove('hidden', 'opacity-0');
+            aiToastText.innerHTML = message;
+            aiToastText.className = isError ? "flex-1 pr-2 text-red-400" : "flex-1 pr-2 text-white";
+            
+            // Auto hide after 8 seconds
+            setTimeout(() => {
+                aiToast.classList.add('hidden', 'opacity-0');
+            }, 8000);
+        }
+
+        // ==========================================
+        // BACKEND COMMUNICATION
+        // ==========================================
+        async function sendToBackend(action, data) {
+            try {
+                showAiToast('<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Connecting to KYNKODE AI Core...');
+                
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // IMPORTANT: GAS often requires no-cors from static pages if headers aren't set perfectly. 
+                                     // NOTE: With 'no-cors', you won't get a readable JSON response back in the browser. 
+                                     // To get the AI response back, your GAS backend must handle CORS preflight (OPTIONS) 
+                                     // or you should remove 'mode: no-cors' and ensure the script is deployed to execute as "You" and access "Anyone".
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ source: 'kynkode_frontend', action: action, data: data })
+                });
+                
+                // If using standard CORS (recommended for reading responses):
+                // const result = await response.json();
+                // showAiToast(result.ai_response || result.message || "Command executed.");
+                
+                showAiToast("Payload dispatched to backend. (Check Google Sheets for updates).");
+                
+            } catch (error) {
+                showAiToast("Network error communicating with backend.", true);
+                console.error(error);
             }
-        };
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setupMobileMenu();
-            fetchDashboardData();
-            setupAIBar();
-            setupSpeechRecognition();
-            setupActionButtons();
+        // ==========================================
+        // TEXT MESSAGING
+        // ==========================================
+        const sendBtn = document.getElementById('sendBtn');
+        const aiInput = document.getElementById('aiInput');
+
+        sendBtn.addEventListener('click', () => {
+            const text = aiInput.value.trim();
+            if (!text) return;
+            aiInput.value = '';
+            sendToBackend('ASK_AI', { text: text });
         });
 
-        // Mobile Hamburger Drawer Toggle
-        function setupMobileMenu() {
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            const closeBtn = document.getElementById('close-sidebar-btn');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendBtn.click();
+        });
 
-            const openMenu = () => {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            };
+        // ==========================================
+        // AUDIO RECORDING (Voice to AI)
+        // ==========================================
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        const micBtn = document.getElementById('micBtn');
 
-            const closeMenu = () => {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            };
-
-            if (menuBtn) menuBtn.addEventListener('click', openMenu);
-            if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-            if (overlay) overlay.addEventListener('click', closeMenu);
-
-            // Close sidebar when clicking links on mobile
-            const sidebarLinks = sidebar.querySelectorAll('a');
-            sidebarLinks.forEach(link => link.addEventListener('click', () => {
-                if (window.innerWidth < 768) closeMenu();
-            }));
-        }
-
-        // Universal Toast Notification
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            const bgClass = type === 'error' ? 'bg-red-600 text-white' : 
-                            type === 'success' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-white';
-                            
-            toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg ${bgClass} text-sm font-medium transition-all duration-300 opacity-0 transform translate-y-2 flex items-center gap-3`;
-            toast.innerHTML = `<span>${message}</span>`;
-            
-            container.appendChild(toast);
-            requestAnimationFrame(() => {
-                toast.classList.remove('opacity-0', 'translate-y-2');
-            });
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        // Backend Interaction: Data Load
-        async function fetchDashboardData() {
-            try {
-                const response = await fetch(GAS_URL);
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                const result = await response.json();
-                
-                if (result.status === "success") {
-                    populateDashboard(result.data);
-                } else {
-                    console.warn("Backend Error, using fallback data:", result.message);
-                    populateDashboard(fallbackData.data);
-                }
-            } catch (error) {
-                console.warn("Fetch Error, using fallback data:", error);
-                populateDashboard(fallbackData.data);
-            } finally {
-                document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
-            }
-        }
-
-        function populateDashboard(data) {
-            document.getElementById('sb-stock-value').textContent = data.metrics.stockValue;
-            document.getElementById('metric-total').textContent = data.metrics.totalItems;
-            document.getElementById('metric-value').textContent = data.metrics.stockValue;
-            document.getElementById('metric-order').textContent = data.metrics.needOrdering;
-            document.getElementById('metric-expiry').textContent = data.metrics.expiringSoon;
-            document.getElementById('metric-pending').textContent = data.metrics.pendingOrders;
-            document.getElementById('recommendation-text').textContent = data.metrics.recommendation;
-
-            const tbody = document.getElementById('inventory-table-body');
-            tbody.innerHTML = '';
-
-            data.items.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50 transition-colors';
-
-                let statusClasses = "bg-gray-50 text-gray-600 border-gray-200/60";
-                if (item.status.toLowerCase().includes("low") || item.status.toLowerCase().includes("out")) {
-                    statusClasses = "bg-red-50 text-red-600 border-red-200/60";
-                } else if (item.status.toLowerCase().includes("expiring")) {
-                    statusClasses = "bg-amber-50 text-amber-600 border-amber-200/60";
-                } else if (item.status.toLowerCase().includes("good")) {
-                    statusClasses = "bg-emerald-50 text-emerald-600 border-emerald-200/60";
-                }
-
-                const stockStyle = item.stock == 0 ? 'text-red-600 font-bold' : 'font-medium text-gray-900';
-
-                tr.innerHTML = `
-                    <td class="py-3.5 font-semibold text-gray-900">${item.name}</td>
-                    <td class="py-3.5 ${stockStyle}">${item.stock}</td>
-                    <td class="py-3.5 text-gray-600">${item.avgUse}</td>
-                    <td class="py-3.5 text-gray-600">${item.daysLeft}</td>
-                    <td class="py-3.5 text-gray-500 text-xs">${item.expiry || '-'}</td>
-                    <td class="py-3.5">
-                        <span class="inline-block px-2.5 py-1 border rounded-full text-[11px] font-semibold uppercase tracking-wide ${statusClasses}">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td class="py-3.5 text-right">
-                        ${item.action !== '-' && item.action !== '' 
-                            ? `<button onclick="handleItemAction('${item.name}', '${item.action}')" class="inline-block px-4 py-1.5 bg-white hover:bg-blue-50 text-blue-600 border border-blue-200 rounded-lg text-xs font-semibold transition shadow-sm">${item.action}</button>` 
-                            : `<span class="text-gray-300">-</span>`}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Backend Interaction: POST Requests to GAS
-        async function sendToBackend(payload) {
-            const response = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            });
-            return await response.json();
-        }
-
-        // AI Logic
-        function setupAIBar() {
-            const queryInput = document.getElementById('ai-query');
-            const sendBtn = document.getElementById('ai-send');
-            const sendIcon = document.getElementById('ai-send-icon');
-            const loadingIcon = document.getElementById('ai-loading-icon');
-
-            const handleSendText = async () => {
-                const query = queryInput.value.trim();
-                if (!query) return;
-
-                queryInput.disabled = true;
-                sendIcon.classList.add('hidden');
-                loadingIcon.classList.remove('hidden');
-
-                try {
-                    const result = await sendToBackend({
-                        source: 'kynkode_frontend',
-                        action: 'ASK_AI',
-                        data: { text: query, context: 'CliniStock' }
-                    });
-
-                    showToast(result.ai_response || result.message || "Query processed successfully.", "success");
-                } catch (error) {
-                    console.error("AI Request Error:", error);
-                    showToast("Connected to AI backend (local execution).", "info");
-                } finally {
-                    queryInput.disabled = false;
-                    queryInput.value = '';
-                    queryInput.focus();
-                    sendIcon.classList.remove('hidden');
-                    loadingIcon.classList.add('hidden');
-                }
-            };
-
-            sendBtn.addEventListener('click', handleSendText);
-            queryInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') handleSendText();
-            });
-        }
-
-        // Voice Input Integration
-        function setupSpeechRecognition() {
-            const micBtn = document.getElementById('mic-btn');
-            const micIcon = document.getElementById('mic-icon');
-            const queryInput = document.getElementById('ai-query');
-
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
-
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.lang = 'en-US';
-
-                recognition.onstart = () => {
-                    micBtn.classList.add('bg-red-50', 'text-red-600', 'animate-pulse');
-                    micIcon.classList.replace('fa-microphone', 'fa-microphone-lines');
-                    showToast("Listening...", "info");
-                };
-
-                recognition.onend = () => {
-                    micBtn.classList.remove('bg-red-50', 'text-red-600', 'animate-pulse');
-                    micIcon.classList.replace('fa-microphone-lines', 'fa-microphone');
-                };
-
-                recognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    queryInput.value = transcript;
-                    document.getElementById('ai-send').click();
-                };
-
-                recognition.onerror = (event) => {
-                    console.error("Speech recognition error:", event.error);
-                    showToast("Speech recognition failed. Try again.", "error");
-                };
-
-                micBtn.addEventListener('click', () => {
-                    try { recognition.start(); } catch (e) { recognition.stop(); }
-                });
+        micBtn.addEventListener('click', async () => {
+            if (isRecording) {
+                // Stop Recording
+                mediaRecorder.stop();
+                micBtn.classList.remove('recording-active');
+                micBtn.innerHTML = '<i class="fa-solid fa-microphone text-lg"></i>';
+                isRecording = false;
             } else {
-                micBtn.addEventListener('click', () => {
-                    showToast("Speech recognition not supported on this browser.", "error");
-                });
-            }
-        }
-
-        // Helper Action Buttons
-        function setupActionButtons() {
-            document.getElementById('btn-gen-po').addEventListener('click', async () => {
-                showToast("Generating Purchase Order...", "info");
+                // Start Recording
                 try {
-                    await sendToBackend({
-                        source: 'kynkode_frontend',
-                        action: 'GENERATE_PO',
-                        data: { module: 'CliniStock' }
-                    });
-                    showToast("Purchase order generated and sent!", "success");
-                } catch (e) {
-                    showToast("PO generated locally.", "success");
-                }
-            });
-        }
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
 
-        async function handleItemAction(itemName, action) {
-            showToast(`Processing '${action}' for ${itemName}...`, "info");
-            try {
-                await sendToBackend({
-                    source: 'kynkode_frontend',
-                    action: 'ITEM_ACTION',
-                    data: { item: itemName, actionType: action }
-                });
-                showToast(`Action '${action}' submitted for ${itemName}`, "success");
-            } catch (e) {
-                showToast(`Request registered for ${itemName}`, "success");
+                    mediaRecorder.ondataavailable = e => {
+                        if (e.data.size > 0) audioChunks.push(e.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            const base64Audio = reader.result;
+                            // Send audio to backend
+                            sendToBackend('ASK_AI', { audioBase64: base64Audio, text: "" });
+                        };
+                        // Stop all tracks to release mic
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    micBtn.classList.add('recording-active');
+                    micBtn.innerHTML = '<i class="fa-solid fa-stop text-lg"></i>';
+                    isRecording = true;
+                    showAiToast("Listening... Tap stop when finished.");
+                } catch (err) {
+                    showAiToast("Microphone access denied or unavailable.", true);
+                    console.error("Mic error:", err);
+                }
             }
-        }
+        });
     </script>
 </body>
 </html>

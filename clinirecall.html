@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF- Pearl Vets UI - Kynkode -8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CliniRecall - KYNKODE</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,8 @@
       --accent-red: #EF4444;
       --accent-orange: #F59E0B;
       --border-color: #E5E7EB;
-      --ai-cyan: #27C3EA; /* Kynkode AGI Highlight */
+      --ai-cyan: #27C3EA;
+      --callout-bg: #EAF4F0;
     }
 
     * {
@@ -37,33 +38,39 @@
       padding: 20px;
     }
 
-    /* App Wrapper simulating the screenshot's curved container */
+    /* Outer Container matching screenshot frame */
     .app-wrapper {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1240px;
       height: 90vh;
       background: var(--bg-color);
       border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       display: flex;
       overflow: hidden;
       position: relative;
     }
 
-    /* Mobile Hamburger */
+    /* Mobile Header */
     .mobile-header {
       display: none;
-      padding: 15px 20px;
-      background: var(--card-bg);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      padding: 0 20px;
+      background: var(--sidebar-bg);
+      color: white;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border-color);
+      z-index: 30;
     }
 
     .hamburger {
-      font-size: 24px;
+      font-size: 22px;
       cursor: pointer;
-      color: var(--sidebar-bg);
+      color: white;
     }
 
     /* Sidebar Layout */
@@ -74,16 +81,17 @@
       display: flex;
       flex-direction: column;
       padding: 24px 16px;
-      transition: transform 0.3s ease;
       margin: 16px;
       border-radius: 16px;
+      transition: transform 0.3s ease;
+      z-index: 40;
     }
 
     .brand {
       font-size: 16px;
       font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 40px;
+      letter-spacing: 1.5px;
+      margin-bottom: 32px;
       padding-left: 12px;
     }
 
@@ -91,7 +99,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .nav-item {
@@ -99,7 +107,7 @@
       align-items: center;
       gap: 12px;
       padding: 12px 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       color: #A0B3AC;
       text-decoration: none;
       font-weight: 500;
@@ -109,99 +117,130 @@
 
     .nav-item:hover {
       color: white;
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .nav-item.active {
       background: var(--sidebar-active);
       color: white;
+      border-left: 4px solid var(--accent-green);
     }
 
     .sidebar-stats {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.08);
       padding: 16px;
       border-radius: 12px;
+      text-center;
       margin-top: auto;
     }
 
     .sidebar-stats p { font-size: 12px; color: #A0B3AC; }
-    .sidebar-stats h3 { font-size: 24px; margin: 4px 0; }
+    .sidebar-stats h3 { font-size: 22px; margin: 4px 0; color: white; }
 
-    /* Main Content */
+    /* Main Content Area */
     .main-content {
       flex: 1;
       padding: 32px;
       overflow-y: auto;
-      padding-bottom: 100px; /* Space for AI bar */
+      padding-bottom: 110px; /* Clear space for floating bar */
     }
 
+    /* Screenshot Header Style: Square Icon + Title Block */
     .header-title {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .bell-icon {
-      width: 48px;
-      height: 48px;
-      background: #10B981;
+      width: 52px;
+      height: 52px;
+      background: var(--sidebar-bg);
       color: white;
-      border-radius: 50%;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 22px;
     }
 
-    .header-title h1 { font-size: 28px; color: var(--text-main); }
-    .header-title p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+    .header-title h1 { font-size: 28px; color: var(--sidebar-bg); font-weight: 700; }
+    .header-title p { color: var(--text-muted); font-size: 14px; margin-top: 2px; }
 
-    /* Metric Cards */
-    .metrics-grid {
+    /* Screenshot Metrics Bar Layout: Unified card divided horizontally */
+    .metrics-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px 24px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       margin-bottom: 24px;
+      text-align: center;
     }
 
-    .metric-card {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
+    .metric-col {
+      padding: 0 8px;
+      border-right: 1px solid var(--border-color);
     }
 
-    .metric-card p { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #059669; }
-    .metric-card.overdue p { color: var(--accent-red); }
-    .metric-card h2 { font-size: 32px; color: var(--text-main); }
+    .metric-col:last-child {
+      border-right: none;
+    }
 
-    /* Queue Table */
+    .metric-col p { 
+      font-size: 13px; 
+      font-weight: 600; 
+      margin-bottom: 6px; 
+      color: #059669; 
+    }
+    .metric-col.overdue p { color: var(--accent-red); }
+    .metric-col h2 { font-size: 28px; color: var(--text-main); font-weight: 700; }
+
+    /* Queue Table Card */
     .card-section {
       background: var(--card-bg);
-      border-radius: 12px;
+      border-radius: 16px;
       border: 1px solid var(--border-color);
-      padding: 24px;
       margin-bottom: 24px;
+      overflow: hidden;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .section-header h3 { font-size: 16px; color: var(--text-main); }
+    .section-header h3 { font-size: 16px; color: var(--text-main); font-weight: 700; }
     .section-header a { font-size: 13px; color: #2563EB; text-decoration: none; font-weight: 500; }
+    .section-header a:hover { text-decoration: underline; }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
 
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { padding-bottom: 16px; color: var(--text-muted); font-size: 12px; font-weight: 500; border-bottom: 1px solid var(--border-color); }
-    td { padding: 16px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px; color: var(--text-main); }
+    th { 
+      padding: 14px 24px; 
+      color: var(--text-muted); 
+      font-size: 12px; 
+      font-weight: 600; 
+      text-transform: uppercase;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--border-color); 
+    }
+    td { padding: 16px 24px; border-bottom: 1px solid #F3F4F6; font-size: 14px; color: var(--text-main); }
     tr:last-child td { border-bottom: none; }
 
     .status-badge {
       padding: 4px 10px;
-      border-radius: 12px;
+      border-radius: 8px;
       font-size: 12px;
       font-weight: 600;
       display: inline-block;
@@ -210,49 +249,91 @@
     .status-completed { background: #D1FAE5; color: #059669; }
     .status-noanswer { background: #FEE2E2; color: #DC2626; }
 
-    .channel-icon { font-size: 18px; color: var(--text-muted); }
+    .channel-icon { font-size: 16px; color: var(--text-muted); }
     .fa-whatsapp { color: #25D366; }
 
-    /* Activities */
-    .activity-list { display: flex; flex-direction: column; gap: 16px; }
-    .activity-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .action-link {
+      color: #2563EB;
+      text-decoration: none;
+      font-weight: 500;
       font-size: 13px;
     }
-    .activity-item i { font-size: 16px; }
-    .activity-item .fa-check-circle { color: #10B981; }
-    .activity-item .fa-clock { color: var(--text-muted); }
-    .activity-text { flex: 1; color: var(--text-main); }
-    .activity-time { color: var(--text-muted); margin-right: 12px; }
+    .action-link:hover { text-decoration: underline; }
 
-    .footer-text { text-align: center; color: #059669; font-size: 13px; font-weight: 500; padding: 10px 0; }
+    /* Screenshot Callout/Recommendation Card Layout */
+    .recommendation-card {
+      background: var(--callout-bg);
+      border: 1px solid #C8E6DA;
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
 
-    /* --- Floating AI Bar --- */
+    .recommendation-card h4 {
+      font-size: 15px;
+      color: var(--sidebar-bg);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .recommendation-card p {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    .recommendation-btn {
+      background: var(--sidebar-bg);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .recommendation-btn:hover {
+      background: var(--sidebar-active);
+    }
+
+    .footer-text { 
+      text-align: center; 
+      color: var(--sidebar-bg); 
+      font-size: 13px; 
+      font-weight: 600; 
+      padding: 10px 0; 
+    }
+
+    /* Floating AI Bar */
     .ai-floating-bar {
       position: absolute;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
-      max-width: 600px;
+      max-width: 650px;
       background: var(--card-bg);
       border-radius: 40px;
-      box-shadow: 0 8px 30px rgba(39, 195, 234, 0.15); /* #27C3EA glow */
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       border: 2px solid var(--ai-cyan);
       display: flex;
       align-items: center;
-      padding: 8px 16px;
+      padding: 6px 12px;
       z-index: 100;
-      transition: all 0.3s ease;
     }
 
     .ai-floating-bar input {
       flex: 1;
       border: none;
       outline: none;
-      padding: 12px;
+      padding: 10px 14px;
       font-size: 14px;
       background: transparent;
       color: var(--text-main);
@@ -264,20 +345,21 @@
       background: transparent;
       border: none;
       cursor: pointer;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-muted);
       transition: all 0.2s;
+      shrink: 0;
     }
 
     .ai-btn:hover { color: var(--ai-cyan); background: #F3F4F6; }
     .ai-btn.recording { color: #EF4444; animation: pulse 1.5s infinite; }
-    .ai-btn-send { color: white; background: var(--ai-cyan); }
-    .ai-btn-send:hover { background: #1CA8CB; color: white; }
+    .ai-btn-send { color: white; background: var(--sidebar-bg); }
+    .ai-btn-send:hover { background: var(--sidebar-active); color: white; }
 
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
@@ -288,23 +370,27 @@
     /* AI Response Toast */
     .ai-toast {
       position: absolute;
-      bottom: 90px;
+      bottom: 84px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       background: var(--sidebar-bg);
       color: white;
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 12px;
       font-size: 13px;
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      z-index: 100;
+      max-width: 80%;
+      text-align: center;
     }
     .ai-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* Mobile Responsive */
+    /* Mobile Responsiveness */
     @media (max-width: 900px) {
+      body { padding: 0; }
       .app-wrapper { flex-direction: column; border-radius: 0; height: 100vh; }
       .mobile-header { display: flex; }
       
@@ -315,22 +401,24 @@
         height: 100%;
         margin: 0;
         border-radius: 0;
-        z-index: 1000;
-        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        box-shadow: 4px 0 15px rgba(0,0,0,0.2);
       }
 
       .sidebar.open { left: 0; }
-      .main-content { padding: 16px; }
-      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-      .ai-floating-bar { width: 95%; bottom: 16px; }
-      
-      /* Hide less critical columns on mobile */
-      th:nth-child(5), td:nth-child(5) { display: none; }
+      .main-content { padding: 80px 16px 120px 16px; }
+      .metrics-bar { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .metric-col { border-right: none; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+      .metric-col:nth-child(2) { border-bottom: 1px solid var(--border-color); }
+      .metric-col:nth-child(3), .metric-col:nth-child(4) { border-bottom: none; }
+      .recommendation-card { flex-direction: column; align-items: flex-start; }
+      .recommendation-btn { width: 100%; text-align: center; }
+      .ai-floating-bar { width: 92%; bottom: 16px; }
     }
 
     @media (max-width: 500px) {
-      .metrics-grid { grid-template-columns: 1fr; }
-      th:nth-child(4), td:nth-child(4) { display: none; }
+      .metrics-bar { grid-template-columns: 1fr; }
+      .metric-col { border-bottom: 1px solid var(--border-color) !important; }
+      .metric-col:last-child { border-bottom: none !important; }
     }
   </style>
 </head>
@@ -340,11 +428,11 @@
     
     <!-- Mobile Header -->
     <div class="mobile-header">
-      <div style="font-weight: 700; color: var(--sidebar-bg);">KYNKODE</div>
+      <div style="font-weight: 700; letter-spacing: 1px;">KYNKODE</div>
       <i class="fas fa-bars hamburger" onclick="toggleMenu()"></i>
     </div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Layout -->
     <nav class="sidebar" id="sidebar">
       <div class="brand">KYNKODE</div>
       <div class="nav-items">
@@ -363,8 +451,10 @@
       </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="main-content" id="mainContent">
+      
+      <!-- Icon Header Block -->
       <div class="header-title">
         <div class="bell-icon"><i class="fas fa-bell"></i></div>
         <div>
@@ -373,113 +463,106 @@
         </div>
       </div>
 
-      <div class="metrics-grid">
-        <div class="metric-card">
+      <!-- Single Multi-Column Metric Bar -->
+      <div class="metrics-bar">
+        <div class="metric-col">
           <p>Due Today</p>
           <h2>18</h2>
         </div>
-        <div class="metric-card">
+        <div class="metric-col">
           <p>Due This Week</p>
           <h2>42</h2>
         </div>
-        <div class="metric-card overdue">
+        <div class="metric-col overdue">
           <p>Overdue</p>
           <h2>7</h2>
         </div>
-        <div class="metric-card">
+        <div class="metric-col">
           <p>Completed</p>
           <h2>96%</h2>
-          <p style="color: var(--text-muted); font-size: 11px; margin-top: 4px;">This week</p>
         </div>
       </div>
 
+      <!-- Main Queue Table Container -->
       <div class="card-section">
         <div class="section-header">
           <h3>Today's Follow-up Queue</h3>
           <a href="#">View all</a>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Client</th>
-              <th>Patient</th>
-              <th>Reason</th>
-              <th>Channel</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>09:00</td>
-              <td>John Mwangi</td>
-              <td>Bella</td>
-              <td>Post-op check</td>
-              <td><i class="fab fa-whatsapp channel-icon"></i></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td>09:30</td>
-              <td>Sarah Wanjiku</td>
-              <td>Max</td>
-              <td>Vaccination due</td>
-              <td><i class="fab fa-whatsapp channel-icon"></i></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td>10:00</td>
-              <td>Peter Ochieng</td>
-              <td>Luna</td>
-              <td>Lab result follow-up</td>
-              <td><i class="fas fa-phone-alt channel-icon"></i></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td>10:30</td>
-              <td>Tina Akinyi</td>
-              <td>Bruno</td>
-              <td>Medication refill</td>
-              <td><i class="fab fa-whatsapp channel-icon"></i></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td>11:00</td>
-              <td>David Kariuki</td>
-              <td>Toby</td>
-              <td>Missed appointment</td>
-              <td><i class="fab fa-discord channel-icon" style="color: #5865F2;"></i></td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card-section">
-        <div class="section-header">
-          <h3>Recent Activities</h3>
-        </div>
-        <div class="activity-list">
-          <div class="activity-item">
-            <i class="fas fa-check-circle"></i>
-            <span class="activity-text">WhatsApp message sent to Sarah Wanjiku about Max</span>
-            <span class="activity-time">2 min ago</span>
-            <span class="status-badge status-completed">Delivered</span>
-          </div>
-          <div class="activity-item">
-            <i class="fas fa-check-circle"></i>
-            <span class="activity-text">Follow-up completed for Bella (Post-op check)</span>
-            <span class="activity-time">15 min ago</span>
-            <span class="status-badge status-completed">Completed</span>
-          </div>
-          <div class="activity-item">
-            <i class="fas fa-clock"></i>
-            <span class="activity-text">Call made to Peter Ochieng</span>
-            <span class="activity-time">20 min ago</span>
-            <span class="status-badge status-noanswer">No answer</span>
-          </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Client</th>
+                <th>Patient</th>
+                <th>Reason</th>
+                <th style="text-align: center;">Channel</th>
+                <th>Status</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>09:00</td>
+                <td style="font-weight: 600;">John Mwangi</td>
+                <td>Bella</td>
+                <td>Post-op check</td>
+                <td style="text-align: center;"><i class="fab fa-whatsapp channel-icon"></i></td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td style="text-align: right;"><a href="#" class="action-link">Send</a></td>
+              </tr>
+              <tr>
+                <td>09:30</td>
+                <td style="font-weight: 600;">Sarah Wanjiku</td>
+                <td>Max</td>
+                <td>Vaccination due</td>
+                <td style="text-align: center;"><i class="fab fa-whatsapp channel-icon"></i></td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td style="text-align: right;"><a href="#" class="action-link">Send</a></td>
+              </tr>
+              <tr>
+                <td>10:00</td>
+                <td style="font-weight: 600;">Peter Ochieng</td>
+                <td>Luna</td>
+                <td>Lab result follow-up</td>
+                <td style="text-align: center;"><i class="fas fa-phone-alt channel-icon"></i></td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td style="text-align: right;"><a href="#" class="action-link">Call</a></td>
+              </tr>
+              <tr>
+                <td>10:30</td>
+                <td style="font-weight: 600;">Tina Akinyi</td>
+                <td>Bruno</td>
+                <td>Medication refill</td>
+                <td style="text-align: center;"><i class="fab fa-whatsapp channel-icon"></i></td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td style="text-align: right;"><a href="#" class="action-link">Send</a></td>
+              </tr>
+              <tr>
+                <td>11:00</td>
+                <td style="font-weight: 600;">David Kariuki</td>
+                <td>Toby</td>
+                <td>Missed appointment</td>
+                <td style="text-align: center;"><i class="fab fa-discord channel-icon" style="color: #5865F2;"></i></td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td style="text-align: right;"><a href="#" class="action-link">Notify</a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
+      <!-- Recommendation / Action Card Block -->
+      <div class="recommendation-card">
+        <div>
+          <h4>KYNKODE Recommendation</h4>
+          <p>You have <strong>7 overdue follow-ups</strong> from yesterday.<br>Consider auto-dispatching WhatsApp reminders to Sarah and John.</p>
+        </div>
+        <button class="recommendation-btn">Dispatch Reminders</button>
+      </div>
+
+      <!-- Tagline Footer -->
       <div class="footer-text">
         Automated reminders. Happier clients. Better compliance.
       </div>
@@ -488,7 +571,7 @@
     <!-- AI Toast Notification -->
     <div class="ai-toast" id="aiToast">Message sent to backend...</div>
 
-    <!-- Floating AI Listening/Messaging Bar -->
+    <!-- Floating AI Bar -->
     <div class="ai-floating-bar">
       <button class="ai-btn" id="micBtn" onclick="toggleMic()" title="Voice Command">
         <i class="fas fa-microphone"></i>
@@ -564,7 +647,7 @@
       document.getElementById('micBtn').classList.remove('recording');
       isRecording = false;
 
-      // Constructing payload to match your GAS doPost router
+      // Constructing payload matching your GAS doPost router
       const payload = {
         source: 'kynkode_frontend',
         action: 'ASK_AI',
@@ -575,18 +658,12 @@
 
       try {
         console.log("Dispatching to KYNKODE Core...");
-        
-        // Uncomment the fetch block below when you add your real URL.
-        // We use 'no-cors' strictly if returning opaque responses, 
-        // but for JSON you must ensure your GAS script handles CORS, 
-        // or route through a proxy. For standard GAS JSON returns, 
-        // DO NOT use no-cors if you need to read the response.
-        
+
         /*
         const response = await fetch(GAS_BACKEND_URL, {
           method: 'POST',
           body: JSON.stringify(payload),
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' } // GAS prefers text/plain for raw payloads
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
         });
         
         const result = await response.json();
@@ -610,7 +687,7 @@
       }
     }
     
-    console.log("KYNKODE x Pearl Vets Frontend Initialized");
+    console.log("KYNKODE x Pearl Vets CliniRecall UI Initialized");
   </script>
 </body>
 </html>

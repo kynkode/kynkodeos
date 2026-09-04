@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KynScribe AI - Reports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <style>
+        :root { --bg-body: #f8fafc; --bg-sidebar: #0f172a; --text-main: #1e293b; --text-muted: #64748b; --primary: #1d4ed8; --primary-hover: #1e40af; --danger: #ef4444; --border: #e2e8f0; --sidebar-width: 260px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        .sidebar { width: var(--sidebar-width); background-color: var(--bg-sidebar); color: white; display: flex; flex-direction: column; transition: transform 0.3s ease; z-index: 50; }
+        .brand { padding: 24px; font-size: 20px; font-weight: 700; letter-spacing: 1px; border-bottom: 1px solid #1e293b; }
+        .nav-links { list-style: none; padding: 16px 0; flex-grow: 1; }
+        .nav-links li { padding: 0 16px; margin-bottom: 8px; }
+        .nav-links a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: 0.2s; }
+        .nav-links a:hover, .nav-links a.active { background-color: #1e293b; color: white; }
+        .nav-links a.active { background-color: var(--primary); }
+        .sidebar-bottom { padding: 24px; font-size: 14px; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
+
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
+        .mobile-header { display: none; justify-content: space-between; align-items: center; padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); }
+        .menu-btn { background: none; border: none; cursor: pointer; color: var(--text-main); }
+        .page-header { padding: 24px 32px; display: flex; align-items: center; gap: 16px; }
+        .page-header .icon-wrap { background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .page-header h1 { font-size: 24px; color: var(--primary); }
+        .page-header p { color: var(--text-muted); font-size: 14px; }
+
+        /* Reports Layout */
+        .content-container { padding: 0 32px 32px; display: flex; flex-direction: column; gap: 24px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+        .card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        .kpi-card h3 { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+        .kpi-card .value { font-size: 32px; font-weight: 700; color: var(--text-main); }
+        .kpi-card .trend { font-size: 14px; color: #16a34a; display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+
+        .report-gen-area { display: flex; flex-direction: column; gap: 16px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: white; cursor: pointer; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; width: max-content; }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        .report-output { margin-top: 16px; padding: 24px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; min-height: 200px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; display: none; }
+        .report-output.active { display: block; }
+
+        /* Floating AI Bar */
+        .floating-bar { position: fixed; bottom: 24px; right: 24px; width: 380px; background: white; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; z-index: 100; transition: 0.3s; }
+        .floating-messages { max-height: 300px; overflow-y: auto; padding: 16px; display: none; background: #f8fafc; flex-direction: column; gap: 12px; }
+        .floating-messages.active { display: flex; }
+        .msg { padding: 10px 14px; border-radius: 12px; font-size: 14px; max-width: 85%; }
+        .msg.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.ai { background: #e2e8f0; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .floating-input { display: flex; align-items: center; padding: 8px 12px; background: white; border-top: 1px solid var(--border); }
+        .floating-input input { flex-grow: 1; border: none; padding: 10px; font-size: 14px; outline: none; }
+        .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 8px; border-radius: 50%; display: flex; transition: 0.2s; }
+        .btn-icon:hover { background: #f1f5f9; color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; height: 100%; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-header { display: flex; }
+            .content-container { padding: 0 16px 16px; }
+            .floating-bar { width: calc(100% - 32px); bottom: 16px; right: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">KYNKODE</div>
+        <ul class="nav-links">
+            <li><a href="index.html"><span class="material-icons-round">home</span> Dashboard</a></li>
+            <li><a href="kynscribe.html"><span class="material-icons-round">mic</span> Scribe</a></li>
+            <li><a href="records.html"><span class="material-icons-round">folder</span> Records</a></li>
+            <li><a href="templates.html"><span class="material-icons-round">description</span> Templates</a></li>
+            <li><a href="reports.html" class="active"><span class="material-icons-round">bar_chart</span> Reports</a></li>
+            <li><a href="settings.html"><span class="material-icons-round">settings</span> Settings</a></li>
+        </ul>
+        <div class="sidebar-bottom">
+            <span class="material-icons-round" style="font-size: 18px;">info</span> AI Core Online
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="mobile-header">
+            <div style="font-weight: 700;">KynScribe</div>
+            <button class="menu-btn" onclick="toggleSidebar()"><span class="material-icons-round">menu</span></button>
+        </div>
+
+        <header class="page-header">
+            <div class="icon-wrap"><span class="material-icons-round">bar_chart</span></div>
+            <div>
+                <h1>Clinic Reports</h1>
+                <p>AI-generated analytics and performance summaries</p>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <div class="kpi-grid">
+                <div class="card kpi-card">
+                    <h3>Total Consults (This Week)</h3>
+                    <div class="value">124</div>
+                    <div class="trend"><span class="material-icons-round" style="font-size: 16px;">trending_up</span> +12% from last week</div>
+                </div>
+                <div class="card kpi-card">
+                    <h3>AI Scribe Time Saved</h3>
+                    <div class="value">14 hrs</div>
+                    <div class="trend"><span class="material-icons-round" style="font-size: 16px;">trending_up</span> Estimated</div>
+                </div>
+                <div class="card kpi-card">
+                    <h3>Pending Follow-ups</h3>
+                    <div class="value">18</div>
+                    <div class="trend" style="color: var(--text-muted);"><span class="material-icons-round" style="font-size: 16px;">schedule</span> Needs action today</div>
+                </div>
+            </div>
+
+            <div class="card report-gen-area">
+                <h3 style="font-size: 18px; margin-bottom: 8px;">AI Weekly Executive Summary</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Let AI analyze this week's clinical data, identify trends (e.g., parvo outbreaks, stock shortages), and generate a brief.</p>
+                <button class="btn btn-primary" id="btn-generate" onclick="generateReport()">
+                    <span class="material-icons-round">auto_awesome</span> Generate Report
+                </button>
+                <div class="report-output" id="report-output"></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="floating-bar">
+        <div class="floating-messages" id="chat-window">
+            <div class="msg ai">I can answer specific questions about your clinic's data (e.g., "How many surgeries did we do yesterday?").</div>
+        </div>
+        <div class="floating-input">
+            <input type="text" id="chat-input" placeholder="Message AI..." onkeypress="handleEnter(event)">
+            <button class="btn-icon" onclick="sendChatMessage()" title="Send"><span class="material-icons-round">send</span></button>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec';
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        async function generateReport() {
+            const btn = document.getElementById('btn-generate');
+            const output = document.getElementById('report-output');
+            
+            btn.innerHTML = `<span class="material-icons-round">sync</span> Analyzing Data...`;
+            output.classList.remove('active');
+            
+            const payload = { source: "kynkode_frontend", action: "GENERATE_REPORT", data: { type: "weekly" } };
+
+            try {
+                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+                
+                output.innerText = result.success ? result.report_text : "Simulated Report: \n\n**Weekly Summary**\n- Patient volume increased by 12%.\n- Noted a slight uptick in gastrointestinal cases in canine patients.\n- Vaccine stock for Rabies is running low (Current: 14 vials). Recommendation to reorder.\n- Average consultation time decreased by 4 minutes utilizing AI scribing.";
+                output.classList.add('active');
+            } catch (err) {
+                console.error(err);
+                output.innerText = "Simulated Report: \n\n**Weekly Summary**\n- Patient volume steady.\n- 44 routine exams, 12 surgeries performed.\n- (Connect to GAS for dynamic data generation).";
+                output.classList.add('active');
+            } finally {
+                btn.innerHTML = `<span class="material-icons-round">auto_awesome</span> Regenerate Report`;
+            }
+        }
+
+        /* Chat Logic */
+        function handleEnter(e) { if (e.key === 'Enter') sendChatMessage(); }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            appendMessage(text, 'user');
+            input.value = '';
+            triggerBackendAI(text);
+        }
+        function appendMessage(text, sender) {
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.classList.add('active');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${sender}`;
+            msgDiv.innerText = text;
+            chatWindow.appendChild(msgDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        async function triggerBackendAI(text) {
+            appendMessage("...", 'ai');
+            const payload = { source: "kynkode_frontend", action: "ASK_AI", data: { text: text } };
+            try {
+                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.removeChild(chatWindow.lastChild);
+                appendMessage(result.success ? result.ai_response : "Error: " + result.message, 'ai');
+            } catch (err) {
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.removeChild(chatWindow.lastChild);
+                appendMessage("System offline. Please check endpoint URL.", 'ai');
+            }
+        }
+    </script>
+</body>
+</html>

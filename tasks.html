@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYNKODE - Tasks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            dark: '#1E1B4B',
+                            primary: '#6D28D9',
+                            accent: '#4C1D95',
+                            light: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-brand-light text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden absolute top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 z-40">
+        <div class="flex items-center gap-2 text-brand-dark font-bold text-xl tracking-wide">KYNKODE</div>
+        <button id="mobileMenuBtn" class="text-slate-600 text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-brand-dark text-white w-64 flex flex-col fixed lg:static h-full transition-transform transform -translate-x-full lg:translate-x-0 z-50">
+        <div class="p-6 flex items-center justify-between">
+            <h1 class="text-xl font-bold tracking-wider">KYNKODE</h1>
+            <button id="closeSidebarBtn" class="lg:hidden text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+            <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-house w-5"></i> <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a href="kynflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-clipboard-check w-5"></i> <span class="text-sm font-medium">Flow</span>
+            </a>
+            <a href="tasks.html" class="flex items-center gap-3 px-4 py-3 bg-brand-primary text-white rounded-lg shadow-md transition-colors">
+                <i class="fa-solid fa-list-check w-5"></i> <span class="text-sm font-medium">Tasks</span>
+            </a>
+            <a href="workflows.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-network-wired w-5"></i> <span class="text-sm font-medium">Workflows</span>
+            </a>
+            <a href="calendar.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-regular fa-calendar w-5"></i> <span class="text-sm font-medium">Calendar</span>
+            </a>
+            <a href="reportsflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-chart-pie w-5"></i> <span class="text-sm font-medium">Reports</span>
+            </a>
+            <a href="settingsflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <i class="fa-solid fa-gear w-5"></i> <span class="text-sm font-medium">Settings</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mb-4">
+            <div class="bg-brand-accent rounded-xl p-4 shadow-inner">
+                <h4 class="text-sm text-purple-200 font-medium">Active Tasks</h4>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span class="text-3xl font-bold text-white">18</span>
+                </div>
+                <p class="text-xs text-purple-300 mt-1">4 High Priority</p>
+            </div>
+        </div>
+    </aside>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto relative pt-16 lg:pt-0">
+        <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full pb-32">
+            
+            <header class="flex items-center justify-between gap-4 mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="bg-brand-primary text-white p-3 rounded-2xl shadow-sm">
+                        <i class="fa-solid fa-list-check text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-brand-dark">Task Management</h1>
+                        <p class="text-slate-500 text-sm mt-1 font-medium">Filter, assign, and execute team operations</p>
+                    </div>
+                </div>
+                <button class="bg-brand-primary hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-transform hover:scale-105 flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-plus"></i> Create Task
+                </button>
+            </header>
+
+            <!-- Search & Filters -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" placeholder="Search tasks, patients or assignees..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-primary">
+                </div>
+                <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                    <button class="px-4 py-2 bg-brand-primary text-white text-xs font-semibold rounded-xl whitespace-nowrap shadow-sm">All Tasks (18)</button>
+                    <button class="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold rounded-xl whitespace-nowrap transition-colors">Mine (6)</button>
+                    <button class="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold rounded-xl whitespace-nowrap transition-colors">Clinical (10)</button>
+                    <button class="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold rounded-xl whitespace-nowrap transition-colors">Admin (8)</button>
+                </div>
+            </div>
+
+            <!-- Task List Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                <th class="p-4 font-semibold">Task Name</th>
+                                <th class="p-4 font-semibold">Workflow Track</th>
+                                <th class="p-4 font-semibold">Assigned To</th>
+                                <th class="p-4 font-semibold">Due Date</th>
+                                <th class="p-4 font-semibold">Priority</th>
+                                <th class="p-4 font-semibold">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Review blood work panel - Thor</td>
+                                <td class="p-4 text-slate-500">Lab Results</td>
+                                <td class="p-4 text-slate-700 font-medium">Dr. Chris</td>
+                                <td class="p-4 text-slate-500">04/09/2026</td>
+                                <td class="p-4"><span class="text-red-500 bg-red-50 border border-red-100 px-2.5 py-1 rounded-md font-semibold text-xs">High</span></td>
+                                <td class="p-4"><button class="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 rounded-lg text-xs font-semibold">Complete</button></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Contact owner for rabies clearance</td>
+                                <td class="p-4 text-slate-500">Pet Relocation</td>
+                                <td class="p-4 text-slate-700 font-medium">Mary</td>
+                                <td class="p-4 text-slate-500">05/09/2026</td>
+                                <td class="p-4"><span class="text-amber-500 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-md font-semibold text-xs">Medium</span></td>
+                                <td class="p-4"><button class="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 rounded-lg text-xs font-semibold">Complete</button></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Administer IV Fluids (Room 3)</td>
+                                <td class="p-4 text-slate-500">Hospitalization</td>
+                                <td class="p-4 text-slate-700 font-medium">Jane</td>
+                                <td class="p-4 text-slate-500">04/09/2026</td>
+                                <td class="p-4"><span class="text-red-500 bg-red-50 border border-red-100 px-2.5 py-1 rounded-md font-semibold text-xs">High</span></td>
+                                <td class="p-4"><button class="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 rounded-lg text-xs font-semibold">Complete</button></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="p-4 font-medium text-slate-800">Order surgical sutures restock</td>
+                                <td class="p-4 text-slate-500">Inventory</td>
+                                <td class="p-4 text-slate-700 font-medium">Brian</td>
+                                <td class="p-4 text-slate-500">07/09/2026</td>
+                                <td class="p-4"><span class="text-emerald-500 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-md font-semibold text-xs">Low</span></td>
+                                <td class="p-4"><button class="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 rounded-lg text-xs font-semibold">Complete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Floating AI Input -->
+    <div class="fixed bottom-4 left-0 right-0 px-4 pointer-events-none flex flex-col items-center z-50">
+        <div id="aiResponseContainer" class="hidden w-full max-w-2xl bg-white rounded-xl shadow-lg border border-purple-100 p-4 mb-3 pointer-events-auto transform transition-all translate-y-4 opacity-0 relative">
+            <button id="closeAiResponse" class="absolute top-2 right-2 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-start gap-3">
+                <div class="bg-purple-100 text-brand-primary p-2 rounded-lg mt-0.5"><i class="fa-solid fa-robot"></i></div>
+                <div id="aiResponseText" class="text-sm text-slate-700 leading-relaxed"></div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-2xl glass-panel shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-full p-2 flex items-center gap-2 border border-white pointer-events-auto transition-all focus-within:ring-2 focus-within:ring-brand-primary focus-within:shadow-xl">
+            <button id="recordBtn" class="h-10 w-10 flex-shrink-0 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-brand-primary flex items-center justify-center transition-colors focus:outline-none relative">
+                <i class="fa-solid fa-microphone"></i>
+                <span id="recordingIndicator" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
+            </button>
+            <input type="text" id="aiInput" placeholder="Ask KYNKODE AI (e.g. 'Show high priority tasks due today')" class="flex-1 bg-transparent border-none focus:ring-0 text-sm px-2 text-slate-700 placeholder-slate-400 outline-none">
+            <div id="aiLoading" class="hidden h-10 w-10 items-center justify-center text-brand-primary"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+            <button id="sendBtn" class="h-10 w-10 flex-shrink-0 rounded-full bg-brand-primary text-white hover:bg-purple-700 flex items-center justify-center transition-transform hover:scale-105 shadow-sm focus:outline-none">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec' };
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); });
+        document.getElementById('closeSidebarBtn').addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); });
+        overlay.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); });
+
+        const aiInput = document.getElementById('aiInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const aiResponseContainer = document.getElementById('aiResponseContainer');
+        const aiResponseText = document.getElementById('aiResponseText');
+        document.getElementById('closeAiResponse').addEventListener('click', () => aiResponseContainer.classList.add('hidden'));
+
+        async function sendToBackend(payloadData) {
+            sendBtn.classList.add('hidden');
+            document.getElementById('aiLoading').classList.remove('hidden');
+            try {
+                const response = await fetch(CONFIG.API_URL, { method: 'POST', body: JSON.stringify({ source: 'kynkode_tasks', action: 'ASK_AI', data: payloadData }) });
+                const result = await response.json();
+                aiResponseText.innerHTML = result.ai_response || "Task request processed.";
+                aiResponseContainer.classList.remove('hidden', 'opacity-0');
+            } catch (err) {
+                aiResponseText.innerHTML = "Task query sent to KYNKODE system.";
+                aiResponseContainer.classList.remove('hidden', 'opacity-0');
+            } finally {
+                sendBtn.classList.remove('hidden');
+                document.getElementById('aiLoading').classList.add('hidden');
+                aiInput.value = '';
+            }
+        }
+        sendBtn.addEventListener('click', () => aiInput.value.trim() && sendToBackend({ text: aiInput.value.trim() }));
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYNKODE - Workflows</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            dark: '#1E1B4B',
+                            primary: '#6D28D9',
+                            accent: '#4C1D95',
+                            light: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-brand-light text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <aside id="sidebar" class="bg-brand-dark text-white w-64 flex flex-col fixed lg:static h-full transition-transform transform -translate-x-full lg:translate-x-0 z-50">
+        <div class="p-6 flex items-center justify-between">
+            <h1 class="text-xl font-bold tracking-wider">KYNKODE</h1>
+            <button id="closeSidebarBtn" class="lg:hidden text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+            <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><i class="fa-solid fa-house w-5"></i><span class="text-sm font-medium">Dashboard</span></a>
+            <a href="kynflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><i class="fa-solid fa-clipboard-check w-5"></i><span class="text-sm font-medium">Flow</span></a>
+            <a href="tasks.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><i class="fa-solid fa-list-check w-5"></i><span class="text-sm font-medium">Tasks</span></a>
+            <a href="workflows.html" class="flex items-center gap-3 px-4 py-3 bg-brand-primary text-white rounded-lg shadow-md transition-colors"><i class="fa-solid fa-network-wired w-5"></i><span class="text-sm font-medium">Workflows</span></a>
+            <a href="calendar.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><i class="fa-regular fa-calendar w-5"></i><span class="text-sm font-medium">Calendar</span></a>
+            <a href="reportsflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><i class="fa-solid fa-chart-pie w-5"></i><span class="text-sm font-medium">Reports</span></a>
+            <a href="settingsflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><i class="fa-solid fa-gear w-5"></i><span class="text-sm font-medium">Settings</span></a>
+        </nav>
+        <div class="p-4 mb-4">
+            <div class="bg-brand-accent rounded-xl p-4">
+                <h4 class="text-sm text-purple-200 font-medium">Active Pipelines</h4>
+                <span class="text-3xl font-bold text-white mt-1 block">4</span>
+            </div>
+        </div>
+    </aside>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+    <main class="flex-1 flex flex-col h-full overflow-y-auto relative pt-16 lg:pt-0">
+        <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full pb-32">
+            <header class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="bg-brand-primary text-white p-3 rounded-2xl shadow-sm"><i class="fa-solid fa-network-wired text-3xl"></i></div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-brand-dark">Workflow Pipelines</h1>
+                        <p class="text-slate-500 text-sm mt-1 font-medium">Standard operating protocols and automated tracking</p>
+                    </div>
+                </div>
+                <button class="bg-brand-primary text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:bg-purple-700 transition-colors text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> New Pipeline
+                </button>
+            </header>
+
+            <!-- Active Pipelines Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 bg-purple-50 text-brand-primary border border-purple-100 rounded-full text-xs font-bold">Pet Relocation</span>
+                            <span class="text-xs text-slate-400 font-medium">3 Active Cases</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">International Travel Clearance</h3>
+                        <p class="text-xs text-slate-500 mt-1">Vaccine verifications, customs paperwork, health certificate.</p>
+                        
+                        <div class="mt-6 space-y-2">
+                            <div class="flex justify-between text-xs text-slate-600 font-semibold"><span>Current Status</span><span>67% Complete</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-brand-primary h-full rounded-full" style="width: 67%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span>Lead: Mary</span>
+                        <a href="#" class="text-brand-primary font-bold hover:underline">View Pipeline &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-full text-xs font-bold">Hospitalization</span>
+                            <span class="text-xs text-slate-400 font-medium">5 Active Patients</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Inpatient Monitoring & Discharge</h3>
+                        <p class="text-xs text-slate-500 mt-1">Post-op monitoring, medication logs, client discharge updates.</p>
+                        
+                        <div class="mt-6 space-y-2">
+                            <div class="flex justify-between text-xs text-slate-600 font-semibold"><span>Current Status</span><span>45% Complete</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span>Lead: Dr. Chris</span>
+                        <a href="#" class="text-brand-primary font-bold hover:underline">View Pipeline &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Floating Bar -->
+    <div class="fixed bottom-4 left-0 right-0 px-4 pointer-events-none flex flex-col items-center z-50">
+        <div id="aiResponseContainer" class="hidden w-full max-w-2xl bg-white rounded-xl shadow-lg border border-purple-100 p-4 mb-3 pointer-events-auto relative">
+            <button id="closeAiResponse" class="absolute top-2 right-2 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-start gap-3"><div class="bg-purple-100 text-brand-primary p-2 rounded-lg"><i class="fa-solid fa-robot"></i></div><div id="aiResponseText" class="text-sm text-slate-700"></div></div>
+        </div>
+        <div class="w-full max-w-2xl glass-panel shadow-lg rounded-full p-2 flex items-center gap-2 border border-white pointer-events-auto">
+            <button id="recordBtn" class="h-10 w-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-microphone"></i></button>
+            <input type="text" id="aiInput" placeholder="Ask KYNKODE AI (e.g. 'Show active workflow bottlenecks')" class="flex-1 bg-transparent border-none text-sm px-2 text-slate-700 outline-none">
+            <button id="sendBtn" class="h-10 w-10 rounded-full bg-brand-primary text-white flex items-center justify-center"><i class="fa-solid fa-paper-plane text-sm"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec' };
+        const aiInput = document.getElementById('aiInput');
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            if (!aiInput.value.trim()) return;
+            document.getElementById('aiResponseText').innerHTML = "Analyzing workflow tracks...";
+            document.getElementById('aiResponseContainer').classList.remove('hidden');
+            aiInput.value = '';
+        });
+        document.getElementById('closeAiResponse').addEventListener('click', () => document.getElementById('aiResponseContainer').classList.add('hidden'));
+    </script>
+</body>
+</html>

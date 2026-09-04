@@ -7,8 +7,20 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* (Styles retained exactly as provided) */
-    :root { --sidebar-bg: #092C1F; --sidebar-active: #154D38; --bg-color: #F4F7F6; --card-bg: #FFFFFF; --text-main: #1A1A1A; --text-muted: #6B7280; --accent-green: #22C55E; --accent-red: #EF4444; --accent-orange: #F59E0B; --border-color: #E5E7EB; --ai-cyan: #27C3EA; --callout-bg: #EAF4F0; }
+    :root { 
+      --sidebar-bg: #092C1F; 
+      --sidebar-active: #154D38; 
+      --bg-color: #F4F7F6; 
+      --card-bg: #FFFFFF; 
+      --text-main: #1A1A1A; 
+      --text-muted: #6B7280; 
+      --accent-green: #22C55E; 
+      --accent-red: #EF4444; 
+      --accent-orange: #F59E0B; 
+      --border-color: #E5E7EB; 
+      --ai-cyan: #27C3EA; 
+      --callout-bg: #EAF4F0; 
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
     body { background-color: #E8ECEB; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
     .app-wrapper { width: 100%; max-width: 1240px; height: 90vh; background: var(--bg-color); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: flex; overflow: hidden; position: relative; }
@@ -28,23 +40,40 @@
     .bell-icon { width: 52px; height: 52px; background: var(--sidebar-bg); color: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
     .header-title h1 { font-size: 28px; color: var(--sidebar-bg); font-weight: 700; }
     .header-title p { color: var(--text-muted); font-size: 14px; margin-top: 2px; }
+    
     .metrics-bar { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; text-align: center; }
     .metric-col { padding: 0 8px; border-right: 1px solid var(--border-color); }
     .metric-col:last-child { border-right: none; }
     .metric-col p { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #059669; }
-    .metric-col h2 { font-size: 28px; color: var(--text-main); font-weight: 700; }
+    .metric-col h2 { font-size: 22px; color: var(--text-main); font-weight: 700; }
+    
     .card-section { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; overflow: hidden; }
     .section-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); }
     .section-header h3 { font-size: 16px; color: var(--text-main); font-weight: 700; }
-    .section-header a { font-size: 13px; color: #2563EB; text-decoration: none; font-weight: 500; }
-    .table-responsive { width: 100%; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { padding: 14px 24px; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid var(--border-color); }
-    td { padding: 16px 24px; border-bottom: 1px solid #F3F4F6; font-size: 14px; color: var(--text-main); }
-    tr:last-child td { border-bottom: none; }
-    .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-block; }
-    .status-completed { background: #D1FAE5; color: #059669; }
-    .action-link { color: #2563EB; text-decoration: none; font-weight: 500; font-size: 13px; }
+    
+    .form-grid { padding: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full-width { grid-column: span 2; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--text-main); }
+    .form-group input, .form-group select { padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 14px; outline: none; background: #FAFAFA; transition: border 0.2s; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--sidebar-bg); background: #FFF; }
+    
+    .toggle-list { padding: 8px 24px; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-color); }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-info h4 { font-size: 14px; font-weight: 600; color: var(--text-main); }
+    .toggle-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #D1D5DB; transition: .3s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--sidebar-bg); }
+    input:checked + .slider:before { transform: translateX(20px); }
+    
+    .btn-container { padding: 0 24px 24px 24px; display: flex; justify-content: flex-end; }
+    .btn-save { background: var(--sidebar-bg); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+    .btn-save:hover { background: var(--sidebar-active); }
+    
     .ai-floating-bar { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 650px; background: var(--card-bg); border-radius: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid var(--ai-cyan); display: flex; align-items: center; padding: 6px 12px; z-index: 100; }
     .ai-floating-bar input { flex: 1; border: none; outline: none; padding: 10px 14px; font-size: 14px; background: transparent; color: var(--text-main); }
     .ai-btn { background: transparent; border: none; cursor: pointer; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; }
@@ -54,8 +83,9 @@
     .ai-btn-send:hover { background: var(--sidebar-active); }
     .ai-toast { position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--sidebar-bg); color: white; padding: 12px 20px; border-radius: 12px; font-size: 13px; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 100; }
     .ai-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+    
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-    @media (max-width: 900px) { body { padding: 0; } .app-wrapper { flex-direction: column; border-radius: 0; height: 100vh; } .mobile-header { display: flex; } .sidebar { position: fixed; left: -300px; top: 0; height: 100%; margin: 0; border-radius: 0; } .sidebar.open { left: 0; } .main-content { padding: 80px 16px 120px 16px; } .metrics-bar { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 900px) { body { padding: 0; } .app-wrapper { flex-direction: column; border-radius: 0; height: 100vh; } .mobile-header { display: flex; } .sidebar { position: fixed; left: -300px; top: 0; height: 100%; margin: 0; border-radius: 0; } .sidebar.open { left: 0; } .main-content { padding: 80px 16px 120px 16px; } .metrics-bar { grid-template-columns: repeat(2, 1fr); } .form-grid { grid-template-columns: 1fr; } .form-group.full-width { grid-column: span 1; } }
   </style>
 </head>
 <body>
@@ -77,81 +107,147 @@
         <a href="settingsrecall.html" class="nav-item active"><i class="fas fa-cog"></i> Settings</a>
       </div>
       <div class="sidebar-stats">
-        <p>System Status</p>
-        <h3 style="color: var(--accent-green);">Online</h3>
-        <p>All APIs Active</p>
+        <p>Current Plan</p>
+        <h3 style="color: white;">Pro</h3>
+        <p>Renews Oct 2026</p>
       </div>
     </nav>
 
     <main class="main-content" id="mainContent">
       <div class="header-title">
-        <div class="bell-icon"><i class="fas fa-cog"></i></div>
+        <div class="bell-icon"><i class="fas fa-user-cog"></i></div>
         <div>
-          <h1>System Settings</h1>
-          <p>Configure Integrations, Automation, and Team Access</p>
+          <h1>Account & Preferences</h1>
+          <p>Manage your practice details, notifications, and security</p>
         </div>
       </div>
 
       <div class="metrics-bar">
         <div class="metric-col">
-          <p>Integrations</p>
-          <h2>3 Active</h2>
+          <p>Subscription</p>
+          <h2>Pro Plan</h2>
         </div>
         <div class="metric-col">
-          <p>Auto-Dispatch</p>
-          <h2>Enabled</h2>
+          <p>Notifications</p>
+          <h2>Active</h2>
+        </div>
+        <div class="metric-col">
+          <p>Security</p>
+          <h2>2FA On</h2>
         </div>
         <div class="metric-col">
           <p>Team Members</p>
-          <h2>4</h2>
-        </div>
-        <div class="metric-col">
-          <p>API Health</p>
-          <h2>100%</h2>
+          <h2>4 Active</h2>
         </div>
       </div>
 
       <div class="card-section">
         <div class="section-header">
-          <h3>Integrations & Automation</h3>
-          <a href="#">View Logs</a>
+          <h3>Practice & Profile Details</h3>
         </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Service Name</th>
-                <th>Type</th>
-                <th>Last Synced</th>
-                <th>Status</th>
-                <th style="text-align: right;">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="font-weight: 600;">Google Apps Script (Core)</td>
-                <td>Data API</td>
-                <td>Just Now</td>
-                <td><span class="status-badge status-completed">Connected</span></td>
-                <td style="text-align: right;"><a href="#" class="action-link">Configure</a></td>
-              </tr>
-              <tr>
-                <td style="font-weight: 600;">WhatsApp Business API</td>
-                <td>Messaging</td>
-                <td>5 mins ago</td>
-                <td><span class="status-badge status-completed">Connected</span></td>
-                <td style="text-align: right;"><a href="#" class="action-link">Configure</a></td>
-              </tr>
-              <tr>
-                <td style="font-weight: 600;">Auto-Dispatch Timer</td>
-                <td>Automation</td>
-                <td>Every 1 Hour</td>
-                <td><span class="status-badge status-completed">Active</span></td>
-                <td style="text-align: right;"><a href="#" class="action-link">Edit Rules</a></td>
-              </tr>
-            </tbody>
-          </table>
+        <form onsubmit="saveProfile(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Account Holder Name</label>
+              <input type="text" id="accName" value="Dr. Sarah Jenkins" required>
+            </div>
+            <div class="form-group">
+              <label>Practice Name</label>
+              <input type="text" id="practiceName" value="Apex Dental Care" required>
+            </div>
+            <div class="form-group">
+              <label>Contact Email</label>
+              <input type="email" id="accEmail" value="sarah.jenkins@apexdental.com" required>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="accPhone" value="+1 (555) 234-5678">
+            </div>
+            <div class="form-group full-width">
+              <label>Time Zone</label>
+              <select id="accTimezone">
+                <option value="EST" selected>(GMT-05:00) Eastern Time (US & Canada)</option>
+                <option value="CST">(GMT-06:00) Central Time (US & Canada)</option>
+                <option value="PST">(GMT-08:00) Pacific Time (US & Canada)</option>
+                <option value="UTC">(GMT+00:00) Universal Coordinated Time</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-container">
+            <button type="submit" class="btn-save">Save Profile Changes</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card-section">
+        <div class="section-header">
+          <h3>Notification & Reminder Preferences</h3>
         </div>
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Automated Patient Reminders</h4>
+              <p>Dispatch SMS and email recall notices automatically based on scheduling rules.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked id="autoReminders">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Daily Summary Emails</h4>
+              <p>Receive a morning breakdown of completed recalls and scheduled appointments.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked id="dailySummary">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Instant Patient Response Alerts</h4>
+              <p>Get notified as soon as a client responds to a messaging campaign.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked id="responseAlerts">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <div class="section-header">
+          <h3>Security & Login</h3>
+        </div>
+        <form onsubmit="saveSecurity(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Current Password</label>
+              <input type="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" placeholder="••••••••">
+            </div>
+          </div>
+          <div class="toggle-list" style="padding-top: 0;">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>Two-Factor Authentication (2FA)</h4>
+                <p>Require a verification code sent to your mobile device upon sign-in.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked id="twoFactor">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="btn-container">
+            <button type="submit" class="btn-save">Update Security</button>
+          </div>
+        </form>
       </div>
     </main>
 
@@ -159,7 +255,7 @@
 
     <div class="ai-floating-bar">
       <button class="ai-btn" id="micBtn" onclick="toggleMic()" title="Voice Command"><i class="fas fa-microphone"></i></button>
-      <input type="text" id="aiInput" placeholder="Ask AI to adjust business hours or settings..." onkeypress="handleEnter(event)">
+      <input type="text" id="aiInput" placeholder="Ask AI to update practice details or settings..." onkeypress="handleEnter(event)">
       <button class="ai-btn ai-btn-send" onclick="sendToBackend()" title="Send"><i class="fas fa-paper-plane"></i></button>
     </div>
   </div>
@@ -167,15 +263,27 @@
   <script>
     function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
     document.getElementById('mainContent').addEventListener('click', () => { if(window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open'); });
+    
     let isRecording = false;
     function toggleMic() {
       const micBtn = document.getElementById('micBtn');
       isRecording = !isRecording;
       if(isRecording) { micBtn.classList.add('recording'); document.getElementById('aiInput').placeholder = "Listening..."; } 
-      else { micBtn.classList.remove('recording'); document.getElementById('aiInput').placeholder = "Ask AI to adjust settings..."; }
+      else { micBtn.classList.remove('recording'); document.getElementById('aiInput').placeholder = "Ask AI to update practice details or settings..."; }
     }
+    
     function handleEnter(e) { if(e.key === 'Enter') sendToBackend(); }
     function showToast(msg) { const toast = document.getElementById('aiToast'); toast.innerText = msg; toast.classList.add('visible'); setTimeout(() => toast.classList.remove('visible'), 4000); }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      showToast("Practice and profile settings updated successfully.");
+    }
+
+    function saveSecurity(e) {
+      e.preventDefault();
+      showToast("Security credentials updated successfully.");
+    }
 
     const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
     async function sendToBackend() {
@@ -186,7 +294,7 @@
 
       const payload = { source: 'kynkode_frontend', action: 'ASK_AI', data: { text: text } };
       try {
-        console.log("Dispatching to KYNKODE Core...");
+        console.log("Dispatching request...");
         const response = await fetch(GAS_BACKEND_URL, {
           method: 'POST',
           body: JSON.stringify(payload),
@@ -197,9 +305,9 @@
         else showToast("AI processed query.");
       } catch (error) {
         console.error("Connection failed", error);
-        showToast("Sent to AI Practice Manager: " + text);
+        showToast("Sent to AI Assistant: " + text);
       } finally {
-        inputEl.placeholder = "Ask AI to adjust business hours or settings...";
+        inputEl.placeholder = "Ask AI to update practice details or settings...";
       }
     }
   </script>

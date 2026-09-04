@@ -76,7 +76,7 @@
             <li><a href="kynscribe.html"><span class="material-icons-round">mic</span> Scribe</a></li>
             <li><a href="records.html"><span class="material-icons-round">folder</span> Records</a></li>
             <li><a href="templates.html"><span class="material-icons-round">description</span> Templates</a></li>
-            <li><a href="reports.html" class="active"><span class="material-icons-round">bar_chart</span> Reports</a></li>
+            <li><a href="reportscribe.html" class="active"><span class="material-icons-round">bar_chart</span> Reports</a></li>
             <li><a href="settings.html"><span class="material-icons-round">settings</span> Settings</a></li>
         </ul>
         <div class="sidebar-bottom">

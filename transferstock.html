@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfers - KYNKODE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .recording-active { animation: pulse-red 2s infinite; background-color: #ef4444 !important; color: white !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex">
+
+    <div class="lg:hidden fixed top-0 w-full bg-[#0f2041] text-white p-4 flex justify-between items-center z-40 shadow">
+        <div class="font-bold tracking-wider">KYNKODE</div>
+        <button id="mobileMenuBtn" class="text-xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <nav id="sidebar" class="bg-[#0f2041] text-white w-64 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out z-50">
+        <div class="p-6 font-bold tracking-widest text-lg flex justify-between items-center">
+            KYNKODE
+            <button id="closeSidebarBtn" class="lg:hidden text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="flex-1 px-4 space-y-1">
+            <li><a href="index.html" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-house w-5"></i> <span>Dashboard</span></a></li>
+            <li><a href="kynstock.html" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-box w-5"></i> <span>Stock</span></a></li>
+            <li><a href="alertstock.html" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors"><i class="fa-regular fa-bell w-5"></i> <span>Alerts</span></a></li>
+            <li><a href="orderstock.html" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors"><i class="fa-regular fa-calendar-check w-5"></i> <span>Orders</span></a></li>
+            <li><a href="transferstock.html" class="flex items-center space-x-3 bg-blue-900/50 text-blue-200 px-4 py-3 rounded-lg border-l-4 border-blue-400"><i class="fa-solid fa-right-left w-5"></i> <span>Transfers</span></a></li>
+            <li><a href="reportstock.html" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-chart-line w-5"></i> <span>Reports</span></a></li>
+            <li><a href="settingstock.html" class="flex items-center space-x-3 hover:bg-white/5 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-gear w-5"></i> <span>Settings</span></a></li>
+        </ul>
+        <div class="p-4">
+            <div class="bg-[#1a2f55] rounded-xl p-4 text-center">
+                <div class="text-slate-400 text-xs mb-1">Stock Value</div>
+                <div class="font-bold text-xl text-white">KES 2.14M</div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 hidden z-40 lg:hidden"></div>
+
+    <main class="flex-1 h-full overflow-y-auto pt-16 lg:pt-0 pb-24">
+        <div class="max-w-6xl mx-auto p-4 lg:p-8">
+            <header class="flex items-center mb-8">
+                <div class="bg-[#0f2041] text-white p-3 rounded-lg mr-4"><i class="fa-solid fa-right-left text-2xl"></i></div>
+                <div>
+                    <h1 class="text-3xl font-bold text-[#0f2041]">Stock Transfers</h1>
+                    <p class="text-slate-500 text-sm">Move inventory safely between clinic locations</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                    <h2 class="font-bold text-[#0f2041] mb-4">Quick Transfer</h2>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Item to Transfer</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500">
+                                <option>Bravecto 500mg</option>
+                                <option>DHLP Vaccine</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">From Location</label>
+                                <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                                    <option>Main Clinic (Westlands)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">To Location</label>
+                                <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500">
+                                    <option>South C Branch</option>
+                                    <option>Karen Branch</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Quantity</label>
+                            <input type="number" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500">
+                        </div>
+                        <button type="button" class="w-full bg-[#0f2041] hover:bg-blue-900 text-white py-2 rounded-lg text-sm font-medium transition-colors">Initiate Transfer</button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                        <h2 class="font-bold text-[#0f2041]">Recent Movement</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-500 uppercase bg-slate-50/50">
+                                <tr>
+                                    <th class="px-6 py-4 font-medium">Item</th>
+                                    <th class="px-6 py-4 font-medium">Route</th>
+                                    <th class="px-6 py-4 font-medium">Qty</th>
+                                    <th class="px-6 py-4 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 text-slate-800 font-medium">Cat Flu Vaccine</td>
+                                    <td class="px-6 py-4 text-xs">Main &rarr; Karen</td>
+                                    <td class="px-6 py-4 font-bold text-center">5</td>
+                                    <td class="px-6 py-4"><span class="text-orange-500 bg-orange-50 px-2 py-1 rounded text-xs">Pending Rx</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 text-slate-800 font-medium">Syringes (5ml)</td>
+                                    <td class="px-6 py-4 text-xs">South C &rarr; Main</td>
+                                    <td class="px-6 py-4 font-bold text-center">100</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-600 bg-emerald-50 px-2 py-1 rounded text-xs">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 flex justify-center px-4 z-40 pointer-events-none">
+        <div id="aiToast" class="absolute bottom-20 bg-[#0f2041] text-white px-4 py-3 rounded-lg shadow-lg text-sm max-w-md w-full transition-opacity opacity-0 pointer-events-auto flex justify-between items-start hidden">
+            <div id="aiToastText" class="flex-1 pr-2">Processing...</div>
+            <button onclick="document.getElementById('aiToast').classList.add('hidden')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="bg-white p-2 rounded-full shadow-xl border border-slate-200 flex items-center w-full max-w-2xl pointer-events-auto">
+            <button id="micBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 w-12 h-12 rounded-full flex justify-center items-center transition-colors focus:outline-none shrink-0"><i class="fa-solid fa-microphone text-lg"></i></button>
+            <input type="text" id="aiInput" placeholder="Ask KYNKODE AI (e.g., 'Transfer 5 Bravecto to Karen')" class="flex-1 bg-transparent border-none outline-none px-4 text-slate-700 placeholder-slate-400">
+            <button id="sendBtn" class="bg-[#0f2041] hover:bg-blue-900 text-white w-12 h-12 rounded-full flex justify-center items-center transition-colors focus:outline-none shrink-0"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script>
+        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
+        const sidebar = document.getElementById('sidebar'); const mobileMenuBtn = document.getElementById('mobileMenuBtn'); const closeSidebarBtn = document.getElementById('closeSidebarBtn'); const sidebarOverlay = document.getElementById('sidebarOverlay'); const aiToast = document.getElementById('aiToast'); const aiToastText = document.getElementById('aiToastText');
+        function toggleSidebar() { sidebar.classList.toggle('-translate-x-full'); sidebarOverlay.classList.toggle('hidden'); }
+        mobileMenuBtn.addEventListener('click', toggleSidebar); closeSidebarBtn.addEventListener('click', toggleSidebar); sidebarOverlay.addEventListener('click', toggleSidebar);
+        function showAiToast(message, isError = false) { aiToast.classList.remove('hidden', 'opacity-0'); aiToastText.innerHTML = message; aiToastText.className = isError ? "flex-1 pr-2 text-red-400" : "flex-1 pr-2 text-white"; setTimeout(() => { aiToast.classList.add('hidden', 'opacity-0'); }, 8000); }
+        async function sendToBackend(action, data) {
+            try { showAiToast('<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Connecting to KYNKODE AI Core...');
+                await fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ source: 'kynkode_frontend', action: action, data: data }) });
+                showAiToast("Payload dispatched to backend. (Check Google Sheets for updates).");
+            } catch (error) { showAiToast("Network error communicating with backend.", true); }
+        }
+        const sendBtn = document.getElementById('sendBtn'); const aiInput = document.getElementById('aiInput');
+        sendBtn.addEventListener('click', () => { const text = aiInput.value.trim(); if (!text) return; aiInput.value = ''; sendToBackend('ASK_AI', { text: text }); });
+        aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendBtn.click(); });
+        let mediaRecorder; let audioChunks = []; let isRecording = false; const micBtn = document.getElementById('micBtn');
+        micBtn.addEventListener('click', async () => {
+            if (isRecording) { mediaRecorder.stop(); micBtn.classList.remove('recording-active'); micBtn.innerHTML = '<i class="fa-solid fa-microphone text-lg"></i>'; isRecording = false;
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); mediaRecorder = new MediaRecorder(stream); audioChunks = [];
+                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' }); const reader = new FileReader(); reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => { sendToBackend('ASK_AI', { audioBase64: reader.result, text: "" }); };
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+                    mediaRecorder.start(); micBtn.classList.add('recording-active'); micBtn.innerHTML = '<i class="fa-solid fa-stop text-lg"></i>'; isRecording = true; showAiToast("Listening... Tap stop when finished.");
+                } catch (err) { showAiToast("Microphone access denied or unavailable.", true); }
+            }
+        });
+    </script>
+</body>
+</html>

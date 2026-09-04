@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | KYNKODE AI Practice Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a192f;
+            --bg-darker: #060d1a;
+            --bg-light: #f5f8fc;
+            --text-dark: #1a202c;
+            --text-gray: #718096;
+            --accent-blue: #2b6cb0;
+            --alert-red: #e53e3e;
+            --warning-orange: #dd6b20;
+            --success-green: #38a169;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+        
+        .mobile-header { display: none; background-color: var(--bg-dark); color: white; padding: 1rem; justify-content: space-between; align-items: center; width: 100%; position: fixed; top: 0; z-index: 50; }
+        .hamburger { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: white; }
+        
+        .sidebar { width: 260px; background-color: var(--bg-dark); color: white; display: flex; flex-direction: column; padding: 1.5rem; transition: transform 0.3s ease; z-index: 40; }
+        .brand { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .brand-icon { font-size: 2rem; color: #63b3ed; }
+        .brand-text h1 { font-size: 1.1rem; font-weight: 600; }
+        .brand-text p { font-size: 0.75rem; color: #a0aec0; }
+        .nav-label { font-size: 0.75rem; font-weight: 600; color: #a0aec0; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+        .nav-menu { list-style: none; flex-grow: 1; }
+        .nav-menu li { margin-bottom: 0.5rem; }
+        .nav-menu a { color: #cbd5e0; text-decoration: none; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s; font-size: 0.9rem; }
+        .nav-menu a:hover, .nav-menu a.active { background-color: rgba(255, 255, 255, 0.1); color: white; }
+        .practice-score { background-color: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.75rem; margin-top: auto; }
+        .practice-score p { font-size: 0.8rem; color: #a0aec0; }
+        .practice-score h2 { font-size: 2rem; margin: 0.5rem 0; display: flex; align-items: baseline; gap: 0.25rem; }
+        .practice-score span.total { font-size: 1rem; color: #a0aec0; }
+
+        .main-content { flex-grow: 1; background-color: white; border-radius: 1.5rem; margin: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .scrollable-content { padding: 2rem; overflow-y: auto; flex-grow: 1; padding-bottom: 100px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        header h2 { font-size: 1.5rem; color: var(--text-dark); }
+        header p { color: var(--text-gray); font-size: 0.9rem; margin-top: 0.25rem; }
+        
+        .ai-floating-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 800px; background: white; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; z-index: 10; }
+        .ai-header { padding: 0.75rem 1.5rem; background: var(--bg-light); font-size: 0.85rem; font-weight: 600; color: var(--accent-blue); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.5rem; }
+        .ai-response-area { max-height: 200px; overflow-y: auto; padding: 0 1.5rem; font-size: 0.9rem; color: var(--text-dark); transition: padding 0.3s ease; }
+        .ai-response-area.active { padding: 1rem 1.5rem; border-bottom: 1px solid #f0f4f8; }
+        .ai-input-group { display: flex; align-items: center; padding: 0.5rem 1rem; }
+        .ai-input-group input { flex-grow: 1; border: none; padding: 0.75rem; font-size: 0.95rem; outline: none; color: var(--text-dark); }
+        .ai-actions { display: flex; gap: 0.5rem; }
+        .ai-btn { background: none; border: none; color: var(--accent-blue); font-size: 1.25rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
+        .ai-btn:hover { background: var(--bg-light); }
+        .ai-btn.listening { color: var(--alert-red); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .footer-text { position: absolute; bottom: 0; width: 100%; text-align: center; padding: 0.5rem; font-size: 0.75rem; color: white; background-color: var(--bg-darker); }
+
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-outline { background: transparent; border: 1px solid #e2e8f0; color: var(--text-dark); }
+        .btn-outline:hover { background: var(--bg-light); }
+        .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .metric-card { background-color: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 1rem; box-shadow: var(--card-shadow); }
+        .metric-card h3 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .metric-card p { font-size: 0.85rem; color: var(--text-gray); font-weight: 500; }
+        .section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-dark); }
+        
+        .table-container { width: 100%; overflow-x: auto; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; margin-bottom: 2rem; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .data-table th, .data-table td { padding: 1rem 1.5rem; border-bottom: 1px solid #f0f4f8; font-size: 0.9rem; }
+        .data-table th { background: var(--bg-light); color: var(--text-gray); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .badge { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 1rem; font-weight: 600; }
+        .badge.medium { color: var(--warning-orange); background: #feebc8; }
+        .badge.low { color: var(--success-green); background: #c6f6d5; }
+        .text-red { color: var(--alert-red); }
+        .text-blue { color: var(--accent-blue); }
+
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { position: fixed; height: 100%; transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin: 0; border-radius: 0; margin-top: 60px; }
+            .footer-text { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="brand"><i class="fa-solid fa-robot brand-icon"></i><span style="font-weight: 600;">KYNKODE AGI</span></div>
+        <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-robot brand-icon"></i>
+            <div class="brand-text">
+                <h1>AI Practice Manager</h1>
+                <p>Your intelligent operations assistant</p>
+            </div>
+        </div>
+        
+        <p class="nav-label">KYNKODE</p>
+        <ul class="nav-menu">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="insights.html"><i class="fa-solid fa-lightbulb"></i> Insights</a></li>
+            <li><a href="alerts.html"><i class="fa-regular fa-bell"></i> Alerts</a></li>
+            <li><a href="analytics.html" class="active"><i class="fa-solid fa-chart-line"></i> Analytics</a></li>
+            <li><a href="reports.html"><i class="fa-regular fa-file-lines"></i> Reports</a></li>
+            <li><a href="ask-ai.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI</a></li>
+            <li><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
+        </ul>
+
+        <div class="practice-score">
+            <p>Practice Score</p>
+            <h2>82 <span class="total">/100</span></h2>
+            <span style="font-size: 0.8rem; color: var(--success-green); font-weight: 600;">Good</span>
+        </div>
+    </aside>
+
+    <main class="main-content" onclick="closeSidebar(event)">
+        <div class="scrollable-content">
+            <header>
+                <div>
+                    <h2>Analytics Overview 📊</h2>
+                    <p>Financial and operational data for the current quarter.</p>
+                </div>
+                <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Export CSV</button>
+            </header>
+
+            <section class="metrics-row">
+                <div class="metric-card">
+                    <p>Gross Revenue (MTD)</p>
+                    <h3>KES 4.2M</h3>
+                    <p class="text-blue"><i class="fa-solid fa-arrow-trend-up"></i> +8.4% vs Last Month</p>
+                </div>
+                <div class="metric-card">
+                    <p>Cost of Goods Sold</p>
+                    <h3>KES 1.8M</h3>
+                    <p class="text-red"><i class="fa-solid fa-arrow-trend-down"></i> -2.1% vs Last Month</p>
+                </div>
+                <div class="metric-card">
+                    <p>New Registrations</p>
+                    <h3>142</h3>
+                    <p class="text-blue"><i class="fa-solid fa-arrow-trend-up"></i> +12% vs Last Month</p>
+                </div>
+            </section>
+
+            <h3 class="section-title">Recent Transactions</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Date</th>
+                            <th>Client / Patient</th>
+                            <th>Category</th>
+                            <th>Amount (KES)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#INV-0982</td>
+                            <td>Today, 10:42 AM</td>
+                            <td>Sarah W. / Max</td>
+                            <td>Consultation & Vaccines</td>
+                            <td>8,500</td>
+                            <td><span class="badge low">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>#INV-0981</td>
+                            <td>Today, 09:15 AM</td>
+                            <td>David K. / Luna</td>
+                            <td>Surgery (Spay)</td>
+                            <td>25,000</td>
+                            <td><span class="badge low">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>#INV-0980</td>
+                            <td>Yesterday</td>
+                            <td>Emma R. / Charlie</td>
+                            <td>Pharmacy Dispense</td>
+                            <td>4,200</td>
+                            <td><span class="badge medium">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="ai-floating-container">
+            <div class="ai-header"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask KYNKODE AI</div>
+            <div class="ai-response-area" id="ai-response"></div>
+            <div class="ai-input-group">
+                <input type="text" id="ai-input" placeholder="Ask anything about your practice..." onkeypress="handleKeyPress(event)">
+                <div class="ai-actions">
+                    <button class="ai-btn" id="mic-btn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="ai-btn" onclick="submitAIQuery()"><i class="fa-regular fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-text">Intelligence. Insight. Better decisions every day.</div>
+    </main>
+
+    <script>
+        const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec"; 
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+        function closeSidebar(e) { if(window.innerWidth <= 768 && document.getElementById('sidebar').classList.contains('show')) { document.getElementById('sidebar').classList.remove('show'); } }
+        async function fetchFromBackend(action, dataObj = {}) {
+            try {
+                const response = await fetch(GAS_BACKEND_URL, { method: 'POST', body: JSON.stringify({ source: 'kynkode_frontend', action: action, data: dataObj }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+                return await response.json();
+            } catch (error) { return { success: false, error: error.message }; }
+        }
+        function handleKeyPress(e) { if (e.key === 'Enter') submitAIQuery(); }
+        async function submitAIQuery() {
+            const inputEl = document.getElementById('ai-input'); const responseArea = document.getElementById('ai-response'); const query = inputEl.value.trim();
+            if (!query) return; inputEl.value = ""; responseArea.classList.add('active'); responseArea.innerHTML = `<span style="color:#718096;"><i class="fa-solid fa-spinner fa-spin"></i> KYNKODE AI is thinking...</span>`;
+            const res = await fetchFromBackend('ASK_AI', { text: query });
+            if (res.success) { responseArea.innerHTML = `<strong>You:</strong> ${query}<br><br><strong>AI:</strong> ${res.ai_response.replace(/\n/g, '<br>')}`; } else { responseArea.innerHTML = `<span style="color:#e53e3e;">Connection error or backend not configured.</span>`; }
+            responseArea.scrollTop = responseArea.scrollHeight;
+        }
+        let isListening = false;
+        function toggleMic() {
+            const micBtn = document.getElementById('mic-btn'); const inputEl = document.getElementById('ai-input'); isListening = !isListening;
+            if (isListening) { micBtn.classList.add('listening'); inputEl.placeholder = "Listening..."; } else { micBtn.classList.remove('listening'); inputEl.placeholder = "Ask anything about your practice..."; }
+        }
+    </script>
+</body>
+</html>

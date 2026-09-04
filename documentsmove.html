@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents - KYNKODE AGI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #fff9f5;
+      --sidebar-bg: #4a2311;
+      --sidebar-hover: #5c2d16;
+      --primary-orange: #f06522;
+      --text-dark: #1f2937;
+      --text-gray: #6b7280;
+      --border-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --status-completed-bg: #d1fae5;
+      --status-completed-txt: #065f46;
+      --status-progress-bg: #e0e7ff;
+      --status-progress-txt: #3730a3;
+      --status-pending-bg: #ffedd5;
+      --status-pending-txt: #c2410c;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); display: flex; height: 100vh; overflow: hidden; }
+    .mobile-header { display: none; background-color: var(--sidebar-bg); padding: 15px 20px; color: white; align-items: center; justify-content: space-between; width: 100%; position: fixed; top: 0; z-index: 100; }
+    .hamburger { font-size: 1.5rem; cursor: pointer; }
+    .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: transform 0.3s ease; z-index: 99; }
+    .sidebar-header { padding: 30px 20px; font-size: 1.25rem; font-weight: 700; letter-spacing: 1px; }
+    .nav-menu { flex: 1; display: flex; flex-direction: column; gap: 5px; padding: 0 10px; }
+    .nav-item { display: flex; align-items: center; gap: 15px; padding: 12px 20px; color: #d1d5db; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.2s; }
+    .nav-item:hover { background-color: var(--sidebar-hover); color: white; }
+    .nav-item.active { background-color: var(--primary-orange); color: white; }
+    .sidebar-footer { padding: 20px; }
+    .active-cases-widget { background-color: #8c421b; padding: 15px; border-radius: 12px; text-align: left; }
+    .active-cases-widget span { display: block; font-size: 0.85rem; color: #fca5a5; }
+    .active-cases-widget h2 { font-size: 2rem; margin-top: 5px; }
+    .main-content { flex: 1; padding: 40px; overflow-y: auto; padding-bottom: 120px; }
+    .top-header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+    .app-icon { background-color: var(--primary-orange); color: white; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.5rem; }
+    .app-title h1 { color: var(--primary-orange); font-size: 1.8rem; }
+    .app-title p { color: var(--text-gray); font-size: 0.9rem; }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid var(--border-color); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 600; color: var(--text-dark); }
+    .btn-primary { background: var(--primary-orange); color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .data-table th { text-align: left; padding: 12px; color: var(--text-gray); border-bottom: 2px solid var(--border-color); font-weight: 600; }
+    .data-table td { padding: 15px 12px; border-bottom: 1px solid var(--border-color); color: var(--text-dark); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge.verified { background: var(--status-completed-bg); color: var(--status-completed-txt); }
+    .badge.review { background: var(--status-pending-bg); color: var(--status-pending-txt); }
+    .footer-tagline { text-align: center; color: var(--primary-orange); font-weight: 500; font-size: 0.9rem; margin-top: 20px; }
+    .floating-ai-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 700px; background: white; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; padding: 8px 15px; border: 1px solid var(--primary-orange); z-index: 1000; transition: all 0.3s; }
+    .floating-ai-bar input { flex: 1; border: none; outline: none; padding: 12px 15px; font-size: 1rem; background: transparent; }
+    .ai-btn { background: none; border: none; color: var(--text-gray); font-size: 1.2rem; cursor: pointer; padding: 10px; transition: color 0.2s; }
+    .ai-btn:hover { color: var(--primary-orange); }
+    .ai-btn.send-btn { color: var(--primary-orange); background: #fff5ee; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;}
+    @media (max-width: 768px) { .mobile-header { display: flex; } .sidebar { position: fixed; height: 100vh; transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .main-content { padding: 80px 20px 100px 20px; } .floating-ai-bar { width: 95%; bottom: 15px; } .data-table { display: block; overflow-x: auto; } }
+  </style>
+</head>
+<body>
+  <div class="mobile-header">
+    <div class="font-bold tracking-wider">KYNKODE</div>
+    <i class="fas fa-bars hamburger" onclick="toggleSidebar()"></i>
+  </div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">KYNKODE</div>
+    <nav class="nav-menu">
+      <a href="index.html" class="nav-item"><i class="fas fa-home w-5 text-center"></i> Dashboard</a>
+      <a href="kynmove.html" class="nav-item"><i class="fas fa-plane w-5 text-center"></i> Relocations</a>
+      <a href="documentsmove.html" class="nav-item active"><i class="fas fa-file-alt w-5 text-center"></i> Documents</a>
+      <a href="checklistsmove.html" class="nav-item"><i class="fas fa-check-square w-5 text-center"></i> Checklists</a>
+      <a href="templatesmove.html" class="nav-item"><i class="fas fa-layer-group w-5 text-center"></i> Templates</a>
+      <a href="reportsmove.html" class="nav-item"><i class="fas fa-chart-bar w-5 text-center"></i> Reports</a>
+      <a href="settingsmove.html" class="nav-item"><i class="fas fa-cog w-5 text-center"></i> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="active-cases-widget"><span>Active Cases</span><h2>7</h2></div>
+    </div>
+  </aside>
+  <main class="main-content">
+    <div class="top-header">
+      <div class="app-icon"><i class="fas fa-file-alt"></i></div>
+      <div class="app-title"><h1>Documents Hub</h1><p>Manage and verify pet travel paperwork</p></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span>Recent Uploads</span>
+        <button class="btn-primary"><i class="fas fa-upload"></i> Upload File</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Document Name</th>
+            <th>Case Ref / Pet</th>
+            <th>Date Uploaded</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><i class="fas fa-file-pdf" style="color: #ef4444; margin-right: 8px;"></i> Luna_Rabies_Titre.pdf</td>
+            <td>Case #1048 (Luna)</td>
+            <td>12/08/2026</td>
+            <td><span class="badge verified">Verified</span></td>
+            <td><a href="#" style="color: #3b82f6;"><i class="fas fa-download"></i></a></td>
+          </tr>
+          <tr>
+            <td><i class="fas fa-file-image" style="color: #3b82f6; margin-right: 8px;"></i> Max_Microchip_Scan.jpg</td>
+            <td>Case #1052 (Max)</td>
+            <td>14/08/2026</td>
+            <td><span class="badge review">Under Review</span></td>
+            <td><a href="#" style="color: #3b82f6;"><i class="fas fa-download"></i></a></td>
+          </tr>
+          <tr>
+            <td><i class="fas fa-file-word" style="color: #2563eb; margin-right: 8px;"></i> EU_Health_Cert_Draft.docx</td>
+            <td>Case #1055 (Bella)</td>
+            <td>15/08/2026</td>
+            <td><span class="badge review">Under Review</span></td>
+            <td><a href="#" style="color: #3b82f6;"><i class="fas fa-download"></i></a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footer-tagline">All documents. All deadlines. Stress-free pet travel.</p>
+  </main>
+  <div class="floating-ai-bar">
+    <button class="ai-btn" id="micBtn"><i class="fas fa-microphone"></i></button>
+    <input type="text" id="aiInput" placeholder="Ask AI to find a document..." autocomplete="off">
+    <button class="ai-btn send-btn" id="sendBtn" onclick="triggerAI()"><i class="fas fa-paper-plane"></i></button>
+  </div>
+  <script>
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+    async function triggerAI() { /* Same AI Logic as original */ }
+  </script>
+</body>
+</html>

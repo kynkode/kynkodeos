@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYNKODE - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: { dark: '#1E1B4B', primary: '#6D28D9', accent: '#4C1D95', light: '#F8FAFC' } }
+                }
+            }
+        }
+    </script>
+    <style>.glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }</style>
+</head>
+<body class="bg-brand-light text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <aside id="sidebar" class="bg-brand-dark text-white w-64 flex flex-col fixed lg:static h-full z-50">
+        <div class="p-6 flex items-center justify-between"><h1 class="text-xl font-bold tracking-wider">KYNKODE</h1></div>
+        <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+            <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white"><i class="fa-solid fa-house w-5"></i><span class="text-sm font-medium">Dashboard</span></a>
+            <a href="kynflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white"><i class="fa-solid fa-clipboard-check w-5"></i><span class="text-sm font-medium">Flow</span></a>
+            <a href="tasks.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white"><i class="fa-solid fa-list-check w-5"></i><span class="text-sm font-medium">Tasks</span></a>
+            <a href="workflows.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white"><i class="fa-solid fa-network-wired w-5"></i><span class="text-sm font-medium">Workflows</span></a>
+            <a href="calendar.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white"><i class="fa-regular fa-calendar w-5"></i><span class="text-sm font-medium">Calendar</span></a>
+            <a href="reportsflow.html" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white"><i class="fa-solid fa-chart-pie w-5"></i><span class="text-sm font-medium">Reports</span></a>
+            <a href="settingsflow.html" class="flex items-center gap-3 px-4 py-3 bg-brand-primary text-white rounded-lg shadow-md"><i class="fa-solid fa-gear w-5"></i><span class="text-sm font-medium">Settings</span></a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-y-auto relative pt-16 lg:pt-0">
+        <div class="p-6 lg:p-10 max-w-4xl mx-auto w-full pb-32">
+            <header class="flex items-center gap-4 mb-8">
+                <div class="bg-brand-primary text-white p-3 rounded-2xl shadow-sm"><i class="fa-solid fa-gear text-3xl"></i></div>
+                <div>
+                    <h1 class="text-3xl font-bold text-brand-dark">Platform Settings</h1>
+                    <p class="text-slate-500 text-sm mt-1 font-medium">Configure Google Apps Script API endpoints and automation preferences</p>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-6">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-2">Google Apps Script Web App Endpoint</h3>
+                    <p class="text-xs text-slate-500 mb-3">All voice and text commands entered into KYNKODE AI will transmit to this execution URL.</p>
+                    <input type="text" value="https://script.google.com/macros/s/AKfycbwqJj6Ovuj7vXBmnyQI45rq8SF9kW2XWKjuw6AXP4KBfyVrsdc-rfvq5ueICaNjxczA/exec" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-700 focus:outline-none focus:border-brand-primary">
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800">Voice Response Feedback</h4>
+                        <p class="text-xs text-slate-500">Play spoken audio confirmations after AI actions execute.</p>
+                    </div>
+                    <input type="checkbox" checked class="w-5 h-5 text-brand-primary rounded accent-brand-primary">
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex justify-end">
+                    <button class="bg-brand-primary text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-sm hover:bg-purple-700 transition-colors">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Floating Bar -->
+    <div class="fixed bottom-4 left-0 right-0 px-4 pointer-events-none flex flex-col items-center z-50">
+        <div class="w-full max-w-2xl glass-panel shadow-lg rounded-full p-2 flex items-center gap-2 border border-white pointer-events-auto">
+            <button class="h-10 w-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-microphone"></i></button>
+            <input type="text" placeholder="Ask KYNKODE AI (e.g. 'Test connection to Google Apps Script')" class="flex-1 bg-transparent border-none text-sm px-2 text-slate-700 outline-none">
+            <button class="h-10 w-10 rounded-full bg-brand-primary text-white flex items-center justify-center"><i class="fa-solid fa-paper-plane text-sm"></i></button>
+        </div>
+    </div>
+</body>
+</html>
